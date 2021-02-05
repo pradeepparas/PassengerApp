@@ -49,6 +49,8 @@ import styles from './StationManagement.module.css';
 import styled from 'styled-components';
 import { Modal1 } from './Modal';
 import { GlobalStyle } from './globalStyles';
+import * as constantValue from '../constants/constants';
+const api_url = constantValue.apiUrl;
 
 const Container = styled.div`
   display: flex;
@@ -121,7 +123,19 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#b22222'
     }
   },
+	textField: {
+		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+			width: '60%'
+		},
+		["@media (min-width: 280px) and (max-width: 750px)"]: {
+			width: '90%'
+		},
+	},
   textField1:{
+		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+      width: '100%',
+      marginBottom: 5
+    },
     outline: 'none',
     width: 150,
     height: 41,
@@ -146,7 +160,25 @@ const useStyles = makeStyles((theme) => ({
     // color: '#b22222',
     // borderRadius: 8
   },
+	link1: {
+		width: '100%',
+		borderRadius: 16,
+    color: 'white',
+    backgroundColor: '#b22222',
+    textTransform: 'capitalize',
+    '&:hover': {
+      backgroundColor: '#b22222',
+      color: '#FFF'
+    }
+	},
   button1: {
+		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+      width: '60%',
+      marginBottom: 5
+    },
+		["@media (min-width: 280px) and (max-width: 750px)"]: {
+			width: '90%'
+		},
     borderRadius: 16,
     color: 'white',
     backgroundColor: '#b22222',
@@ -170,16 +202,43 @@ const useStyles = makeStyles((theme) => ({
   container1: {
 		display: "flex",
 		flexWrap: "wrap",
-    width: 170,
+		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+      width: '60%',
+			display: 'flex',
+			flexDirection: 'column',
+      marginBottom: 5
+    },
+		["@media (min-width: 280px) and (max-width: 750px)"]: {
+			width: '90%'
+		},
+    // width: 170,
 	},
 	date1: {
+    // width: 131,
+    height: 40,
+    fontSize: 12,
     "& .MuiOutlinedInput-adornedEnd":{
       'filter' : 'invert(0%) sepia(3%) saturate(0%) hue-rotate(250deg) brightness(103%) contrast(104%)'
     },
-		// marginLeft: theme.spacing(1),
-		// marginRight: theme.spacing(1),
-		// width: 170,
+    '&:hover': {
+      outline: 'none',
+      borderColor: 'red'
+    },
 	},
+	input1: {
+    '&:hover': {
+      outline: 'none',
+      borderColor: 'red'
+    },
+    height: 18,
+    paddingLeft: 4,
+    paddingRight: 1,
+		color: "#4D4F5C",
+		fontSize: "smaller",
+	},
+  focused1: {
+    borderColor: 'white'
+  }
 }));
 
 function createData(name, calories, fat, carbs, protein) {
@@ -262,7 +321,7 @@ export default function StationManagement(props) {
       <div className={styles.header}>
         <div className={styles.title}>Station Management</div>
         <Link to="/station-management/add">
-        <Button className={classes.button1} variant="contained">
+        <Button className={classes.link1} variant="contained">
           + Add Station
         </Button>
         </Link>
@@ -294,7 +353,7 @@ export default function StationManagement(props) {
         </Button>
 
          {/*Select*/}
-         <div /*className={styles.select1}*/>
+         <div className={styles.selectDiv1}>
            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
              <option selected disabled>Station Name</option>
              <option value="1">Pure CSS</option>
@@ -303,7 +362,7 @@ export default function StationManagement(props) {
          </select>
          </div>
 
-          <div /*className={styles.select1}*/>
+          <div className={styles.selectDiv1}>
             <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
               <option selected disabled>Station Code</option>
               <option value="1">Pure CSS</option>
@@ -312,7 +371,7 @@ export default function StationManagement(props) {
           </select>
           </div>
 
-            <div /*className={styles.select1}*/>
+            <div className={styles.selectDiv1}>
               <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
                 <option selected disabled>Station Type</option>
                 <option value="1">Pure CSS</option>
@@ -321,7 +380,7 @@ export default function StationManagement(props) {
             </select>
             </div>
 
-          <div /*style={{borderWidth: 2}} className={styles.select1}*/>
+          <div className={styles.selectDiv1}>
             <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
               <option selected disabled>Managed By</option>
               <option value="1">Pure CSS</option>
@@ -331,23 +390,26 @@ export default function StationManagement(props) {
           </div>
 
         <div className={classes.container1}>
-    			<TextField
-    				id="date"
-    				variant="outlined"
-    				type="date"
-    				size="small"
-            placeholder="From Date"
-    				defaultValue={new Date()}
-    				className={classes.date1}
-            InputProps={{
-              placeholder: "From Date",
-              endAdornment: null,
-            }}
-    				// InputLabelProps={{
-            //   placeholder: 'From Date',
-    				// 	shrink: true,
-    				// }}
-    			/>
+				<TextField
+					id="date"
+					variant="outlined"
+					type="date"
+					size="small"
+					defaultValue={new Date()}
+					className={classes.date1}
+					// InputLabelProps={{
+					//   label: 'To Date',
+					// 	shrink: true,
+					//   classes: { input: classes.input1 },
+					//   focused: classes.focused1,
+					// }}
+					InputProps={{
+						placeholder: "From Date",
+						// endAdornment: null,
+						classes: { input: classes.input1 },
+						focused: classes.focused1,
+					}}
+				/>
           {/*<DatePicker
             className={styles.input_s}
             peekNextMonth showMonthDropdown showYearDropdown
@@ -359,18 +421,19 @@ export default function StationManagement(props) {
     		</div>
 
         <div className={classes.container1}>
-    			<TextField
-    				id="date"
-    				variant="outlined"
-    				type="date"
-    				size="small"
-    				defaultValue={new Date()}
-    				className={classes.date1}
-    				InputLabelProps={{
-              placeholder: 'To Date',
-    					shrink: true,
-    				}}
-    			/>
+				<TextField
+					id="date"
+					variant="outlined"
+					type="date"
+					size="small"
+					defaultValue={new Date()}
+					className={classes.date1}
+					InputProps={{
+						placeholder: "From Date",
+						classes: { input: classes.input1 },
+						focused: classes.focused1,
+					}}
+				/>
     		</div>
       </div>
 
@@ -495,7 +558,7 @@ export default function StationManagement(props) {
 				 <small style={{display: 'flex', alignItems: 'center'}}>Download Details</small>
 				 </button>
 				 </div>
-						<div style={{display: 'flex'}}>
+						<div className={styles.modalOuterDiv} style={{display: 'flex'}}>
 
 						<div className={styles.box1}>
 							<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Details</div>
@@ -539,7 +602,7 @@ export default function StationManagement(props) {
 							</div>
 						</div>
 
-						<div style={{display: 'flex'}}>
+						<div className={styles.modalOuterDiv} style={{display: 'flex'}}>
 						<div className={styles.box1}>
 							<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Contact Person Details</div>
 								<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
@@ -574,6 +637,6 @@ export default function StationManagement(props) {
       <Pagination count={10} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
       </div>
       </div>}
-    // </div>
+			</div>
   );
 }

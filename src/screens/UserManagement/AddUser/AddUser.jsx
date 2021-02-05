@@ -13,7 +13,7 @@ import {
 	FormGroup,
 } from "reactstrap";
 
-// components
+// components saveButton
 import styles from './AddUser.module.css';
 
 // import logo from './logo.png';
@@ -131,7 +131,30 @@ const useStyles = makeStyles((theme) => ({
       color: '#FFF'
     }
   },
+	saveButton1: {
+		width: 100,
+		marginRight: 20,
+		borderRadius: 16,
+    color: 'white',
+    backgroundColor: '#b22222',
+    textTransform: 'capitalize',
+    '&:hover': {
+      backgroundColor: '#b22222',
+      color: '#FFF'
+    },
+		["@media (max-width:428px)"]: {
+			marginRight: 0,
+			width: '100%',
+			// marginBottom: 5
+		},
+	},
   button2: {
+		["@media (max-width:428px)"]: {
+			marginRight: 0,
+			width: '100%',
+			marginBottom: 5
+		},
+		marginRight: 45,
     width: 100,
     borderRadius: 16,
     color: 'white',
@@ -256,7 +279,7 @@ export default function AddUser(props) {
   return(
     <div className={styles.main}>
       <div className={styles.header}>
-        <div className={styles.title}>Add User</div>
+        <div className={styles.title1}>Add User</div>
         <Button startIcon={<ArrowBackIosIcon color="white" />} onClick={() => history.push('/user-management')} className={classes.button1} variant="contained">
           Back
         </Button>
@@ -309,8 +332,9 @@ export default function AddUser(props) {
               <label style={{color: 'black'}}>Password</label>
 
               <input style={{position: 'relative'}} autocomplete="off" name="userPassword" value={state.userPassword} onChange={handleInputs} className={styles.inputfield} type={values.showPassword? "text" : "password"} />
+							<span>
 							<IconButton
-								style={{position: 'relative', backgroundColor: 'white', width: 33, height: 33}}
+								style={{position: 'relative',float: 'right', backgroundColor: 'white', width: 33, height: 33}}
 								className={styles.passwordIcon}
 								aria-label="toggle password visibility"
 								onClick={
@@ -327,18 +351,19 @@ export default function AddUser(props) {
 									<VisibilityOff />
 								)}
 							</IconButton>
+							</span>
 							<div style={{marginTop: -31}} className={styles.error_message}>{errors.userPassword}</div>
             </div>
 
 
 						{/*Dummy Div*/}
-						<div></div>
+						<div className={styles.extraDiv}></div>
 						<div></div>
 						<div className={styles.saveButton}>
-			      <Button style={{marginRight: 45}} onClick={() => history.push('/station-management')}  className={classes.button2} variant="contained">
+			      <Button style={{}} onClick={() => history.push('/station-management')}  className={classes.button2} variant="contained">
 			        Cancel
 			      </Button>
-			      <Button style={{width: 100, marginRight: 20}} onClick={handleSubmit} className={classes.button1} variant="contained">
+			      <Button style={{}} onClick={handleSubmit} className={classes.saveButton1} variant="contained">
 			        Save
 			      </Button>
 			      </div>

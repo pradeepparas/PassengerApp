@@ -332,4 +332,23 @@ border-color: #cac7c7;
   }
 }
 
+@media (min-width: 280px) and (max-width: 680px) {
+  .searchBarDiv {
+    width: 91%;
+  }
+  .dateDiv {
+    width: 91%;
+  }
+}
+
+@media (min-width: 280px) and (max-width: 545px) {
+  .header {
+    flex-direction: column;
+  }
+  .title {
+    margin-bottom: 8px;
+    font-size: 19px;
+  }
+}
+
 /* modalContainer */

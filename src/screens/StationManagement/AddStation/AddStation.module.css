@@ -13,6 +13,14 @@
   width: 100%;
 }
 
+.title1 {
+  text-align: left;
+  font: normal normal bold 25px/26px Montserrat;
+  letter-spacing: 0px;
+  color: #272D3B;
+  opacity: 1;
+}
+
 .title {
   text-align: left;
   font: normal normal bold 25px/26px Montserrat;
@@ -324,3 +332,76 @@ border-color: #cac7c7;
     color: #ef0b0bde;
     font: normal normal normal 10px/10px Montserrat;
   }
+
+@media (min-width: 900px) and (max-width: 1024px) {
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* grid-template-rows: 1fr 1fr 1fr 1fr; */
+  }
+  .grid1 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+}
+
+@media (min-width: 280px) and (max-width: 899px) {
+  .grid {
+    display: flex;
+    flex-direction: column;
+  }
+  .grid1 {
+    display: flex;
+    flex-direction: column;
+  }
+  .detailsBox {
+    display: flex;
+    flex-direction: column;
+  }
+  .box2 {
+    width: 100%;
+  }
+}
+
+@media (min-width: 280px) and (max-width: 550px) {
+  .textfield {
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+  .box {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .passwordDiv {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 990px) {
+  .passwordDiv {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 180px) and (max-width: 428px) {
+  .header {
+    flex-direction: column;
+  }
+  .title1 {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+}
+
+@media (min-width: 180px) and (max-width: 368px) {
+  .saveButton {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-right: 0px;
+    margin-top: 0px;
+  }
+}

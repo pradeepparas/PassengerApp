@@ -12,11 +12,12 @@ import {
 	Form,
 	FormGroup,
 } from "reactstrap";
-
+// title
 // components
 import styles from './AddStation.module.css';
 import logo from './logo.png';
 import flag from '../flag.svg';
+
 // Material UI
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import {
@@ -127,6 +128,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   button2: {
+		marginRight: 45,
     width: 100,
     borderRadius: 16,
     color: 'white',
@@ -135,8 +137,30 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       backgroundColor: '#272d3b',
       color: '#FFF'
-    }
+    },
+		["@media (max-width:368px)"]: {
+			marginRight: 0,
+			width: '100%',
+			marginBottom: 5
+		},
   },
+	saveButton1: {
+		width: 100,
+		marginRight: 20,
+		borderRadius: 16,
+		color: 'white',
+		backgroundColor: '#b22222',
+		textTransform: 'capitalize',
+		'&:hover': {
+			backgroundColor: '#b22222',
+			color: '#FFF'
+		},
+		["@media (max-width:368px)"]: {
+			marginRight: 0,
+			width: '100%',
+			// marginBottom: 5
+		},
+	},
   container1: {
 		display: "flex",
 		flexWrap: "wrap",
@@ -378,7 +402,7 @@ export default function AddStation(props) {
   return(
     <div className={styles.main}>
       <div className={styles.header}>
-        <div className={styles.title}>Add Station</div>
+        <div className={styles.title1}>Add Station</div>
         <Button startIcon={<ArrowBackIosIcon color="white" />} onClick={() => history.push('/station-management')} className={classes.button1} variant="contained">
           Back
         </Button>
@@ -482,7 +506,7 @@ export default function AddStation(props) {
             </div>
         </div>
 
-        <div style={{display: 'flex',justifyContent: 'space-between'}}>
+        <div className={styles.detailsBox} style={{display: 'flex',justifyContent: 'space-between'}}>
           <div className={styles.box2}>
           <div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Contact Person Details</div>
           <div>
@@ -547,7 +571,7 @@ export default function AddStation(props) {
           </div>
           <div className={styles.textfield}>
             <label style={{color: 'black'}}>Password</label>
-            <div style={{display: 'flex'}}>
+            <div className={styles.passwordDiv} style={{display: 'flex'}}>
             <input autocomplete="off" name="adminPassword" value={details.adminPassword} onChange={handleDetails} className={styles.inputfield} type="text" />
             <button style={{display: 'contents'}} onClick={passwordGenerate}>
             <img style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={logo} />
@@ -583,10 +607,10 @@ export default function AddStation(props) {
         </div>
       </div>
       <div className={styles.saveButton}>
-      <Button style={{marginRight: 45}} onClick={() => history.push('/station-management')}  className={classes.button2} variant="contained">
+      <Button style={{}} onClick={() => history.push('/station-management')}  className={classes.button2} variant="contained">
         Cancel
       </Button>
-      <Button style={{width: 100, marginRight: 20}} onClick={handleSubmit} className={classes.button1} variant="contained">
+      <Button style={{}} onClick={handleSubmit} className={classes.saveButton1} variant="contained">
         Save
       </Button>
       </div>

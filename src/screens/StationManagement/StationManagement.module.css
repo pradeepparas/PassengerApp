@@ -114,9 +114,7 @@ border-color: #cac7c7;
  .select1 > option {
    font-family: Montserrat;
    padding-top: 10px !important;
-   /* text-indent: 15px; */
    font-size: 12px;
-   background-color: pink;
 }
 
  .select1 > option:hover{
@@ -282,3 +280,65 @@ border-color: #cac7c7;
 }
 
 /* modalContainer */
+@media (min-width: 280px) and (max-width: 1158px) {
+  .filterContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .selectDiv1 {
+    width: 60%;
+    margin-bottom: 5px;
+  }
+  .select1 {
+    width: 100%;
+  }
+}
+
+@media (min-width: 280px) and (max-width:750px) {
+  .selectDiv1 {
+    width: 90%;
+  }
+}
+
+@media (min-width: 280px) and (max-width: 680px) {
+  .searchBarDiv {
+    width: 91%;
+  }
+  .dateDiv {
+    width: 91%;
+  }
+}
+
+@media (min-width: 280px) and (max-width: 545px) {
+  .header {
+    flex-direction: column;
+  }
+  .title {
+    margin-bottom: 8px;
+    font-size: 19px;
+  }
+}
+
+@media (min-width: 280px) and (max-width: 1026px) {
+  .modalContainer {
+    z-index: 9999;
+    max-width: 900px;
+  }
+}
+
+@media (min-width: 280px) and (max-width: 930px) {
+  .modalOuterDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .modalContainer {
+    z-index: 9999;
+    max-width: fit-content;
+  }
+}
+
+/* modalOuterDiv */

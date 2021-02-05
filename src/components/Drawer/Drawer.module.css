@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 .header {
+  min-width: 216px;
   height: 53px;
   padding-top: 16px;
   width: 216px;
@@ -67,4 +68,10 @@
   width: 28px;
   height: 21px;
   filter :invert(0%) sepia(3%) saturate(0%) hue-rotate(250deg) brightness(103%) contrast(104%)
+}
+
+@media (min-width: 180px) and (max-width: 560px) {
+  .header {
+    display: none;
+  }
 }

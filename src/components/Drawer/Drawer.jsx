@@ -1,5 +1,5 @@
 import React from 'react';
-
+// zIndex
 // Material UI
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -120,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
   drawerOpen: {
     ["@media (min-width: 280px) and (max-width: 1318px)"]: {
 			position: 'fixed',
-			zIndex: 999,
+			zIndex: 500,
 			width: '260px'
 		},
     backgroundColor: '#B22222',
@@ -131,6 +131,7 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   drawerClose: {
+    zIndex: 500,
     backgroundColor: '#B22222',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -151,6 +152,7 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
   },
   content: {
+    minWidth: 0,
     backgroundColor: 'white',
     flexGrow: 1,
     padding: theme.spacing(3),
