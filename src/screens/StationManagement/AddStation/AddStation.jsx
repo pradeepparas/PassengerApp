@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
-import {Link, useHistory}  from  'react-router-dom';
+import {Link, useHistory, useParams }  from  'react-router-dom';
 import moment from 'moment';
 import {
 	Modal,
@@ -177,7 +177,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AddStation(props) {
-  const [isAdd, setIsAdd] = useState(true);
+	const { station_id } = useParams();
+  const [isAdd, setIsAdd] = useState(false);
   const [modal, setModal] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -207,6 +208,12 @@ export default function AddStation(props) {
     adminEmail: "",
     adminPassword: ""
   })
+
+	// if(id == 'add') {
+	// 	setIsAdd(true)
+	// } else {
+	// 	setIsAdd(false)
+	// }
 
   const [pchecked, setPChecked] = useState(false);
   const [achecked, setAchecked] = useState(false);
@@ -249,7 +256,11 @@ export default function AddStation(props) {
           return
       }
       setModal(true);
-      setIsAdd(true);
+			if(station_id == 'add'){
+				setIsAdd(true);
+			} else {
+				setIsAdd(false);
+			}
       // state.orgId=localStorage.getItem('orgId')
       // props.addPackage(state)
   }
@@ -395,6 +406,7 @@ export default function AddStation(props) {
             ...state,
             endDate:moment(date).format("DD-MM-YYYY")
           })
+					//props.match.params.
         }
 
    };
@@ -402,7 +414,7 @@ export default function AddStation(props) {
   return(
     <div className={styles.main}>
       <div className={styles.header}>
-        <div className={styles.title1}>Add Station</div>
+        <div className={styles.title1}>{ station_id == 'add' ? "Add Station": "Edit Station"}</div>
         <Button startIcon={<ArrowBackIosIcon color="white" />} onClick={() => history.push('/station-management')} className={classes.button1} variant="contained">
           Back
         </Button>
@@ -611,7 +623,7 @@ export default function AddStation(props) {
         Cancel
       </Button>
       <Button style={{}} onClick={handleSubmit} className={classes.saveButton1} variant="contained">
-        Save
+        {station_id == 'add' ? "Save" : "Update"}
       </Button>
       </div>
 

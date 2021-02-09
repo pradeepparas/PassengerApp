@@ -18,6 +18,10 @@ import AddStation from "../../../screens/StationManagement/AddStation/AddStation
 import StationManagement from "../../../screens/StationManagement/StationManagement";
 import UserManagement from "../../../screens/UserManagement/UserManagement";
 import AddUser from "../../../screens/UserManagement/AddUser/AddUser";
+import Vendors from '../../../screens/Vendors/Vendors';
+import Revenue from "../../../screens/Revenue/Revenue";
+import Users from "../../../screens/Users/Users";
+import ProfileSettings from "../../../screens/ProfileSettings/ProfileSettings";
 import Forgot_password from "../../../screens/ForgotPassword/Forgot_password";
 import Log_in from "../../../screens/Login/Log_in";
 import Reset_password from "../../../screens/ResetPassword/Reset_password";
@@ -36,9 +40,13 @@ const Router = () => (
         <Route path="/otp" component={OTP1} />
         <Route path="/dashboard" render={(props) => <Drawer page={<Dashboard />} />}/>
         <Route path="/station-management" exact={true} render={props => <Drawer page={<StationManagement />} />}/>
-      {  <Route path="/station-management/:id" render={props => <Drawer page={<AddStation />} />} />}
+      {  <Route path="/station-management/:station_id" render={props => <Drawer page={<AddStation />} />} />}
         <Route path="/user-management" exact={true} render={props => <Drawer page={<UserManagement />} />}/>
-        <Route path="/user-management/:id" exact={true} render={props => <Drawer page={<AddUser />} />} />
+        <Route path="/user-management/:user_id" exact={true} render={props => <Drawer page={<AddUser />} />} />
+        <Route path="/vendors" exact={true} render={props => <Drawer page={<Vendors />} />} />
+        <Route path="/revenue" exact={true} render={props => <Drawer page={<Revenue />} />} />
+        <Route path="/users" exact={true} render={props => <Drawer page={<Users />} />} />
+        {<Route path="/profile" render={props => <Drawer page={<ProfileSettings />} />} />}
         {// <Route exact path="/" component={Landing} />
         // <Route path="/404" component={NotFound404} />
         // <Route path="/lock_screen" component={LockScreen} />

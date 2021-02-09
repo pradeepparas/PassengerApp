@@ -13,12 +13,12 @@ import {
 	FormGroup,
 } from "reactstrap";
 
-// Images
-import downArrow from './downArrow.png';
-import delete_logo from './delete.svg';
-import edit from './edit.png';
+// Images modalButton
+import downArrow from '../StationManagement/downArrow.png';
+import delete_logo from '../StationManagement/delete.svg';
+import edit from '../StationManagement/edit.png';
+import flag from '../StationManagement/flag.svg';
 import printer from './printer.png';
-import flag from './flag.svg';
 
 // Material UI
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -45,30 +45,8 @@ import InputBase from '@material-ui/core/InputBase';
 import Pagination from '@material-ui/lab/Pagination';
 
 // components
-import styles from './StationManagement.module.css';
-import styled from 'styled-components';
-import { Modal1 } from './Modal';
-import { GlobalStyle } from './globalStyles';
-import * as constantValue from '../constants/constants';
-const api_url = constantValue.apiUrl;
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-`;
-
-const Button1 = styled.button`
-  min-width: 100px;
-  padding: 16px 32px;
-  border-radius: 4px;
-  border: none;
-  background: #141414;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
-`;
+import styles from './Revenue.module.css';
+// import styled from 'styled-components';
 
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -123,16 +101,13 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#b22222'
     }
   },
-	textField: {
-		["@media (min-width: 280px) and (max-width: 1158px)"]: {
-			width: '60%'
-		},
-		["@media (min-width: 280px) and (max-width: 750px)"]: {
-			width: '90%'
-		},
-	},
+  textField: {
+    ["@media (min-width: 280px) and (max-width: 1158px)"]: {
+      width: '100%'
+    }
+  },
   textField1:{
-		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+    ["@media (min-width: 280px) and (max-width: 1158px)"]: {
       width: '100%',
       marginBottom: 5
     },
@@ -160,26 +135,12 @@ const useStyles = makeStyles((theme) => ({
     // color: '#b22222',
     // borderRadius: 8
   },
-	link1: {
-		width: '100%',
-		borderRadius: 16,
-    color: 'white',
-    backgroundColor: '#b22222',
-    textTransform: 'capitalize',
-    '&:hover': {
-      backgroundColor: '#b22222',
-      color: '#FFF'
-    }
-	},
   button1: {
-		["@media (min-width: 280px) and (max-width: 1158px)"]: {
-      width: '60%',
+    ["@media (min-width: 280px) and (max-width: 1158px)"]: {
+      width: '100%',
       marginBottom: 5
     },
-		["@media (min-width: 280px) and (max-width: 750px)"]: {
-			width: '90%'
-		},
-    borderRadius: 16,
+    borderRadius: 80,
     color: 'white',
     backgroundColor: '#b22222',
     textTransform: 'capitalize',
@@ -200,18 +161,18 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   container1: {
-		display: "flex",
-		flexWrap: "wrap",
 		["@media (min-width: 280px) and (max-width: 1158px)"]: {
-      width: '60%',
+      width: '100%',
 			display: 'flex',
 			flexDirection: 'column',
       marginBottom: 5
     },
-		["@media (min-width: 280px) and (max-width: 750px)"]: {
-			width: '90%'
-		},
-    // width: 170,
+		display: "flex",
+		// flexWrap: "wrap",
+    width: 192,
+	},
+	table: {
+		overflowX: 'scroll'
 	},
 	date1: {
     // width: 131,
@@ -224,10 +185,14 @@ const useStyles = makeStyles((theme) => ({
       outline: 'none',
       borderColor: 'red'
     },
+		// marginLeft: theme.spacing(1),
+		// marginRight: theme.spacing(1),
+		// width: 170,
 	},
-	input1: {
+  input1: {
     '&:hover': {
       outline: 'none',
+      // backgroundColor: 'red',
       borderColor: 'red'
     },
     height: 18,
@@ -315,19 +280,16 @@ export default function StationManagement(props) {
 
   return(
     <div className={styles.main}>
-		{/*Modal for view details*/}
-		<Modal1 showModal={showModal} setShowModal={setShowModal} />
-		 <GlobalStyle />
       <div className={styles.header}>
-        <div className={styles.title}>Station Management</div>
-        <Link to="/station-management/add">
-        <Button className={classes.link1} variant="contained">
-          + Add Station
-        </Button>
-        </Link>
+        <div className={styles.title}>Revenue</div>
+        <button className={styles.modalButton} /*style={{display: 'contents'}}*/ /*onClick={passwordGenerate}*/>
+        <img className={styles.modalImage} style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={printer} />
+        <small style={{display: 'flex', alignItems: 'center'}}>Download Details</small>
+        </button>
       </div>
       <div className={styles.table}>
       <div className={styles.filterContent}>
+        <div className={styles.searchBarDiv}>
         <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
           <OutlinedInput
             // label="Search"
@@ -362,79 +324,73 @@ export default function StationManagement(props) {
          </select>
          </div>
 
-          <div className={styles.selectDiv1}>
-            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
-              <option selected disabled>Station Code</option>
-              <option value="1">Pure CSS</option>
-              <option value="2">No JS</option>
-              <option value="3">Nice!</option>
-          </select>
-          </div>
-
-            <div className={styles.selectDiv1}>
-              <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
-                <option selected disabled>Station Type</option>
-                <option value="1">Pure CSS</option>
-                <option value="2">No JS</option>
-                <option value="3">Nice!</option>
-            </select>
-            </div>
+         <div className={styles.selectDiv1}>
+           <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
+             <option selected disabled>Vendor Name</option>
+             <option value="1">Pure CSS</option>
+             <option value="2">No JS</option>
+             <option value="3">Nice!</option>
+         </select>
+         </div>
 
           <div className={styles.selectDiv1}>
             <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
-              <option selected disabled>Managed By</option>
-              <option value="1">Pure CSS</option>
-              <option value="2">No JS</option>
-              <option value="3">Nice!</option>
+              <option selected disabled>Service Name</option>
+              <option value="1">Medicines</option>
+              <option value="2">Food and Beverage</option>
+              <option value="2">Porter</option>
           </select>
           </div>
+          </div>
 
+        <div className={styles.dateDiv}>
         <div className={classes.container1}>
-				<TextField
-					id="date"
-					variant="outlined"
-					type="date"
-					size="small"
-					defaultValue={new Date()}
-					className={classes.date1}
-					// InputLabelProps={{
-					//   label: 'To Date',
-					// 	shrink: true,
-					//   classes: { input: classes.input1 },
-					//   focused: classes.focused1,
-					// }}
-					InputProps={{
-						placeholder: "From Date",
-						// endAdornment: null,
-						classes: { input: classes.input1 },
-						focused: classes.focused1,
-					}}
-				/>
-          {/*<DatePicker
-            className={styles.input_s}
-            peekNextMonth showMonthDropdown showYearDropdown
-            dropdownMode="select"
-            selected={new Date()}
-            value={new Date()}
-            onChange={(e) => handleChange(e,'end')} placeholderText='Start Date' />
-            <img style={{width: 15, height: 15}} src={downArrow} />*/}
+        <label style={{width: 70}} className={styles.dateLabel}>From Date</label>
+    			<TextField
+    				id="date"
+    				variant="outlined"
+    				type="date"
+    				size="small"
+            placeholder="From Date"
+    				defaultValue={new Date()}
+    				className={classes.date1}
+            InputProps={{
+              placeholder: "From Date",
+              // endAdornment: null,
+              classes: { input: classes.input1 },
+              focused: classes.focused1,
+            }}
+    				// InputLabelProps={{
+            //   placeholder: 'From Date',
+    				// 	shrink: true,
+    				// }}
+    			/>
     		</div>
 
         <div className={classes.container1}>
-				<TextField
-					id="date"
-					variant="outlined"
-					type="date"
-					size="small"
-					defaultValue={new Date()}
-					className={classes.date1}
-					InputProps={{
-						placeholder: "From Date",
-						classes: { input: classes.input1 },
-						focused: classes.focused1,
-					}}
-				/>
+          <label style={{width: 45}} className={styles.dateLabel}>To Date</label>
+    			<TextField
+    				id="date"
+    				variant="outlined"
+    				type="date"
+    				size="small"
+    				defaultValue={new Date()}
+    				className={classes.date1}
+    				// InputLabelProps={{
+            //   label: 'To Date',
+    				// 	shrink: true,
+            //   classes: { input: classes.input1 },
+            //   focused: classes.focused1,
+    				// }}
+            InputProps={{
+              placeholder: "From Date",
+              // endAdornment: null,
+              classes: { input: classes.input1 },
+              focused: classes.focused1,
+            }}
+    			/>
     		</div>
+        </div>
       </div>
 
       <TableContainer component={Paper}>
@@ -443,14 +399,12 @@ export default function StationManagement(props) {
           <TableRow>
             <TableCell>S.No.</TableCell>
             <TableCell align="center">Station Name</TableCell>
-            <TableCell align="center">Station Code</TableCell>
-            <TableCell align="center">Station Type</TableCell>
-            <TableCell align="center">Managed By</TableCell>
-            <TableCell align="center">No. of Platforms</TableCell>
-            <TableCell align="center">Contact Person</TableCell>
-            <TableCell align="center">Contact Person Mobile</TableCell>
-            <TableCell align="center">Start Date</TableCell>
-            <TableCell align="center">End Date</TableCell>
+            <TableCell align="center">Customer Name</TableCell>
+            <TableCell align="center">Service Name</TableCell>
+            <TableCell align="center">Service Order No.</TableCell>
+            <TableCell align="center">Vendor Name</TableCell>
+            <TableCell align="center">Date</TableCell>
+            <TableCell align="center">Amount</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -465,17 +419,13 @@ export default function StationManagement(props) {
               <TableCell align="center">{row.carbs}</TableCell>
               <TableCell align="center">{row.protein}</TableCell>
               <TableCell align="center">{row.calories}</TableCell>
-              <TableCell align="center">{row.fat}</TableCell>
-              <TableCell align="center">{row.fat}</TableCell>
-              <TableCell align="center">{row.carbs}</TableCell>
+              <TableCell align="center">{row.protein}</TableCell>
               <TableCell align="center">{row.protein}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
                   <a><div onClick={(e) => toggleModal(e, 'details')}>View Details</div></a>
-                  <Link to={`station-management/${index}`}><div onClick={() => console.log('hello')}>Edit Details</div></Link>
-                  <a><div onClick={(e) => toggleModal(e, 'delete')}>Delete Station</div></a>
                 </div>
                 </div></TableCell>
             </TableRow>
@@ -486,12 +436,12 @@ export default function StationManagement(props) {
       </div>
 
 			{/* After Delete Modal */}
-			<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deletedModal} toggle={toggleModalClose} centered={true}>
+			{<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deletedModal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={flag} />
-					<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Successfully Deleted Station</strong>  </p>
+					<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Successfully Deleted User</strong>  </p>
 					</ModalBody>
-					<ModalFooter className={styles.footer}>
+					<ModalFooter className={styles.deleteFooter}>
 						<Button
               style={{width: 100}}
 							variant="contained"
@@ -502,15 +452,16 @@ export default function StationManagement(props) {
 						OK
 						</Button>
 					</ModalFooter>
-				</Modal>
+				</Modal>}
 
-      <Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deleteModal} toggle={toggleModalClose} centered={true}>
+			{/*Delete User*/}
+      {<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deleteModal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={delete_logo} />
-				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to delete Bhopal Station?</strong>  </p>
+				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to delete John User?</strong>  </p>
 
 					</ModalBody>
-					<ModalFooter className={styles.footer}>
+					<ModalFooter className={styles.deleteFooter}>
 						<Button
               style={{width: 100}}
 							variant="contained"
@@ -529,10 +480,10 @@ export default function StationManagement(props) {
 							YES
 						</Button>
 					</ModalFooter>
-				</Modal>
+				</Modal>}
 
 				{/* Modal for view Details */}
-				<Modal className={styles.modalContainer} contentClassName={styles.customClass}
+        <Modal className={styles.modalContainer} contentClassName={styles.customClass}
 				 isOpen={modal.details} toggle={toggleModalClose} centered={true}>
 				 <CancelIcon
 					 style={{
@@ -548,87 +499,67 @@ export default function StationManagement(props) {
 					 }}
 					 onClick={toggleModalClose}
 				 />
-				 <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-				 <Link to={`station-management/1`}><button className={styles.modalButton}/*style={{display: 'contents'}}*/ /*onClick={passwordGenerate}*/>
-				 <img className={styles.modalImage} style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={edit} />
-				 <small style={{display: 'flex', alignItems: 'center'}}>Edit Details</small>
-				 </button></Link>
-				 <button className={styles.modalButton} /*style={{display: 'contents'}}*/ /*onClick={passwordGenerate}*/>
-				 <img className={styles.modalImage} style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={printer} />
-				 <small style={{display: 'flex', alignItems: 'center'}}>Download Details</small>
-				 </button>
-				 </div>
 						<div className={styles.modalOuterDiv} style={{display: 'flex'}}>
 
 						<div className={styles.box1}>
-							<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Details</div>
 								<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 80,marginRight: 25}}> - </span>Dewas
+								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 40,marginRight: 25}}> - </span>John Doe
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Code</span><span style={{marginLeft: 86,marginRight: 25}}> - </span>DWS
+								<span className={styles.textModal}>Customer Name</span><span style={{marginLeft: 24,marginRight: 25}}> - </span>8898585689
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Type</span><span style={{marginLeft: 88,marginRight: 25}}> - </span>Urban
+								<span className={styles.textModal}>Service Name</span><span style={{marginLeft: 40,marginRight: 25}}> - </span>Urban@gmail.com
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>No. of Platforms</span><span style={{marginLeft: 66,marginRight: 25}}> - </span>05
-								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station GPS Coordinates</span><span style={{marginLeft: 15,marginRight: 25}}> - </span>23N 54E
-								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Managed By</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>Bansal Constructions
+								<span className={styles.textModal}>Service Order No.</span><span style={{marginLeft: 17,marginRight: 25}}> - </span>107 Abc street no. 7 Bhopal
+								</div>
+                <div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
+								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 42,marginRight: 25}}> - </span>Bansal Constructions
+								</div>
+								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
+								<span className={styles.textModal}>Date</span><span style={{marginLeft: 98,marginRight: 25}}> - </span>21 July 2021
 								</div>
 								</div>
 						</div>
 
 						<div className={styles.box1}>
-						<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Contract Details</div>
 							<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 							<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Contract Giver</span><span style={{marginLeft: 60,marginRight: 25}}> - </span>Indian Railways
+							<span className={styles.textModal}>Service Charge</span><span style={{marginLeft: 47,marginRight: 25}}> - </span>500
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Contract Winner</span><span style={{marginLeft: 46,marginRight: 25}}> - </span>Bansal Constructions
+							<span className={styles.textModal}>Vendor Charge</span><span style={{marginLeft: 47,marginRight: 25}}> - </span>400
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Contract Start Date</span><span style={{marginLeft: 29,marginRight: 25}}> - </span>17 July
+							<span className={styles.textModal}>Tax</span><span style={{marginLeft: 120,marginRight: 25}}> - </span>100
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Contract Tenure</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>05 Years
-							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Expected End Date</span><span style={{marginLeft: 31,marginRight: 25}}> - </span>25 July
+							<span className={styles.textModal}>Other fees</span><span style={{marginLeft: 76,marginRight: 25}}> - </span>00
 							</div>
-							<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}></span><span style={{marginLeft: 80,marginRight: 25}}> </span>
+              { /* Extra div */ }
+							<div className={styles.modalDiv} className={styles.modalDiv}
+								style={{
+									flexDirection: 'row',
+									marginTop: 31,
+									paddingTop: 11,
+									marginRight: 10,
+									borderTopStyle: 'solid',
+									borderWidth: 2,
+									borderColor: '#6b6f788c'}}>
+							<span className={styles.textModal}>Total Price</span><span style={{marginLeft: 76,marginRight: 25}}> - </span>1000/-
 							</div>
 							</div>
 							</div>
 						</div>
-
-						<div className={styles.modalOuterDiv} style={{display: 'flex'}}>
-						<div className={styles.box1}>
-							<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Contact Person Details</div>
-								<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
-								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Name</span><span style={{marginLeft: 134,marginRight: 25}}> - </span>ABC
-								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Phone Number</span><span style={{marginLeft: 76,marginRight: 25}}> - </span>8875485689
-								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Email</span><span style={{marginLeft: 137,marginRight: 25}}> - </span>abc@gmail.com
-								</div>
-								</div>
-						</div>
-
-						<div className={styles.box1}>
-						<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Admin Details</div>
-							<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
-							<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Name</span><span style={{marginLeft: 115,marginRight: 25}}> - </span>ABC
-							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Phone Number</span><span style={{marginLeft: 57,marginRight: 25}}> - </span>8523568978
-							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Email</span><span style={{marginLeft: 118,marginRight: 25}}> - </span>abc@gmail.com
-							</div>
-							</div>
-							</div>
-						</div>
+            <ModalFooter className={styles.footer}>
+  						<Button
+                style={{width: 100}}
+  							variant="contained"
+                color="black"
+                className={classes.button1}
+  							onClick={toggleModalClose}
+  						>
+  						Ok
+  						</Button>
+  					</ModalFooter>
 					</Modal>
 
 
@@ -637,6 +568,6 @@ export default function StationManagement(props) {
       <Pagination count={10} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
       </div>
       </div>}
-			</div>
+    </div>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container } from "reactstrap";
 import { Row, Col } from "reactstrap";
 // import Cookies from 'js-cookie';
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 
 // Images
 import background1 from "../Login/images/background1.png";
@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Forgot_password = (props) => {
   // const [t, i18n] = useTranslation('common');
-	// const history = useHistory();
+	const history = useHistory();
 
 	const classes = useStyles();
 	const [checked, setChecked] = useState(false);
@@ -148,13 +148,17 @@ const Forgot_password = (props) => {
 	};
 
   const handleSubmit = (event) => {
-    console.log('clicked')
+		var number = username.match(/^([_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,5}))|(\d+$)$/);
+    // console.log('clicked')
+
 		event.preventDefault();
-		// if(username.trim()==''){
-		// setusername_ErMsg(t('login.username_error'))
-		// setdisplaytext('showBlock')
-	  //   return
-		// }
+		if(username.trim()=='' || !number){
+		setusername_ErMsg("number/email is required or invalid email")
+		setdisplaytext('showBlock')
+	    return
+		}
+
+		history.push('/otp')
 		// else if(password.trim()==''){
 		// 	setpassword_ErMsg(t('login.password_error'))
 		// 	setdisplaytext('showBlock')
@@ -226,9 +230,11 @@ const Forgot_password = (props) => {
                 fullWidth={true}
                 value={username}
                 onChange={handleUsernameChange}
+								error={username_ErMsg}
+								helperText={username_ErMsg}
               />
 							<div className={styles.wrap}>
-  							<Link to="/otp"><button className={styles.button1}>GET OTP</button></Link>
+  							<button onSubmit={handleSubmit} className={styles.button1}>GET OTP</button>
 							</div>
               </form>
             </div>

@@ -28,11 +28,11 @@ export default function DashBoard(props) {
 			{/* <button onClick={() => i18n.changeLanguage('hi')}>Hindi</button> */}
 
 			<div className={styles.grid}>
-			{<Card title={'Total Stations'} number="20" icon={train1} arrow={<CallMadeSharpIcon />} color="#2d62ed" />}
-			{<Card title={'Total Users'} arrow={<CallMadeSharpIcon />} number="20K" icon={servicestack} color="#7d00b5" />}
-			{<Card title={'Total Vendors'} arrow={<CallMadeSharpIcon />} number="146" icon={user_friends} color="#ff007c" />}
+			{<Card title={'Total Stations'} number="20" icon={train1} link="/station-management" arrow={<CallMadeSharpIcon />} color="#2d62ed" />}
+			{<Card title={'Total Users'} arrow={<CallMadeSharpIcon />} link="/users" number="20K" icon={servicestack} color="#7d00b5" />}
+			{<Card title={'Total Vendors'} arrow={<CallMadeSharpIcon />} link="/vendors" number="146" icon={user_friends} color="#ff007c" />}
 			{<Card title={'Total Services'} number="180" icon={user_check} color="#0a4491" />}
-		  {<Card title={'Total Revenue'} arrow={<CallMadeSharpIcon />} number="256K" icon={rupee} color="#025e87" />}
+		  {<Card title={'Total Revenue'} arrow={<CallMadeSharpIcon />} number="256K" link="/revenue" icon={rupee} color="#025e87" />}
 			</div>
 		</>
 	);

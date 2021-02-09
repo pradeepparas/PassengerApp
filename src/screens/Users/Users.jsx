@@ -44,28 +44,8 @@ import InputBase from '@material-ui/core/InputBase';
 import Pagination from '@material-ui/lab/Pagination';
 
 // components
-import styles from './UserManagement.module.css';
-import styled from 'styled-components';
-// import { Modal1 } from './Modal';
-// import { GlobalStyle } from './globalStyles';
-
-// const Container = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   height: 100vh;
-// `;
-
-// const Button1 = styled.button`
-//   min-width: 100px;
-//   padding: 16px 32px;
-//   border-radius: 4px;
-//   border: none;
-//   background: #141414;
-//   color: #fff;
-//   font-size: 24px;
-//   cursor: pointer;
-// `;
+import styles from './Users.module.css';
+// import styled from 'styled-components';
 
 const BootstrapInput = withStyles((theme) => ({
   root: {
@@ -121,17 +101,17 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   textField: {
-    ["@media (min-width: 280px) and (max-width: 1032px)"]: {
+    ["@media (min-width: 280px) and (max-width: 842px)"]: {
       width: '100%'
     }
   },
   textField1:{
-    ["@media (min-width: 280px) and (max-width: 1032px)"]: {
+    ["@media (min-width: 280px) and (max-width: 842px)"]: {
       width: '100%',
       marginBottom: 5
     },
     outline: 'none',
-    width: 150,
+    width: 180,
     height: 41,
     borderRadius: 30,
     '&:focus': {
@@ -155,10 +135,11 @@ const useStyles = makeStyles((theme) => ({
     // borderRadius: 8
   },
   button1: {
-    ["@media (min-width: 280px) and (max-width: 1032px)"]: {
+    ["@media (min-width: 280px) and (max-width: 842px)"]: {
       width: '100%',
       marginBottom: 5
     },
+    width: 120,
     borderRadius: 80,
     color: 'white',
     backgroundColor: '#b22222',
@@ -180,7 +161,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   container1: {
-		["@media (min-width: 280px) and (max-width: 1032px)"]: {
+		["@media (min-width: 280px) and (max-width: 842px)"]: {
       width: '100%',
 			display: 'flex',
 			flexDirection: 'column',
@@ -225,21 +206,20 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
 const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9)
+	{name:'Frozen yoghurt', calories:159, fat:6.0, carbs:24, protein:4.0},
+	{name:'Ice cream sandwich', calories:237, fat:9.0, carbs:37, protein:4.3},
+	{name:'Eclair', calories:262, fat:16.0, carbs:24, protein:6.0},
+	{name:'Cupcake', calories:305, fat:3.7, carbs:67, protein:4.3},
+	{name:'Gingerbread', calories:356, fat:16.0, carbs:49, protein:3.9}
 ];
 
 export default function StationManagement(props) {
-	const [showModal, setShowModal] = useState(false);
+// name, calories, fat, carbs, protein
 
+
+	const [showModal, setShowModal] = useState(false);
+	const [index, setIndex] = useState("")
   const [modal, setModal] = useState({
     deleteModal: false,
     details: false,
@@ -275,7 +255,7 @@ export default function StationManagement(props) {
     setAge(event.target.value);
   };
 
-  const toggleModal =(e,data)=>{
+  const toggleModal =(e,data, index)=>{
   	setModal(true);
     if(data == 'delete'){
       setModal({
@@ -286,6 +266,9 @@ export default function StationManagement(props) {
         details: true
       })
     }
+		setIndex(index);
+		console.log(rows[index].name)
+		debugger
   	// setState({...state, packageName:data.packageName, id: data._id, })
     }
     // close modal
@@ -300,12 +283,7 @@ export default function StationManagement(props) {
   return(
     <div className={styles.main}>
       <div className={styles.header}>
-        <div className={styles.title}>User Management</div>
-        <Link to="/user-management/add">
-        <Button className={classes.button1} variant="contained">
-          + Add User
-        </Button>
-        </Link>
+        <div className={styles.title}>Users</div>
       </div>
       <div className={styles.table}>
       <div className={styles.filterContent}>
@@ -334,25 +312,9 @@ export default function StationManagement(props) {
           Search
         </Button>
 
-         {/*Select*/}
-         <div className={styles.selectDiv1}>
-           <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
-             <option selected disabled>Station Name</option>
-             <option value="1">Pure CSS</option>
-             <option value="2">No JS</option>
-             <option value="3">Nice!</option>
-         </select>
-         </div>
-
-          <div className={styles.selectDiv1}>
-            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
-              <option selected disabled>Role</option>
-              <option value="1">Station Admin</option>
-              <option value="2">Master Admin</option>
-          </select>
-          </div>
           </div>
 
+          {/* Dates fields */}
         <div className={styles.dateDiv}>
         <div className={classes.container1}>
         <label style={{width: 70}} className={styles.dateLabel}>From Date</label>
@@ -375,14 +337,6 @@ export default function StationManagement(props) {
     				// 	shrink: true,
     				// }}
     			/>
-          {/*<DatePicker
-            className={styles.input_s}
-            peekNextMonth showMonthDropdown showYearDropdown
-            dropdownMode="select"
-            selected={new Date()}
-            value={new Date()}
-            onChange={(e) => handleChange(e,'end')} placeholderText='Start Date' />
-            <img style={{width: 15, height: 15}} src={downArrow} />*/}
     		</div>
 
         <div className={classes.container1}>
@@ -419,31 +373,28 @@ export default function StationManagement(props) {
             <TableCell align="center">Name</TableCell>
             <TableCell align="center">Phone Number</TableCell>
             <TableCell align="center">Email</TableCell>
-            <TableCell align="center">Role</TableCell>
-            <TableCell align="center">Station Name</TableCell>
+
             <TableCell align="center">Registration Date</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
+          {rows.map((row, i) => (
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">
-                {index+1}
+                {i+1}
               </TableCell>
               <TableCell align="center">{row.calories}</TableCell>
               <TableCell align="center">{row.fat}</TableCell>
               <TableCell align="center">{row.carbs}</TableCell>
-              <TableCell align="center">{row.protein}</TableCell>
-              <TableCell align="center">{row.calories}</TableCell>
+
               <TableCell align="center">{row.protein}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
-                  <a><div onClick={(e) => toggleModal(e, 'details')}>View Details</div></a>
-                  <Link to={`user-management/${index}`}><div onClick={() => console.log('hello')}>Edit Details</div></Link>
-                  <a><div onClick={(e) => toggleModal(e, 'delete')}>Delete User</div></a>
+                  <a><div onClick={(e) => toggleModal(e, 'details', i)}>View Details</div></a>
+                  <a><div onClick={(e) => toggleModal(e, 'delete', i)}>Block</div></a>
                 </div>
                 </div></TableCell>
             </TableRow>
@@ -457,9 +408,9 @@ export default function StationManagement(props) {
 			{<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deletedModal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={flag} />
-					<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Successfully Deleted User</strong>  </p>
+					<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Successfully Blocked User</strong>  </p>
 					</ModalBody>
-					<ModalFooter className={styles.footer}>
+					<ModalFooter className={styles.deleteFooter}>
 						<Button
               style={{width: 100}}
 							variant="contained"
@@ -476,10 +427,10 @@ export default function StationManagement(props) {
       {<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deleteModal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={delete_logo} />
-				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to delete John User?</strong>  </p>
+				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to Block John User?</strong>  </p>
 
 					</ModalBody>
-					<ModalFooter className={styles.footer}>
+					<ModalFooter className={styles.deleteFooter}>
 						<Button
               style={{width: 100}}
 							variant="contained"
@@ -501,7 +452,7 @@ export default function StationManagement(props) {
 				</Modal>}
 
 				{/* Modal for view Details */}
-				{<Modal className={styles.modalContainer} contentClassName={styles.customClass}
+        {<Modal className={styles.modalContainer} contentClassName={styles.customClass}
 				 isOpen={modal.details} toggle={toggleModalClose} centered={true}>
 				 <CancelIcon
 					 style={{
@@ -517,46 +468,41 @@ export default function StationManagement(props) {
 					 }}
 					 onClick={toggleModalClose}
 				 />
-				 <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-				 <Link to={`user-management/1`}><button className={styles.modalButton}>
-				 <img className={styles.modalImage} style={{width: 21,height: 21, marginTop: 10, marginLeft: 10, marginRight: 10}} src={edit} />
-				 <small style={{display: 'flex', alignItems: 'center'}}>Edit Details</small>
-				 </button></Link>
-				 </div>
-						<div style={{display: 'flex', marginTop: 15}}>
+						<div className={styles.modalOuterDiv} style={{display: 'flex'}}>
 
 						<div className={styles.box1}>
-							{/*<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Details</div>*/}
-								<div className={styles.modalBox}>
+								<div className={styles.modalBox} >
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Role</span><span style={{marginLeft: 130,marginRight: 25}}> - </span>Station Admin
+								<span className={styles.textModal}>User Name</span><span style={{marginLeft: 86,marginRight: 25}}> - </span>{index}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Name</span><span style={{marginLeft:  121,marginRight: 25}}> - </span>John Doe
+								<span className={styles.textModal}>User Phone Number</span><span style={{marginLeft: 27,marginRight: 25}}> - </span>8898585689
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>User Phone Number</span><span style={{marginLeft: 32,marginRight: 25}}> - </span>8745865985
+								<span className={styles.textModal}>User Email</span><span style={{marginLeft: 88,marginRight: 25}}> - </span>Johndoe@gmail.com
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>User Email</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>john@gmail.com
-								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Date</span><span style={{marginLeft: 82,marginRight: 25}}> - </span>21 july 2021
-								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>25 july 2022
+								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 45,marginRight: 25}}> - </span>01-01-2021
+								</div>
+
+                {/* Empty Div */}
+                <div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
+								<span className={styles.textModal}></span><span style={{marginLeft: 90,marginRight: 25}}></span>
 								</div>
 								</div>
 						</div>
+
 						</div>
-						<ModalFooter className={styles.footer}>
-							<Button
-	              style={{width: 100}}
-								variant="contained"
-	              color="black"
-	              className={classes.button1}
-								onClick={toggleModalClose}
-							>
-							OK
-							</Button>
-						</ModalFooter>
+            <ModalFooter className={styles.footer}>
+  						<Button
+                style={{width: 100}}
+  							variant="contained"
+                color="black"
+                className={classes.button1}
+  							onClick={toggleModalClose}
+  						>
+  						Ok
+  						</Button>
+  					</ModalFooter>
 					</Modal>}
 
 

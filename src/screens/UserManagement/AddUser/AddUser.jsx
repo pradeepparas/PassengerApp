@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
-import {Link, useHistory}  from  'react-router-dom';
+import {Link, useHistory, useParams }  from  'react-router-dom';
 import moment from 'moment';
 import {
 	Modal,
@@ -181,12 +181,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AddUser(props) {
-  const [isAdd, setIsAdd] = useState(true);
+  const [isAdd, setIsAdd] = useState(false);
   const [modal, setModal] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const classes = useStyles();
   const history= useHistory();
+	const { user_id } = useParams();
   const [state, setState]=useState({
       userName:"",
       userNumber:"",
@@ -215,7 +216,11 @@ export default function AddUser(props) {
           return
       }
       setModal(true);
-      setIsAdd(true);
+			if(user_id == 'add') {
+				setIsAdd(true);
+			} else {
+				setIsAdd(false);
+			}
       // state.orgId=localStorage.getItem('orgId')
       // props.addPackage(state)
   }
@@ -237,7 +242,7 @@ export default function AddUser(props) {
           isValid =false;
       }
 			else if(state.userEmail.toString().trim()=='' || !emailValid){
-          errors.userEmail="number of platforms is required or invalid number";
+          errors.userEmail="email is required or invalid email";
           isValid =false;
       }
     else  if(state.stationName.trim()==''){
@@ -279,7 +284,7 @@ export default function AddUser(props) {
   return(
     <div className={styles.main}>
       <div className={styles.header}>
-        <div className={styles.title1}>Add User</div>
+        <div className={styles.title1}>{user_id == 'add' ? "Add User" : "Edit User"}</div>
         <Button startIcon={<ArrowBackIosIcon color="white" />} onClick={() => history.push('/user-management')} className={classes.button1} variant="contained">
           Back
         </Button>
@@ -364,7 +369,7 @@ export default function AddUser(props) {
 			        Cancel
 			      </Button>
 			      <Button style={{}} onClick={handleSubmit} className={classes.saveButton1} variant="contained">
-			        Save
+			        {user_id == 'add' ? "Save" : "Update"}
 			      </Button>
 			      </div>
             </div>

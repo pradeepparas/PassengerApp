@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 // zIndex
 // Material UI
 import clsx from 'clsx';
@@ -112,12 +113,14 @@ const useStyles = makeStyles((theme) => ({
     display: 'none',
   },
   drawer: {
+    zIndex: 500,
     // backgroundColor: 'yellow',
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: 'nowrap',
   },
   drawerOpen: {
+    zIndex: 500,
     ["@media (min-width: 280px) and (max-width: 1318px)"]: {
 			position: 'fixed',
 			zIndex: 500,
@@ -250,8 +253,8 @@ export default function MiniDrawer(props) {
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList className={classes.menuList1} autoFocusItem={open_Profile} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                    <MenuItem onClick={handleClose}>Profile <img style={{width: 15, height: 15, marginLeft: 25}} src={user_alt1} /></MenuItem>
-                    <MenuItem onClick={handleClose}>Logout <img style={{width: 15, marginLeft: 25,height: 15}} src={account_logout} /></MenuItem>
+                    <MenuItem onClick={handleClose}>Profile <img className={styles.imageColor} style={{width: 15, height: 15, marginLeft: 25}} src={user_alt1} /></MenuItem>
+                    <MenuItem onClick={handleClose}>Logout <img className={styles.imageColor} style={{width: 15, marginLeft: 25,height: 15}} src={account_logout} /></MenuItem>
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
@@ -281,40 +284,54 @@ export default function MiniDrawer(props) {
           </IconButton>
         </div>
         <List style={{paddingTop: 40}}>
+        <Link to="/dashboard">
             <ListItem className={styles.active} button>
               <ListItemIcon><img className={styles.selected} src={home} /></ListItemIcon>
               <ListItemText className={styles.selectedText} primary={"Dashboard"} />
             </ListItem>
+            </Link>
 
+            <Link to="/station-management">
             <ListItem className={styles.list} button>
               <ListItemIcon><img className={styles.filter} src={train} /></ListItemIcon>
               <ListItemText className={styles.listText} primary={"Station Management"} />
             </ListItem>
+            </Link>
 
+            <Link to="/user-management">
             <ListItem className={styles.list} button>
               <ListItemIcon><img className={styles.filter} src={user_alt} /></ListItemIcon>
               <ListItemText className={styles.listText} primary={"User Management"} />
             </ListItem>
+            </Link>
 
+            <Link to="/vendors">
             <ListItem className={styles.list} button>
               <ListItemIcon><img className={styles.filter} src={user_astronaut} /></ListItemIcon>
               <ListItemText className={styles.listText} primary={"Vendor Reports"} />
             </ListItem>
+            </Link>
 
+            <Link to="/revenue">
             <ListItem className={styles.list} button>
               <ListItemIcon><img className={styles.filter} src={rupee} /></ListItemIcon>
               <ListItemText className={styles.listText} primary={"Revene Reports"} />
             </ListItem>
+            </Link>
 
+            <Link to="/users">
             <ListItem className={styles.list} button>
               <ListItemIcon><img className={styles.filter} src={users} /></ListItemIcon>
               <ListItemText className={styles.listText} primary={"App User Reports"} />
             </ListItem>
+            </Link>
 
+            <Link to="/profile">
             <ListItem className={styles.list} button>
               <ListItemIcon><img className={styles.filter} src={users_cog} /></ListItemIcon>
               <ListItemText className={styles.listText} primary={"Profile Settings"} />
             </ListItem>
+            </Link>
         </List>
       </Drawer>
       <main className={classes.content}>

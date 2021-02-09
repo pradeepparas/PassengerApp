@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import { Link } from "react-router-dom";
 // import graph from "../../assets/graph.png";
 
 import styles from "./Card.module.css";
@@ -17,6 +18,9 @@ const useStyles = makeStyles({
 				color: 'white',
 				transition: 'rotate(360deg)',
     		// : 'rotate(360deg)'
+			},
+			["@media (min-width: 180px) and (max-width: 360px)"]: {
+				margin: "33px 0px 33px 0px",
 			},
 		 	margin: "33px 33px 33px 24px",
     	width: "200px",
@@ -52,7 +56,7 @@ export default function SimpleCard(props) {
 				<div className={styles.details}>
 
 					<div className={styles.image}>
-						{props.title == 'Total Services'?<div></div>: <div className={styles.arrow1}>{props.arrow}</div>}
+						{props.title == 'Total Services'?<div></div>: <Link to={props.link}><div className={styles.arrow1}>{props.arrow}</div></Link>}
 					</div>
 				</div>
 			</CardContent>

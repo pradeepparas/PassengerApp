@@ -50,9 +50,9 @@ const useStyles = makeStyles((theme) => ({
       color: 'green',
     },
     '& label.Mui-focused': {
-			fontSize: '14px',
-			fontFamily: 'Montserrat',
-			fontWeight: 'normal',
+			// fontSize: '14px',
+			// fontFamily: 'Montserrat',
+			// fontWeight: 'normal',
       color: '#272D3B',
     },
     '& .MuiInput-underline:after': {
@@ -103,8 +103,12 @@ const Reset_password = (props) => {
 	// const history = useHistory();
 
 	const classes = useStyles();
+	const [state, setState] = useState({
+			newPassword: "",
+			confirmPassword: ""
+	});
 	// const [checked, setChecked] = useState(false);
-	const [state, setState] = useState({password: "",cPassword: ""});
+	const [errors , setErros]= useState({})
 	const [displaytext, setdisplaytext] = useState("hideBlock");
 	// const [isSignUp, setIsSignUp] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -119,9 +123,11 @@ const Reset_password = (props) => {
   //   setChecked(event.target.checked);
   // };
 
-	const handleChange =(e)=>{
-     setState({...state,[e.target.name]:e.target.value.trim()})
-	}
+	// Password Fields changing
+	  const handleChange =(e)=>{
+	     setState({...state,[e.target.name]:e.target.value.trim()})
+			 setErros({errors, [e.target.name]:""})
+		}
 
 	const [values, setValues] = React.useState({
 		password: "",
@@ -156,26 +162,24 @@ const Reset_password = (props) => {
   const handleSubmit = (event) => {
     console.log('clicked')
 		event.preventDefault();
-		// if(username.trim()==''){
-		// setusername_ErMsg(t('login.username_error'))
-		// setdisplaytext('showBlock')
-	  //   return
-		// }
-		// else if(password.trim()==''){
-		// 	setpassword_ErMsg(t('login.password_error'))
-		// 	setdisplaytext('showBlock')
-		// 	return
-		// }
-		// if(checked){
-		// 	Cookies.remove('username');
-		// 	Cookies.remove('password');
-		// 	Cookies.remove('checked');
-		// 	Cookies.set('username',username , { expires: 7 });
-		// 	Cookies.set('password',password, { expires: 7 });
-		// 	Cookies.set('checked', true, { expires: 7 });
-		// }
-    //
-		// setIsLoading(true);
+
+		var isValid= true;
+		if(state.newPassword == "") {
+			errors.newPassword="password is required"
+			isValid = false;
+		} else if(state.confirmPassword == ""){
+			errors.confirmPassword ="password is required";
+			isValid = false;
+		} else if(state.confirmPassword !== state.newPassword) {
+			errors.confirmPassword="new password and confirm password does not match"
+			isValid=false;
+		}
+		setErros({...errors, errors:errors})
+		if(isValid){
+			window.alert("Password Changed Successfully")
+		} else {
+			return
+		}
 		// props.onAuth(username, password);
 	};
 
@@ -229,13 +233,12 @@ const Reset_password = (props) => {
                     : "password"
                 }
                 autoComplete="current-password"
-                // variant="standard-adornment-password"
                 fullWidth={true}
-                // onChange={handlePasswordChange}
-                // value={password}
+								error={errors.newPassword}
+								helperText={errors.newPassword}
 								onChange={handleChange}
-								name='password'
-								value={state.password}
+								name='newPassword'
+								value={state.newPassword}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -276,11 +279,13 @@ const Reset_password = (props) => {
                     ? "text"
                     : "password"
                 }
-								name='cPassword'
-								value={state.cPassword}
+								name='confirmPassword'
+								value={state.confirmPassword}
                 autoComplete="current-password"
                 // variant="standard-adornment-password"
                 fullWidth={true}
+								error={errors.confirmPassword}
+								helperText={errors.confirmPassword}
                 // onChange={handlePasswordChange}
                 // value={password}
 								onChange={handleChange}
