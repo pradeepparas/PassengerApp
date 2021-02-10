@@ -206,20 +206,25 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+function createData(name, number, email, date) {
+  return { name, number, email, date };
+}
+
 const rows = [
-	{name:'Frozen yoghurt', calories:159, fat:6.0, carbs:24, protein:4.0},
-	{name:'Ice cream sandwich', calories:237, fat:9.0, carbs:37, protein:4.3},
-	{name:'Eclair', calories:262, fat:16.0, carbs:24, protein:6.0},
-	{name:'Cupcake', calories:305, fat:3.7, carbs:67, protein:4.3},
-	{name:'Gingerbread', calories:356, fat:16.0, carbs:49, protein:3.9}
+  createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
+  createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
+  createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
+  createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
+  createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
 ];
 
 export default function StationManagement(props) {
 // name, calories, fat, carbs, protein
 
 
+	const [arrayDetails, setArrayDetails] = useState([]);
 	const [showModal, setShowModal] = useState(false);
-	const [index, setIndex] = useState("")
+	// const [index, setIndex] = useState("")
   const [modal, setModal] = useState({
     deleteModal: false,
     details: false,
@@ -255,19 +260,18 @@ export default function StationManagement(props) {
     setAge(event.target.value);
   };
 
-  const toggleModal =(e,data, index)=>{
+  const toggleModal =(e,data, i)=>{
   	setModal(true);
     if(data == 'delete'){
       setModal({
         deleteModal: true
       })
     } else {
+			setArrayDetails(rows[i]);
       setModal({
         details: true
       })
     }
-		setIndex(index);
-		console.log(rows[index].name)
 		debugger
   	// setState({...state, packageName:data.packageName, id: data._id, })
     }
@@ -379,22 +383,22 @@ export default function StationManagement(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, i) => (
+          {rows.map((row, index) => (
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">
-                {i+1}
+                {index+1}
               </TableCell>
-              <TableCell align="center">{row.calories}</TableCell>
-              <TableCell align="center">{row.fat}</TableCell>
-              <TableCell align="center">{row.carbs}</TableCell>
+              <TableCell align="center">{row.name}</TableCell>
+              <TableCell align="center">{row.number}</TableCell>
+              <TableCell align="center">{row.email}</TableCell>
 
-              <TableCell align="center">{row.protein}</TableCell>
+              <TableCell align="center">{row.date}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
-                  <a><div onClick={(e) => toggleModal(e, 'details', i)}>View Details</div></a>
-                  <a><div onClick={(e) => toggleModal(e, 'delete', i)}>Block</div></a>
+                  <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
+                  <a><div onClick={(e) => toggleModal(e, 'delete', index)}>Block</div></a>
                 </div>
                 </div></TableCell>
             </TableRow>
@@ -473,15 +477,15 @@ export default function StationManagement(props) {
 						<div className={styles.box1}>
 								<div className={styles.modalBox} >
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>User Name</span><span style={{marginLeft: 86,marginRight: 25}}> - </span>{index}
+								<span className={styles.textModal}>User Name</span><span style={{marginLeft: 86,marginRight: 25}}> - </span>{arrayDetails.name}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>User Phone Number</span><span style={{marginLeft: 27,marginRight: 25}}> - </span>8898585689
+								<span className={styles.textModal}>User Phone Number</span><span style={{marginLeft: 27,marginRight: 25}}> - </span>{arrayDetails.number}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>User Email</span><span style={{marginLeft: 88,marginRight: 25}}> - </span>Johndoe@gmail.com
+								<span className={styles.textModal}>User Email</span><span style={{marginLeft: 88,marginRight: 25}}> - </span>{arrayDetails.email}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 45,marginRight: 25}}> - </span>01-01-2021
+								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 45,marginRight: 25}}> - </span>{arrayDetails.date}
 								</div>
 
                 {/* Empty Div */}

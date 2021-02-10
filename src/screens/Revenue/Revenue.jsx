@@ -206,21 +206,21 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData(station, name, service, order, vname, date, amount) {
+  return { station, name, service, order, vname, date, amount };
 }
 
 const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9)
+  createData("Bhopal", "John Doe", "Medicines", 101, "John Doe", "01/01/21", 1000),
+  createData("Inodre", "John Doe", "Medicines", 102, "John Doe", "01/01/21", 1000),
+  createData("Habib Ganj", "John Doe", "Medicines", 103, "John Doe", "01/01/21", 1000),
+  createData("Bhopal", "John Doe", "Medicines", 104, "John Doe", "01/01/21", 1000),
+  createData("Bhopal", "John Doe", "Medicines", 105, "John Doe", "01/01/21", 1000),
 ];
 
 export default function StationManagement(props) {
 	const [showModal, setShowModal] = useState(false);
-
+	const [arrayDetails, setArrayDetails] = useState([]);
   const [modal, setModal] = useState({
     deleteModal: false,
     details: false,
@@ -256,13 +256,14 @@ export default function StationManagement(props) {
     setAge(event.target.value);
   };
 
-  const toggleModal =(e,data)=>{
+  const toggleModal =(e,data, i)=>{
   	setModal(true);
     if(data == 'delete'){
       setModal({
         deleteModal: true
       })
     } else {
+			setArrayDetails(rows[i]);
       setModal({
         details: true
       })
@@ -318,18 +319,17 @@ export default function StationManagement(props) {
          <div className={styles.selectDiv1}>
            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
              <option selected disabled>Station Name</option>
-             <option value="1">Pure CSS</option>
-             <option value="2">No JS</option>
-             <option value="3">Nice!</option>
+             <option value="1">Bhopal</option>
+             <option value="2">Indore</option>
+             <option value="3">Habib Ganj</option>
          </select>
          </div>
 
          <div className={styles.selectDiv1}>
            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
              <option selected disabled>Vendor Name</option>
-             <option value="1">Pure CSS</option>
-             <option value="2">No JS</option>
-             <option value="3">Nice!</option>
+             <option value="1">John Doe</option>
+             <option value="2">Name</option>
          </select>
          </div>
 
@@ -414,18 +414,18 @@ export default function StationManagement(props) {
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
-              <TableCell align="center">{row.calories}</TableCell>
-              <TableCell align="center">{row.fat}</TableCell>
-              <TableCell align="center">{row.carbs}</TableCell>
-              <TableCell align="center">{row.protein}</TableCell>
-              <TableCell align="center">{row.calories}</TableCell>
-              <TableCell align="center">{row.protein}</TableCell>
-              <TableCell align="center">{row.protein}</TableCell>
+              <TableCell align="center">{row.station}</TableCell>
+              <TableCell align="center">{row.name}</TableCell>
+              <TableCell align="center">{row.service}</TableCell>
+              <TableCell align="center">{row.order}</TableCell>
+              <TableCell align="center">{row.name}</TableCell>
+              <TableCell align="center">{row.date}</TableCell>
+              <TableCell align="center">{row.amount}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
-                  <a><div onClick={(e) => toggleModal(e, 'details')}>View Details</div></a>
+                  <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
                 </div>
                 </div></TableCell>
             </TableRow>
@@ -499,12 +499,17 @@ export default function StationManagement(props) {
 					 }}
 					 onClick={toggleModalClose}
 				 />
+						 <div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: 15}}>
+							 <button className={styles.modalButton} /*style={{display: 'contents'}}*/ /*onClick={passwordGenerate}*/>
+								 <img className={styles.modalImage} style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={printer} />
+								 <small style={{display: 'flex', alignItems: 'center'}}>Download Details</small>
+							 </button>
+						</div>
 						<div className={styles.modalOuterDiv} style={{display: 'flex'}}>
-
 						<div className={styles.box1}>
 								<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 40,marginRight: 25}}> - </span>John Doe
+								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 40,marginRight: 25}}> - </span>{arrayDetails.name}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>Customer Name</span><span style={{marginLeft: 24,marginRight: 25}}> - </span>8898585689
@@ -512,13 +517,13 @@ export default function StationManagement(props) {
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>Service Name</span><span style={{marginLeft: 40,marginRight: 25}}> - </span>Urban@gmail.com
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Service Order No.</span><span style={{marginLeft: 17,marginRight: 25}}> - </span>107 Abc street no. 7 Bhopal
+								<span className={styles.textModal}>Service Order No.</span><span style={{marginLeft: 17,marginRight: 25}}> - </span>{arrayDetails.order}
 								</div>
                 <div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 42,marginRight: 25}}> - </span>Bansal Constructions
+								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 42,marginRight: 25}}> - </span>{arrayDetails.name}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Date</span><span style={{marginLeft: 98,marginRight: 25}}> - </span>21 July 2021
+								<span className={styles.textModal}>Date</span><span style={{marginLeft: 98,marginRight: 25}}> - </span>{arrayDetails.date}
 								</div>
 								</div>
 						</div>
@@ -544,7 +549,7 @@ export default function StationManagement(props) {
 									borderTopStyle: 'solid',
 									borderWidth: 2,
 									borderColor: '#6b6f788c'}}>
-							<span className={styles.textModal}>Total Price</span><span style={{marginLeft: 76,marginRight: 25}}> - </span>1000/-
+							<span className={styles.textModal}>Total Price</span><span style={{marginLeft: 76,marginRight: 25}}> - </span>{arrayDetails.amount}
 							</div>
 							</div>
 							</div>

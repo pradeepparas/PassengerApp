@@ -6,6 +6,8 @@ import newOrderTableReducer from './newOrderTableReducer';
 import customizerReducer from './customizerReducer';
 import todoReducer from './todoReducer';
 import authReducer from './authReducer';
+import stationReducer from './stationReducer';
+import userReducer from './userReducer'
 
 export {
   themeReducer,
@@ -16,4 +18,6 @@ export {
   customizerReducer,
   todoReducer,
   authReducer,
+  stationReducer,
+  userReducer
 };

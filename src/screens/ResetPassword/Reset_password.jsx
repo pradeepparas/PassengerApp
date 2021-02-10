@@ -92,6 +92,19 @@ const useStyles = makeStyles((theme) => ({
 		},
 
 	},
+	textfield1: {
+		"& .MuiInputBase-root": {
+			fontSize: 15,
+			fontWeight: 'bold',
+			fontFamily: 'Montserrat',
+		},
+		'& label.Mui-focused': {
+			color: '#272D3B',
+		},
+		'& .MuiInput-underline:after': {
+			borderBottomColor: '#272D3B',
+		},
+	},
 	label: {
 		color: "red",
 		["@media (max-width:320px)"]: {},
@@ -234,6 +247,7 @@ const Reset_password = (props) => {
                 }
                 autoComplete="current-password"
                 fullWidth={true}
+								className={classes.textfield1}
 								error={errors.newPassword}
 								helperText={errors.newPassword}
 								onChange={handleChange}
@@ -282,12 +296,10 @@ const Reset_password = (props) => {
 								name='confirmPassword'
 								value={state.confirmPassword}
                 autoComplete="current-password"
-                // variant="standard-adornment-password"
+								className={classes.textfield1}
                 fullWidth={true}
 								error={errors.confirmPassword}
 								helperText={errors.confirmPassword}
-                // onChange={handlePasswordChange}
-                // value={password}
 								onChange={handleChange}
                 InputProps={{
                   endAdornment: (

@@ -93,6 +93,19 @@ const useStyles = makeStyles((theme) => ({
 		},
 
 	},
+	textfield1: {
+		"& .MuiInputBase-root": {
+			fontSize: 15,
+			fontWeight: 'bold',
+			fontFamily: 'Montserrat',
+		},
+		'& label.Mui-focused': {
+      color: '#272D3B',
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: '#272D3B',
+    },
+	},
 	label: {
 		color: "red",
 		["@media (max-width:320px)"]: {},
@@ -214,6 +227,7 @@ const Forgot_password = (props) => {
 							>
               <TextField
                 required
+								className={classes.textfield1}
                 // className={classes.}
                 id="standard-basic"
                 label={
@@ -226,7 +240,6 @@ const Forgot_password = (props) => {
                     {/*t('login.username' )*/}
                   </span>
                 }
-                // variant="standard-basic"
                 fullWidth={true}
                 value={username}
                 onChange={handleUsernameChange}

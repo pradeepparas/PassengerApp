@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import {Link, useHistory, useParams }  from  'react-router-dom';
 import moment from 'moment';
+import { connect } from "react-redux";
+import { compose } from 'redux';
+import * as actions from "../../../redux/actions/userActions";
 import {
 	Modal,
 	ModalHeader,
@@ -180,7 +183,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function AddUser(props) {
+export function AddUser(props) {
   const [isAdd, setIsAdd] = useState(false);
   const [modal, setModal] = useState(false);
   const [startDate, setStartDate] = useState('');
@@ -194,7 +197,9 @@ export default function AddUser(props) {
       role:"",
       stationName:"",
       userEmail:"",
-      userPassword:"",
+			date: "",
+      userPassword:"",// IDEA:
+			// isEdit:false, isAdd:false,
   });
 	const [values, setValues] = useState({
 		password: "",
@@ -207,7 +212,17 @@ export default function AddUser(props) {
   const toggleModalClose =()=>{
     setModal(false)
   }
+//
+		useEffect(()=>{
+		if(props.isEdit){
+			console.log(props.user)
+			debugger
+			setState(props.user)
+			// set value in startDate
 
+			//funciton
+		}
+		},[])
   // Handle Submit Station
   const handleSubmit = (e) => {
 
@@ -215,6 +230,12 @@ export default function AddUser(props) {
       if (!validateForm()) {
           return
       }
+			setState({
+				...state,
+				date: moment(new Date()).format("DD-MM-YYYY")
+			})
+			props.addUser(state);
+			console.log(props.user)
       setModal(true);
 			if(user_id == 'add') {
 				setIsAdd(true);
@@ -225,6 +246,12 @@ export default function AddUser(props) {
       // props.addPackage(state)
   }
 
+	// useEffect
+	// useEffect(() => {
+	// 	console.log(props.user)
+	//
+	// }, [])
+
   // validate form
   const validateForm =()=>{
     // All regex for validation
@@ -233,18 +260,18 @@ export default function AddUser(props) {
        var usernameRegex = state.userName.toString().match(/^[a-zA-Z0-9]+$/);
 
        var isValid= true;
-       if(state.userName.trim()==''|| !usernameRegex){
-           errors.userName="user name is required or invalid name";
+       if(state.userName.trim()==''){
+           errors.userName="user name is required";
            isValid =false;
        }
       else if(state.userNumber.toString().trim()==''|| !mobileValid){
           errors.userNumber="phone number is required or invalid number";
           isValid =false;
       }
-			else if(state.userEmail.toString().trim()=='' || !emailValid){
-          errors.userEmail="email is required or invalid email";
-          isValid =false;
-      }
+			// else if(state.userEmail.toString().trim()=='' || !emailValid){
+      //     errors.userEmail="email is required or invalid email";
+      //     isValid =false;
+      // }
     else  if(state.stationName.trim()==''){
           errors.stationName="station name is required";
           isValid =false;
@@ -263,6 +290,8 @@ export default function AddUser(props) {
    }
 
   const handleInputs = (event) => {
+		console.log(event.target.name, event.target.value)
+		debugger
     setState({
       ...state,
       [event.target.name]: event.target.value
@@ -313,11 +342,11 @@ export default function AddUser(props) {
 
             <div className={styles.textfield}>
               <label style={{color: 'black'}}>Station Name</label>
-              <select className={styles.select1} name="stationName" value={state.stationName} onChange={handleInputs}>
+              <select className={styles.select1} name="stationName" /*value={state.stationName}*/ onChange={handleInputs}>
                 <option selected disabled>Station Name</option>
-                <option value="1">Pure CSS</option>
-                <option value="2">No JS</option>
-                <option value="3">Nice!</option>
+                <option value="Bhopal">Bhopal</option>
+                <option value="Indore">Indore</option>
+                <option value="Habib Ganj">Habib Ganj</option>
             </select>
             <div className={styles.error_message}>{errors.stationName}</div>
             </div>
@@ -326,9 +355,8 @@ export default function AddUser(props) {
 							<label style={{color: 'black'}}>Role</label>
 							<select className={styles.select1} name="role" /*value={state.role}*/ onChange={handleInputs}>
 								<option selected disabled>Role</option>
-								<option value="1">Pure CSS</option>
-								<option value="2">No JS</option>
-								<option value="3">Nice!</option>
+								<option value="Station Admin">Station Admin</option>
+								<option value="Master Admin">Master Admin</option>
 						</select>
 						<div className={styles.error_message}>{errors.role}</div>
 						</div>
@@ -381,7 +409,7 @@ export default function AddUser(props) {
 			<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={flag} />
-					<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>{isAdd ? "Successfully Added Station": "Successfully Updated"} </strong>  </p>
+					<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>{isAdd ? "Successfully Added User": "Successfully Updated"} </strong>  </p>
 					</ModalBody>
 					<ModalFooter className={styles.footer}>
 						<Button
@@ -398,3 +426,19 @@ export default function AddUser(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+	return {
+		user: state.Users.userData,
+		isEdit: state.Users.isEdit
+	}
+}
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		addUser: (user) =>
+			dispatch(actions.userActions(user))
+	}
+}
+
+export default compose(connect(mapStateToProps, mapDispatchToProps))(AddUser);

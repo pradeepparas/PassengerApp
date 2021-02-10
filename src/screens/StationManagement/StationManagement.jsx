@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from "react-redux";
+import { compose } from 'redux';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { Link, Redirect } from "react-router-dom";
@@ -241,26 +243,27 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
+// function createData(name, code, type, managedBy, platform, person, number, start, end) {
+//   return { name, code, type, managedBy, platform, person, number, start, end };
+// }
+//
+// const rows = [
+//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26"),
+//   createData('Bhopal', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26"),
+//   createData('Habib Ganj', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26"),
+//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26"),
+//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26"),
+// ];
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9)
-];
-
-export default function StationManagement(props) {
+export function StationManagement(props) {
 	const [showModal, setShowModal] = useState(false);
-
+	const [rows, setRows] = useState([]);
   const [modal, setModal] = useState({
     deleteModal: false,
     details: false,
 		deletedModal: false
   });
+	const [arrayDetails, setArrayDetails] = useState([]);
   const classes = useStyles();
   const [values, setValues] = React.useState({
     amount: '',
@@ -283,6 +286,13 @@ export default function StationManagement(props) {
 		})
 	}
 
+	// useEffect for Getting Data
+	useEffect(() => {
+		setRows(props.details)
+		console.log(rows)
+		debugger
+	}, [props.details])
+
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
@@ -291,13 +301,16 @@ export default function StationManagement(props) {
     setAge(event.target.value);
   };
 
-  const toggleModal =(e,data)=>{
+  const toggleModal =(e,data, i)=>{
   	setModal(true);
     if(data == 'delete'){
       setModal({
         deleteModal: true
       })
     } else {
+			setArrayDetails(rows[i]);
+			console.log(arrayDetails)
+			debugger
       setModal({
         details: true
       })
@@ -356,36 +369,35 @@ export default function StationManagement(props) {
          <div className={styles.selectDiv1}>
            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
              <option selected disabled>Station Name</option>
-             <option value="1">Pure CSS</option>
-             <option value="2">No JS</option>
-             <option value="3">Nice!</option>
+             <option value="1">Indore</option>
+             <option value="2">Bhopal</option>
+             <option value="3">Habib Ganj</option>
          </select>
          </div>
 
           <div className={styles.selectDiv1}>
             <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
               <option selected disabled>Station Code</option>
-              <option value="1">Pure CSS</option>
-              <option value="2">No JS</option>
-              <option value="3">Nice!</option>
+              <option value="1">HBJ</option>
+              <option value="2">IND</option>
+              <option value="3">DWX</option>
           </select>
           </div>
 
             <div className={styles.selectDiv1}>
               <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
                 <option selected disabled>Station Type</option>
-                <option value="1">Pure CSS</option>
-                <option value="2">No JS</option>
-                <option value="3">Nice!</option>
+                <option value="1">Urban</option>
+                <option value="2">Rural</option>
+                <option value="3">Semi Rural</option>
             </select>
             </div>
 
           <div className={styles.selectDiv1}>
             <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
               <option selected disabled>Managed By</option>
-              <option value="1">Pure CSS</option>
-              <option value="2">No JS</option>
-              <option value="3">Nice!</option>
+              <option value="1">Indian Railways</option>
+              <option value="2">Bansal Constructions</option>
           </select>
           </div>
 
@@ -454,35 +466,37 @@ export default function StationManagement(props) {
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
+        {rows.length > 0 && <TableBody>
           {rows.map((row, index) => (
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
-              <TableCell align="center">{row.calories}</TableCell>
-              <TableCell align="center">{row.fat}</TableCell>
-              <TableCell align="center">{row.carbs}</TableCell>
-              <TableCell align="center">{row.protein}</TableCell>
-              <TableCell align="center">{row.calories}</TableCell>
-              <TableCell align="center">{row.fat}</TableCell>
-              <TableCell align="center">{row.fat}</TableCell>
-              <TableCell align="center">{row.carbs}</TableCell>
-              <TableCell align="center">{row.protein}</TableCell>
+							<TableCell align="center">{row.stationName}</TableCell>
+              <TableCell align="center">{row.stationCode}</TableCell>
+              <TableCell align="center">{row.stationType}</TableCell>
+              <TableCell align="center">{row.managedBy}</TableCell>
+              <TableCell align="center">{row.noPlatforms}</TableCell>
+              <TableCell align="center">{row.personName}</TableCell>
+              <TableCell align="center">{row.personNumber}</TableCell>
+              <TableCell align="center">{row.startDate}</TableCell>
+              <TableCell align="center">{row.endDate}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
-                  <a><div onClick={(e) => toggleModal(e, 'details')}>View Details</div></a>
+                  <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
                   <Link to={`station-management/${index}`}><div onClick={() => console.log('hello')}>Edit Details</div></Link>
                   <a><div onClick={(e) => toggleModal(e, 'delete')}>Delete Station</div></a>
                 </div>
                 </div></TableCell>
             </TableRow>
           ))}
-        </TableBody>
+
+        </TableBody>}
       </Table>
     </TableContainer>
+		{rows.length == 0 && <div className={styles.emptyTable} style={{ display: 'flex', justifyContent: 'center'}}>No Data Found</div>}
       </div>
 
 			{/* After Delete Modal */}
@@ -564,19 +578,19 @@ export default function StationManagement(props) {
 							<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Details</div>
 								<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 80,marginRight: 25}}> - </span>Dewas
+								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 80,marginRight: 25}}> - </span>{arrayDetails.stationName}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Code</span><span style={{marginLeft: 86,marginRight: 25}}> - </span>DWS
+								<span className={styles.textModal}>Station Code</span><span style={{marginLeft: 86,marginRight: 25}}> - </span>{arrayDetails.stationCode}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Type</span><span style={{marginLeft: 88,marginRight: 25}}> - </span>Urban
+								<span className={styles.textModal}>Station Type</span><span style={{marginLeft: 88,marginRight: 25}}> - </span>{arrayDetails.stationType}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>No. of Platforms</span><span style={{marginLeft: 66,marginRight: 25}}> - </span>05
+								<span className={styles.textModal}>No. of Platforms</span><span style={{marginLeft: 66,marginRight: 25}}> - </span>{arrayDetails.noPlatforms}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station GPS Coordinates</span><span style={{marginLeft: 15,marginRight: 25}}> - </span>23N 54E
+								<span className={styles.textModal}>Station GPS Coordinates</span><span style={{marginLeft: 15,marginRight: 25}}> - </span>{arrayDetails.stationLatitude} {arrayDetails.stationLongitude}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Managed By</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>Bansal Constructions
+								<span className={styles.textModal}>Managed By</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>{arrayDetails.managedBy}
 								</div>
 								</div>
 						</div>
@@ -585,15 +599,15 @@ export default function StationManagement(props) {
 						<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Contract Details</div>
 							<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 							<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Contract Giver</span><span style={{marginLeft: 60,marginRight: 25}}> - </span>Indian Railways
+							<span className={styles.textModal}>Contract Giver</span><span style={{marginLeft: 60,marginRight: 25}}> - </span>{arrayDetails.contractGiver}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Contract Winner</span><span style={{marginLeft: 46,marginRight: 25}}> - </span>Bansal Constructions
+							<span className={styles.textModal}>Contract Winner</span><span style={{marginLeft: 46,marginRight: 25}}> - </span>{arrayDetails.contractWinner}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Contract Start Date</span><span style={{marginLeft: 29,marginRight: 25}}> - </span>17 July
+							<span className={styles.textModal}>Contract Start Date</span><span style={{marginLeft: 29,marginRight: 25}}> - </span>{arrayDetails.startDate}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Contract Tenure</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>05 Years
+							<span className={styles.textModal}>Contract Tenure</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>{arrayDetails.contractTenure}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Expected End Date</span><span style={{marginLeft: 31,marginRight: 25}}> - </span>25 July
+							<span className={styles.textModal}>Expected End Date</span><span style={{marginLeft: 31,marginRight: 25}}> - </span>{arrayDetails.endDate}
 							</div>
 							<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 							<span className={styles.textModal}></span><span style={{marginLeft: 80,marginRight: 25}}> </span>
@@ -607,11 +621,11 @@ export default function StationManagement(props) {
 							<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Contact Person Details</div>
 								<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Name</span><span style={{marginLeft: 134,marginRight: 25}}> - </span>ABC
+								<span className={styles.textModal}>Name</span><span style={{marginLeft: 134,marginRight: 25}}> - </span>{arrayDetails.personName}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Phone Number</span><span style={{marginLeft: 76,marginRight: 25}}> - </span>8875485689
+								<span className={styles.textModal}>Phone Number</span><span style={{marginLeft: 76,marginRight: 25}}> - </span>{arrayDetails.personNumber}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Email</span><span style={{marginLeft: 137,marginRight: 25}}> - </span>abc@gmail.com
+								<span className={styles.textModal}>Email</span><span style={{marginLeft: 137,marginRight: 25}}> - </span>{arrayDetails.personEmail}
 								</div>
 								</div>
 						</div>
@@ -620,11 +634,11 @@ export default function StationManagement(props) {
 						<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Admin Details</div>
 							<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 							<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Name</span><span style={{marginLeft: 115,marginRight: 25}}> - </span>ABC
+							<span className={styles.textModal}>Name</span><span style={{marginLeft: 115,marginRight: 25}}> - </span>{arrayDetails.adminName}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Phone Number</span><span style={{marginLeft: 57,marginRight: 25}}> - </span>8523568978
+							<span className={styles.textModal}>Phone Number</span><span style={{marginLeft: 57,marginRight: 25}}> - </span>{arrayDetails.adminNumber}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Email</span><span style={{marginLeft: 118,marginRight: 25}}> - </span>abc@gmail.com
+							<span className={styles.textModal}>Email</span><span style={{marginLeft: 118,marginRight: 25}}> - </span>{arrayDetails.adminEmail}
 							</div>
 							</div>
 							</div>
@@ -634,9 +648,33 @@ export default function StationManagement(props) {
 
       {rows.length > 0 &&<div className={styles.pageDiv}>
       <div style={{marginTop: 40}}>
-      <Pagination count={10} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
+      <Pagination count={rows.length} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
       </div>
       </div>}
 			</div>
   );
 }
+
+const mapStateToProps = (state) => {
+	return {
+		details: state.addStation.details,
+		// loading: state.auth.loading,
+		// error: state.auth.error,
+		// isAuthenticated: state.auth.token !== null,
+		// authRedirectPath: state.auth.authRedirectPath,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		// add_station: (details) =>
+		// 	dispatch(actions.stationActions(details))
+		// onAuth: (username, password) =>
+		// 	dispatch(actions.auth(username, password)),
+		// 	updateSignup:()=>
+		// 	  dispatch(actions.updateSingupFlag()),
+		// onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
+	};
+};
+
+export default compose(connect(mapStateToProps,  mapDispatchToProps))(StationManagement);

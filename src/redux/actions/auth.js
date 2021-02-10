@@ -64,13 +64,13 @@ export const auth = (username, password) => {
         //
         //
         //         localStorage.setItem('userId', response.data.data._id);
-             dispatch(authSuccess(response.data.token, response.data.data._id));
+             // dispatch(authSuccess(response.data.token, response.data.data._id));
 
             // })
             // .catch(err => {
 
                 dispatch(authFail({
-                    error: err.response ? err.response.data : null
+                    // error: err.response ? err.response.data : null
                 }));
             // });
     };

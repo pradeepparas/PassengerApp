@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
+import { connect } from "react-redux";
+import { compose } from 'redux';
 import {Link, useHistory, useParams }  from  'react-router-dom';
 import moment from 'moment';
 import {
@@ -12,11 +14,12 @@ import {
 	Form,
 	FormGroup,
 } from "reactstrap";
-// title
+
 // components
 import styles from './AddStation.module.css';
 import logo from './logo.png';
 import flag from '../flag.svg';
+import * as actions from '../../../redux/actions/stationActions';
 
 // Material UI
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -74,6 +77,7 @@ const GreenCheckbox = withStyles({
 //     },
 //   },
 // }))(InputBase);
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -176,7 +180,8 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function AddStation(props) {
+export function AddStation(props) {
+	const [add_details, setAddDetails] = useState([]);
 	const { station_id } = useParams();
   const [isAdd, setIsAdd] = useState(false);
   const [modal, setModal] = useState(false);
@@ -220,6 +225,10 @@ export default function AddStation(props) {
   const [errors , setErros]= useState({})
   // const [password, setPassword] = useState('');
 
+	useEffect(() => {
+		console.log(props.details)
+	}, [props.details])
+
   useEffect(()=>{
 		autofillDetails()
 	},[pchecked])
@@ -255,6 +264,9 @@ export default function AddStation(props) {
       if (!validateForm()) {
           return
       }
+			let merged = {...state, ...details};
+			setAddDetails(merged)
+			props.add_station(add_details)
       setModal(true);
 			if(station_id == 'add'){
 				setIsAdd(true);
@@ -327,10 +339,10 @@ export default function AddStation(props) {
           errors.personNumber="phone number is required or invalid number";
           isValid =false;
       }
-      else if(details.personEmail.trim()=='' || !personEmail){
-          errors.personEmail="email is required or invalid field";
-          isValid =false;
-      }
+      // else if(details.personEmail.trim()=='' || !personEmail){
+      //     errors.personEmail="email is required or invalid field";
+      //     isValid =false;
+      // }
       else if(details.adminName.trim()=='' || !details.adminName.toString().match(/^[a-zA-Z0-9]+$/)){
           errors.adminName="admin name is required or invalid field";
           isValid =false;
@@ -339,10 +351,10 @@ export default function AddStation(props) {
           errors.adminNumber="number is required or invalid number";
           isValid =false;
       }
-      else if(details.adminEmail.trim()=='' || !emailValid){
-          errors.adminEmail="email is required or invalid email Id";
-          isValid =false;
-      }
+      // else if(details.adminEmail.trim()=='' || !emailValid){
+      //     errors.adminEmail="email is required or invalid email Id";
+      //     isValid =false;
+      // }
       // else if(state.quantity.trim()==''){
       //     errors.quantity=(t("add_package.quantity_error"));
       //     isValid =false;
@@ -437,9 +449,9 @@ export default function AddStation(props) {
                 <label style={{color: 'black'}}>Station Type</label>
                 <select className={styles.select1} name="stationType" /*value={state.stationType}*/ onChange={handleInputs}>
                   <option selected disabled>Station Type</option>
-                  <option value="1">Pure CSS</option>
-                  <option value="2">No JS</option>
-                  <option value="3">Nice!</option>
+                  <option value="Bhopal">Bhopal</option>
+                  <option value="Indore">Indore</option>
+                  <option value="Habib Ganj">Habib Ganj</option>
               </select>
               <div className={styles.error_message}>{errors.stationType}</div>
               </div>
@@ -447,9 +459,8 @@ export default function AddStation(props) {
               <label style={{color: 'black'}}>Managed By</label>
               <select className={styles.select1} name="managedBy" /*value={state.managedBy}*/ onChange={handleInputs}>
                 <option selected disabled>Managed By</option>
-                <option value="1">Pure CSS</option>
-                <option value="2">No JS</option>
-                <option value="3">Nice!</option>
+                <option value="Indian Railways">Indian Railways</option>
+                <option value="Bansal Constructions">Bansal Constructions</option>
             </select>
             <div className={styles.error_message}>{errors.managedBy}</div>
             </div>
@@ -648,3 +659,27 @@ export default function AddStation(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+	return {
+		details: state.addStation.details,
+		// loading: state.auth.loading,
+		// error: state.auth.error,
+		// isAuthenticated: state.auth.token !== null,
+		// authRedirectPath: state.auth.authRedirectPath,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		add_station: (details) =>
+			dispatch(actions.stationActions(details))
+		// onAuth: (username, password) =>
+		// 	dispatch(actions.auth(username, password)),
+		// 	updateSignup:()=>
+		// 	  dispatch(actions.updateSingupFlag()),
+		// onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
+	};
+};
+
+export default compose(connect(mapStateToProps,  mapDispatchToProps))(AddStation);

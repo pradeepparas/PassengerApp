@@ -9,12 +9,16 @@ import {
   newOrderTableReducer,
   sidebarReducer,
   authReducer,
+  stationReducer,
+  userReducer
 } from '../../redux/reducers/index';
 import appConfigReducer from '../../redux/reducers/appConfigReducer';
 import covidReducer from '../Maps/VectorMapWithRequestData/redux/covidReducer';
 import todoReducer from '../Todo/redux/reducer';
 
 const reducer = combineReducers({
+  Users: userReducer,
+  addStation: stationReducer,
   form: reduxFormReducer, // mounted under "form",
   theme: themeReducer,
   rtl: rtlReducer,

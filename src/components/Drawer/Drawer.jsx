@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 // zIndex
 // Material UI
 import clsx from 'clsx';
@@ -163,9 +163,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MiniDrawer(props) {
+  const url = useRouteMatch()
+	const path = url.path.split('/')[1]
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+
 
   // Profile
   const [open_Profile, setOpenProfile] = React.useState(false);
@@ -200,6 +203,8 @@ export default function MiniDrawer(props) {
   // Profile
 
   const handleDrawerOpen = () => {
+    console.log(path)
+    debugger
     setOpen((prevState) => !prevState);
   };
 
@@ -285,51 +290,51 @@ export default function MiniDrawer(props) {
         </div>
         <List style={{paddingTop: 40}}>
         <Link to="/dashboard">
-            <ListItem className={styles.active} button>
-              <ListItemIcon><img className={styles.selected} src={home} /></ListItemIcon>
-              <ListItemText className={styles.selectedText} primary={"Dashboard"} />
+            <ListItem className={path == 'dashboard' ? styles.active : styles.list} button>
+              <ListItemIcon><img className={path == 'dashboard' ? styles.selected : styles.filter } src={home} /></ListItemIcon>
+              <ListItemText className={path == 'dashboard' ? styles.selectedText : styles.listText } primary={"Dashboard"} />
             </ListItem>
             </Link>
 
             <Link to="/station-management">
-            <ListItem className={styles.list} button>
-              <ListItemIcon><img className={styles.filter} src={train} /></ListItemIcon>
-              <ListItemText className={styles.listText} primary={"Station Management"} />
+            <ListItem className={path == 'station-management' ? styles.active : styles.list} button>
+              <ListItemIcon><img className={path == 'station-management' ? styles.selected : styles.filter} src={train} /></ListItemIcon>
+              <ListItemText className={path == 'station-management' ? styles.selectedText : styles.listText} primary={"Station Management"} />
             </ListItem>
             </Link>
 
             <Link to="/user-management">
-            <ListItem className={styles.list} button>
-              <ListItemIcon><img className={styles.filter} src={user_alt} /></ListItemIcon>
-              <ListItemText className={styles.listText} primary={"User Management"} />
+            <ListItem className={path == 'user-management' ? styles.active : styles.list} button>
+              <ListItemIcon><img className={path == 'user-management' ? styles.selected : styles.filter} src={user_alt} /></ListItemIcon>
+              <ListItemText className={path == 'user-management' ? styles.selectedText : styles.listText} primary={"User Management"} />
             </ListItem>
             </Link>
 
             <Link to="/vendors">
-            <ListItem className={styles.list} button>
-              <ListItemIcon><img className={styles.filter} src={user_astronaut} /></ListItemIcon>
-              <ListItemText className={styles.listText} primary={"Vendor Reports"} />
+            <ListItem className={path == 'vendors' ? styles.active : styles.list} button>
+              <ListItemIcon><img className={path == 'vendors' ? styles.selected : styles.filter} src={user_astronaut} /></ListItemIcon>
+              <ListItemText className={path == 'vendors' ? styles.selectedText : styles.listText} primary={"Vendor Reports"} />
             </ListItem>
             </Link>
 
             <Link to="/revenue">
-            <ListItem className={styles.list} button>
-              <ListItemIcon><img className={styles.filter} src={rupee} /></ListItemIcon>
-              <ListItemText className={styles.listText} primary={"Revene Reports"} />
+            <ListItem className={path == 'revenue' ? styles.active : styles.list} button>
+              <ListItemIcon><img className={path == 'revenue' ? styles.selected : styles.filter} src={rupee} /></ListItemIcon>
+              <ListItemText className={path == 'revenue' ? styles.selectedText : styles.listText} primary={"Revene Reports"} />
             </ListItem>
             </Link>
 
             <Link to="/users">
-            <ListItem className={styles.list} button>
-              <ListItemIcon><img className={styles.filter} src={users} /></ListItemIcon>
-              <ListItemText className={styles.listText} primary={"App User Reports"} />
+            <ListItem className={path == 'users' ? styles.active : styles.list} button>
+              <ListItemIcon><img className={path == 'users' ? styles.selected : styles.filter} src={users} /></ListItemIcon>
+              <ListItemText className={path == 'users' ? styles.selectedText : styles.listText} primary={"App User Reports"} />
             </ListItem>
             </Link>
 
             <Link to="/profile">
-            <ListItem className={styles.list} button>
-              <ListItemIcon><img className={styles.filter} src={users_cog} /></ListItemIcon>
-              <ListItemText className={styles.listText} primary={"Profile Settings"} />
+            <ListItem className={path == 'profile' ? styles.active : styles.list} button>
+              <ListItemIcon><img className={path == 'profile' ? styles.selected : styles.filter} src={users_cog} /></ListItemIcon>
+              <ListItemText className={path == 'profile' ? styles.selectedText : styles.listText} primary={"Profile Settings"} />
             </ListItem>
             </Link>
         </List>
@@ -341,3 +346,26 @@ export default function MiniDrawer(props) {
     </div>
   );
 }
+
+// const mapStateToProps = (state) => {
+//
+// 	return {
+//     email: state.
+// 		// loading: state.auth.loading,
+// 		// error: state.auth.error,
+// 		// isAuthenticated: state.auth.token !== null,
+// 		// authRedirectPath: state.auth.authRedirectPath,
+// 	};
+// };
+//
+// const mapDispatchToProps = (dispatch) => {
+// 	return {
+// 		// onAuth: (username, password) =>
+// 		// 	dispatch(actions.auth(username, password)),
+// 		// 	updateSignup:()=>
+// 		// 	  dispatch(actions.updateSingupFlag()),
+// 		// onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
+// 	};
+// };
+//
+// export default compose(connect(mapStateToProps,  mapDispatchToProps))(MiniDrawer);

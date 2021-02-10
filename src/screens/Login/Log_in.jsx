@@ -50,10 +50,12 @@ const useStyles = makeStyles((theme) => ({
     '& checked': {
       color: 'green',
     },
-    '& .MuiTextField-root label.Mui-focused': {
+    '& label.Mui-focused': {
 			// fontSize: '14px',
 			// fontFamily: 'Montserrat',
 			// fontWeight: 'normal',
+			fontFamily: 'Montserrat',
+			fontWeight: 'normal',
       color: '#272D3B',
     },
     '& .MuiInput-underline:after': {
@@ -92,6 +94,19 @@ const useStyles = makeStyles((theme) => ({
 			},
 		},
 
+	},
+	textfield1: {
+		"& .MuiInputBase-root": {
+			fontSize: 15,
+			fontWeight: 'bold',
+			fontFamily: 'Montserrat',
+		},
+		'& label.Mui-focused': {
+      color: '#272D3B',
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: '#272D3B',
+    },
 	},
 	label: {
 		color: "red",
@@ -211,6 +226,7 @@ export const Log_in = (props) => {
 							>
               <TextField
                 required
+								className={classes.textfield1}
                 id="standard-basic"
                 label={
                   <span>
@@ -226,6 +242,7 @@ export const Log_in = (props) => {
 								helperText={username_ErMsg}
               />
               <TextField
+								className={classes.textfield1}
                 required
                 id="standard-basic"
                 label={

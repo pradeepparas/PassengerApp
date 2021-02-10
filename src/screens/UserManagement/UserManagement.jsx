@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import { connect } from "react-redux";
+import { compose } from 'redux';
 import { Link, Redirect } from "react-router-dom";
 import {
 	Modal,
@@ -46,6 +48,8 @@ import Pagination from '@material-ui/lab/Pagination';
 // components
 import styles from './UserManagement.module.css';
 import styled from 'styled-components';
+import * as actions from "../../redux/actions/userActions";
+
 // import { Modal1 } from './Modal';
 // import { GlobalStyle } from './globalStyles';
 
@@ -225,21 +229,22 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
+// function createData(name, number, email, type, station, date) {
+//   return { name, number, email, type, station, date };
+// }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9)
-];
+// const rows = [
+//   createData("John Doe", 8854875896, "john@gmail.com", "Station Admin", "Habib Ganj", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "Station Master", "Bhopal", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "Station Admin", "Indore", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "Station Admin", "Indore", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "Station Master", "Indore", "01/01/21"),
+// ];
 
-export default function StationManagement(props) {
+export function UserManagement(props) {
+	const [rows, setRows] = useState([]);
 	const [showModal, setShowModal] = useState(false);
-
+	const [arrayDetails, setArrayDetails] = useState([]);
   const [modal, setModal] = useState({
     deleteModal: false,
     details: false,
@@ -254,6 +259,10 @@ export default function StationManagement(props) {
     showPassword: false,
   });
   const [age, setAge] = React.useState('');
+
+	useEffect(() => {
+		setRows(props.user)
+	}, [props.user])
 
 	const openModal = () => {
     setShowModal(prev => !prev);
@@ -275,13 +284,14 @@ export default function StationManagement(props) {
     setAge(event.target.value);
   };
 
-  const toggleModal =(e,data)=>{
+  const toggleModal =(e,data, i)=>{
   	setModal(true);
     if(data == 'delete'){
       setModal({
         deleteModal: true
       })
     } else {
+			setArrayDetails(rows[i]);
       setModal({
         details: true
       })
@@ -296,6 +306,10 @@ export default function StationManagement(props) {
 				deletedModal: false
       })
     }
+		const editUser=(e, i,  data)=>{
+			data.id=i
+			props.setUserData(data)
+		}
 
   return(
     <div className={styles.main}>
@@ -338,9 +352,9 @@ export default function StationManagement(props) {
          <div className={styles.selectDiv1}>
            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
              <option selected disabled>Station Name</option>
-             <option value="1">Pure CSS</option>
-             <option value="2">No JS</option>
-             <option value="3">Nice!</option>
+             <option value="1">Indore</option>
+             <option value="2">Bhopal</option>
+             <option value="3">Habib Ganj</option>
          </select>
          </div>
 
@@ -431,18 +445,18 @@ export default function StationManagement(props) {
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
-              <TableCell align="center">{row.calories}</TableCell>
-              <TableCell align="center">{row.fat}</TableCell>
-              <TableCell align="center">{row.carbs}</TableCell>
-              <TableCell align="center">{row.protein}</TableCell>
-              <TableCell align="center">{row.calories}</TableCell>
-              <TableCell align="center">{row.protein}</TableCell>
+              <TableCell align="center">{row.userName}</TableCell>
+              <TableCell align="center">{row.userNumber}</TableCell>
+              <TableCell align="center">{row.userEmail}</TableCell>
+              <TableCell align="center">{row.role}</TableCell>
+              <TableCell align="center">{row.stationName}</TableCell>
+              <TableCell align="center">{row.date}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
-                  <a><div onClick={(e) => toggleModal(e, 'details')}>View Details</div></a>
-                  <Link to={`user-management/${index}`}><div onClick={() => console.log('hello')}>Edit Details</div></Link>
+                  <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
+                  <Link to={`user-management/${index}`}><div onClick={(e) =>editUser(e, index, row)}>Edit Details</div></Link>
                   <a><div onClick={(e) => toggleModal(e, 'delete')}>Delete User</div></a>
                 </div>
                 </div></TableCell>
@@ -451,6 +465,7 @@ export default function StationManagement(props) {
         </TableBody>
       </Table>
     </TableContainer>
+		{rows.length == 0 && <div className={styles.emptyTable} style={{ display: 'flex', justifyContent: 'center'}}>No Data Found</div>}
       </div>
 
 			{/* After Delete Modal */}
@@ -529,19 +544,19 @@ export default function StationManagement(props) {
 							{/*<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Details</div>*/}
 								<div className={styles.modalBox}>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Role</span><span style={{marginLeft: 130,marginRight: 25}}> - </span>Station Admin
+								<span className={styles.textModal}>Role</span><span style={{marginLeft: 130,marginRight: 25}}> - </span>{arrayDetails.role}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Name</span><span style={{marginLeft:  121,marginRight: 25}}> - </span>John Doe
+								<span className={styles.textModal}>Name</span><span style={{marginLeft:  121,marginRight: 25}}> - </span>{arrayDetails.userName}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>User Phone Number</span><span style={{marginLeft: 32,marginRight: 25}}> - </span>8745865985
+								<span className={styles.textModal}>User Phone Number</span><span style={{marginLeft: 32,marginRight: 25}}> - </span>{arrayDetails.userNumber}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>User Email</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>john@gmail.com
+								<span className={styles.textModal}>User Email</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>{arrayDetails.userEmail}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Date</span><span style={{marginLeft: 82,marginRight: 25}}> - </span>21 july 2021
+								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 75,marginRight: 25}}> - </span>{arrayDetails.stationName}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>25 july 2022
+								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>{arrayDetails.date}
 								</div>
 								</div>
 						</div>
@@ -562,9 +577,27 @@ export default function StationManagement(props) {
 
       {rows.length > 0 &&<div className={styles.pageDiv}>
       <div style={{marginTop: 40}}>
-      <Pagination count={10} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
+      <Pagination count={rows.length} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
       </div>
       </div>}
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+	debugger
+	return {
+		user: state.Users.usersList
+	}
+}
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		// add_user: (user) =>
+		// 	dispatch(actions.userActions(user))
+	setUserData	: (data) =>
+			dispatch(actions.setUserData(data))
+	}
+}
+
+export default compose(connect(mapStateToProps, mapDispatchToProps))(UserManagement);
