@@ -52,6 +52,7 @@ import styled from 'styled-components';
 import { Modal1 } from './Modal';
 import { GlobalStyle } from './globalStyles';
 import * as constantValue from '../constants/constants';
+import * as actions from "../../redux/actions/stationActions";
 const api_url = constantValue.apiUrl;
 
 const Container = styled.div`
@@ -243,21 +244,36 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-// function createData(name, code, type, managedBy, platform, person, number, start, end) {
-//   return { name, code, type, managedBy, platform, person, number, start, end };
-// }
-//
-// const rows = [
-//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26"),
-//   createData('Bhopal', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26"),
-//   createData('Habib Ganj', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26"),
-//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26"),
-//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26"),
-// ];
+function createData(stationName, stationCode, stationType, managedBy, 
+  noPlatforms, personName, personNumber, startDate, endDate,
+  stationLatitude, stationLongitude, contractGiver, contractWinner, contractTenure, personEmail,
+  adminName, adminNumber, adminEmail ) {
+  return { stationName, stationCode, stationType, managedBy, 
+    noPlatforms, personName, personNumber, startDate, endDate,
+    stationLatitude, stationLongitude, contractGiver, contractWinner, contractTenure, personEmail,
+    adminName, adminNumber, adminEmail };
+}
+
+const rows = [
+  createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+  "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
+  createData('Bhopal', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+  "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
+  createData('Habib Ganj', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+  "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
+  createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+  "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
+  createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+  "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
+];
 
 export function StationManagement(props) {
+  const [date, setDate] = useState({
+    start: moment(new Date()).format("MM-DD-YYYY"),
+    end: moment(new Date()).format("MM-DD-YYYY")
+  })
 	const [showModal, setShowModal] = useState(false);
-	const [rows, setRows] = useState([]);
+	// const [rows, setRows] = useState([]);
   const [modal, setModal] = useState({
     deleteModal: false,
     details: false,
@@ -287,11 +303,17 @@ export function StationManagement(props) {
 	}
 
 	// useEffect for Getting Data
-	useEffect(() => {
-		setRows(props.details)
-		console.log(rows)
-		debugger
-	}, [props.details])
+	// useEffect(() => {
+	// 	setRows(props.details)
+	// 	console.log(rows)
+	// 	debugger
+	// }, [props.details])
+
+  // Edit Station
+  const editStation=(e, data, i)=>{
+    data.id=i
+    props.setStationData(data)
+  }
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
@@ -302,13 +324,15 @@ export function StationManagement(props) {
   };
 
   const toggleModal =(e,data, i)=>{
-  	setModal(true);
+  	setArrayDetails(rows[i]);
+    setModal(true);
+    console.log(arrayDetails)
+    debugger
     if(data == 'delete'){
       setModal({
         deleteModal: true
       })
     } else {
-			setArrayDetails(rows[i]);
 			console.log(arrayDetails)
 			debugger
       setModal({
@@ -317,6 +341,24 @@ export function StationManagement(props) {
     }
   	// setState({...state, packageName:data.packageName, id: data._id, })
     }
+
+    // Changing Date fields
+    const handleDateChange = (data, type) => {
+      console.log(data)
+      debugger
+      if(type == 'start') {
+        setDate({
+          ...date,
+          start: moment(data.target.value).format("MM-DD-YYYY")
+        })
+      } else {
+        setDate({
+          ...date,
+          end: moment(data.target.value).format("MM-DD-YYYY")
+        })
+      }
+    }
+
     // close modal
     const toggleModalClose =()=>{
   	  setModal({
@@ -324,6 +366,11 @@ export function StationManagement(props) {
         details: false,
 				deletedModal: false
       })
+    }
+
+    // function for adding station or Setting IsEdit False
+    const addStation = () => {
+      props.setIsEditFalse(false)
     }
 
   return(
@@ -334,7 +381,7 @@ export function StationManagement(props) {
       <div className={styles.header}>
         <div className={styles.title}>Station Management</div>
         <Link to="/station-management/add">
-        <Button className={classes.link1} variant="contained">
+        <Button onClick={addStation} className={classes.link1} variant="contained">
           + Add Station
         </Button>
         </Link>
@@ -408,6 +455,8 @@ export function StationManagement(props) {
 					type="date"
 					size="small"
 					defaultValue={new Date()}
+          // value={date.start}
+          // onChange={(e) => handleDateChange(e, 'start')}
 					className={classes.date1}
 					// InputLabelProps={{
 					//   label: 'To Date',
@@ -417,7 +466,6 @@ export function StationManagement(props) {
 					// }}
 					InputProps={{
 						placeholder: "From Date",
-						// endAdornment: null,
 						classes: { input: classes.input1 },
 						focused: classes.focused1,
 					}}
@@ -486,8 +534,8 @@ export function StationManagement(props) {
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
                   <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
-                  <Link to={`station-management/${index}`}><div onClick={() => console.log('hello')}>Edit Details</div></Link>
-                  <a><div onClick={(e) => toggleModal(e, 'delete')}>Delete Station</div></a>
+                  <Link to={`station-management/${index}`}><div onClick={(e) => editStation(e, row, index)}>Edit Details</div></Link>
+                  <a><div onClick={(e) => toggleModal(e, 'delete', index)}>Delete Station</div></a>
                 </div>
                 </div></TableCell>
             </TableRow>
@@ -521,7 +569,7 @@ export function StationManagement(props) {
       <Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deleteModal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={delete_logo} />
-				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to delete Bhopal Station?</strong>  </p>
+				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to delete {arrayDetails.stationName} Station?</strong>  </p>
 
 					</ModalBody>
 					<ModalFooter className={styles.footer}>
@@ -588,7 +636,7 @@ export function StationManagement(props) {
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>No. of Platforms</span><span style={{marginLeft: 66,marginRight: 25}}> - </span>{arrayDetails.noPlatforms}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station GPS Coordinates</span><span style={{marginLeft: 15,marginRight: 25}}> - </span>{arrayDetails.stationLatitude} {arrayDetails.stationLongitude}
+								<span className={styles.textModal}>Station GPS Coordinates</span><span style={{marginLeft: 15,marginRight: 25}}> - </span>{arrayDetails.stationLatitude}°N, {arrayDetails.stationLongitude}°E
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>Managed By</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>{arrayDetails.managedBy}
 								</div>
@@ -657,7 +705,7 @@ export function StationManagement(props) {
 
 const mapStateToProps = (state) => {
 	return {
-		details: state.addStation.details,
+		details: state.Stations.details,
 		// loading: state.auth.loading,
 		// error: state.auth.error,
 		// isAuthenticated: state.auth.token !== null,
@@ -667,6 +715,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
+    setStationData: (data) => {
+      dispatch(actions.setStationDate(data)) 
+    },
+    setIsEditFalse: (value) => {
+      dispatch(actions.setIsEditFalse(value))
+    }
 		// add_station: (details) =>
 		// 	dispatch(actions.stationActions(details))
 		// onAuth: (username, password) =>

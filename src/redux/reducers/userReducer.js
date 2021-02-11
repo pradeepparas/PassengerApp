@@ -22,6 +22,12 @@ const userReducer = (state = initialState, action) => {
           userData: value,
           isEdit:true
         }
+
+      case "SET_ISADD":
+        return {
+          ...state,
+          isEdit: action.value
+        }
     default:
       return state;
   }

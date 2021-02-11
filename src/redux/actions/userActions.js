@@ -14,3 +14,10 @@ export function setUserData(user) {
     data: user
   };
 }
+
+export function setIsEditFalse(value) {
+  return {
+    type: "SET_ISADD",
+    value: value
+  }
+}

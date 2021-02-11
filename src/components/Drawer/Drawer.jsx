@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 // zIndex
 // Material UI
 import clsx from 'clsx';
@@ -167,6 +167,7 @@ export default function MiniDrawer(props) {
 	const path = url.path.split('/')[1]
   const classes = useStyles();
   const theme = useTheme();
+  const history = useHistory()
   const [open, setOpen] = React.useState(false);
 
 
@@ -178,11 +179,14 @@ export default function MiniDrawer(props) {
     setOpenProfile((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
+  const handleClose = (event, type) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
     setOpenProfile(false);
+    if(type == 'logout'){
+      history.push("/")
+    }
   };
 
   function handleListKeyDown(event) {
@@ -259,7 +263,7 @@ export default function MiniDrawer(props) {
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList className={classes.menuList1} autoFocusItem={open_Profile} id="menu-list-grow" onKeyDown={handleListKeyDown}>
                     <MenuItem onClick={handleClose}>Profile <img className={styles.imageColor} style={{width: 15, height: 15, marginLeft: 25}} src={user_alt1} /></MenuItem>
-                    <MenuItem onClick={handleClose}>Logout <img className={styles.imageColor} style={{width: 15, marginLeft: 25,height: 15}} src={account_logout} /></MenuItem>
+                    <MenuItem onClick={(e) => handleClose(e, 'logout')}>Logout <img className={styles.imageColor} style={{width: 15, marginLeft: 25,height: 15}} src={account_logout} /></MenuItem>
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

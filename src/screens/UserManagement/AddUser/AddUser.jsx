@@ -211,6 +211,7 @@ export function AddUser(props) {
   // close modal
   const toggleModalClose =()=>{
     setModal(false)
+    history.push('/user-management')
   }
 //
 		useEffect(()=>{
@@ -230,10 +231,11 @@ export function AddUser(props) {
       if (!validateForm()) {
           return
       }
-			setState({
-				...state,
-				date: moment(new Date()).format("DD-MM-YYYY")
-			})
+      state.date = moment(new Date()).format("DD-MM-YYYY")
+      
+      state.userName = state.userName.trim()
+      console.log(state)
+      debugger
 			props.addUser(state);
 			console.log(props.user)
       setModal(true);
@@ -261,17 +263,17 @@ export function AddUser(props) {
 
        var isValid= true;
        if(state.userName.trim()==''){
-           errors.userName="user name is required";
+           errors.userName="Name is required";
            isValid =false;
        }
       else if(state.userNumber.toString().trim()==''|| !mobileValid){
           errors.userNumber="phone number is required or invalid number";
           isValid =false;
       }
-			// else if(state.userEmail.toString().trim()=='' || !emailValid){
-      //     errors.userEmail="email is required or invalid email";
-      //     isValid =false;
-      // }
+			else if(state.userEmail.toString().trim()!=='' && !emailValid){
+          errors.userEmail="invalid email example ";
+          isValid =false;
+      }
     else  if(state.stationName.trim()==''){
           errors.stationName="station name is required";
           isValid =false;
@@ -280,8 +282,9 @@ export function AddUser(props) {
           errors.role="role field is required";
           isValid =false;
       }
-      else if(state.userPassword.toString().trim()==''){
-          errors.userPassword="password is required";
+      else if(!props.isEdit && (state.userPassword.toString().trim()==''|| 
+                !(state.userPassword.length >= 3 && state.userPassword.length <= 10))){
+          errors.userPassword="password is in between 3 to 10 characters";
           isValid =false;
       }
 
@@ -294,7 +297,9 @@ export function AddUser(props) {
 		debugger
     setState({
       ...state,
-      [event.target.name]: event.target.value
+      [event.target.name]: (event.target.name == 'userPassword' 
+                          || event.target.name == 'userNumber')?  
+                          event.target.value.trim() : event.target.value
     })
     // debugger
     setErros({errors, [event.target.name]:""})
@@ -361,7 +366,7 @@ export function AddUser(props) {
 						<div className={styles.error_message}>{errors.role}</div>
 						</div>
 
-            <div className={styles.textfield}>
+            {!props.isEdit ? <div className={styles.textfield}>
               <label style={{color: 'black'}}>Password</label>
 
               <input style={{position: 'relative'}} autocomplete="off" name="userPassword" value={state.userPassword} onChange={handleInputs} className={styles.inputfield} type={values.showPassword? "text" : "password"} />
@@ -386,14 +391,14 @@ export function AddUser(props) {
 							</IconButton>
 							</span>
 							<div style={{marginTop: -31}} className={styles.error_message}>{errors.userPassword}</div>
-            </div>
+            </div>: <div></div>}
 
 
 						{/*Dummy Div*/}
 						<div className={styles.extraDiv}></div>
 						<div></div>
 						<div className={styles.saveButton}>
-			      <Button style={{}} onClick={() => history.push('/station-management')}  className={classes.button2} variant="contained">
+			      <Button style={{}} onClick={() => history.push('/user-management')}  className={classes.button2} variant="contained">
 			        Cancel
 			      </Button>
 			      <Button style={{}} onClick={handleSubmit} className={classes.saveButton1} variant="contained">

@@ -206,13 +206,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(station, name, service, order, vname, date, amount) {
-  return { station, name, service, order, vname, date, amount };
+function createData(stationName, userName, service, order, vendorName, date, Amount) {
+  return { stationName, userName, service, order, vendorName, date, Amount };
 }
 
 const rows = [
   createData("Bhopal", "John Doe", "Medicines", 101, "John Doe", "01/01/21", 1000),
-  createData("Inodre", "John Doe", "Medicines", 102, "John Doe", "01/01/21", 1000),
+  createData("Indore", "John Doe", "Medicines", 102, "John Doe", "01/01/21", 1000),
   createData("Habib Ganj", "John Doe", "Medicines", 103, "John Doe", "01/01/21", 1000),
   createData("Bhopal", "John Doe", "Medicines", 104, "John Doe", "01/01/21", 1000),
   createData("Bhopal", "John Doe", "Medicines", 105, "John Doe", "01/01/21", 1000),
@@ -414,13 +414,13 @@ export default function StationManagement(props) {
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
-              <TableCell align="center">{row.station}</TableCell>
-              <TableCell align="center">{row.name}</TableCell>
+              <TableCell align="center">{row.stationName}</TableCell>
+              <TableCell align="center">{row.userName}</TableCell>
               <TableCell align="center">{row.service}</TableCell>
               <TableCell align="center">{row.order}</TableCell>
-              <TableCell align="center">{row.name}</TableCell>
+              <TableCell align="center">{row.vendorName}</TableCell>
               <TableCell align="center">{row.date}</TableCell>
-              <TableCell align="center">{row.amount}</TableCell>
+              <TableCell align="center">{row.Amount}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
@@ -509,18 +509,18 @@ export default function StationManagement(props) {
 						<div className={styles.box1}>
 								<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 40,marginRight: 25}}> - </span>{arrayDetails.name}
+								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 40,marginRight: 25}}> - </span>{arrayDetails.stationName}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Customer Name</span><span style={{marginLeft: 24,marginRight: 25}}> - </span>8898585689
+								<span className={styles.textModal}>Customer Name</span><span style={{marginLeft: 24,marginRight: 25}}> - </span>{arrayDetails.userName}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Service Name</span><span style={{marginLeft: 40,marginRight: 25}}> - </span>Urban@gmail.com
+								<span className={styles.textModal}>Service Name</span><span style={{marginLeft: 40,marginRight: 25}}> - </span>{arrayDetails.service}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>Service Order No.</span><span style={{marginLeft: 17,marginRight: 25}}> - </span>{arrayDetails.order}
 								</div>
                 <div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 42,marginRight: 25}}> - </span>{arrayDetails.name}
+								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 42,marginRight: 25}}> - </span>{arrayDetails.vendorName}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>Date</span><span style={{marginLeft: 98,marginRight: 25}}> - </span>{arrayDetails.date}
@@ -549,7 +549,7 @@ export default function StationManagement(props) {
 									borderTopStyle: 'solid',
 									borderWidth: 2,
 									borderColor: '#6b6f788c'}}>
-							<span className={styles.textModal}>Total Price</span><span style={{marginLeft: 76,marginRight: 25}}> - </span>{arrayDetails.amount}
+							<span className={styles.textModal}>Total Price</span><span style={{marginLeft: 76,marginRight: 25}}> - </span>{arrayDetails.Amount}
 							</div>
 							</div>
 							</div>

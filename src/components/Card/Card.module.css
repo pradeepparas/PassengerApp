@@ -32,6 +32,12 @@
     justify-content: flex-end;
 }
 
+@media (min-width: 470px) and (max-width: 540px) {
+    .image {
+        margin-top: -10px;
+    }
+}
+
 @media(max-width:320px) {
 
     .stats {
@@ -45,7 +51,7 @@
     .title {
         font-weight: 100;
         color: #9695b5;
-        text-align: center;
+        /* text-align: center; */
     }
 
     .details {
@@ -58,7 +64,7 @@
         width: 100%;
         height: 100%;
         text-align: center;
-        display: block;
+        /* display: block; */
     }
 }
 

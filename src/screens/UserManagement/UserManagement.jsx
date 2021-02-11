@@ -229,20 +229,20 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-// function createData(name, number, email, type, station, date) {
-//   return { name, number, email, type, station, date };
-// }
+function createData(userName, userNumber, userEmail, role, stationName, date) {
+  return { userName, userNumber, userEmail, role, stationName, date };
+}
 
-// const rows = [
-//   createData("John Doe", 8854875896, "john@gmail.com", "Station Admin", "Habib Ganj", "01/01/21"),
-//   createData("John Doe", 8854875896, "john@gmail.com", "Station Master", "Bhopal", "01/01/21"),
-//   createData("John Doe", 8854875896, "john@gmail.com", "Station Admin", "Indore", "01/01/21"),
-//   createData("John Doe", 8854875896, "john@gmail.com", "Station Admin", "Indore", "01/01/21"),
-//   createData("John Doe", 8854875896, "john@gmail.com", "Station Master", "Indore", "01/01/21"),
-// ];
+const rows = [
+  createData("Jack", 8854875896, "john@gmail.com", "Station Admin", "Habib Ganj", "01/01/21"),
+  createData("John Doe", 8854875896, "john@gmail.com", "Station Master", "Bhopal", "01/01/21"),
+  createData("John Doe", 8854875896, "john@gmail.com", "Station Admin", "Indore", "01/01/21"),
+  createData("Jack", 8854875896, "john@gmail.com", "Station Admin", "Indore", "01/01/21"),
+  createData("Mark", 8854875896, "john@gmail.com", "Station Master", "Indore", "01/01/21"),
+];
 
 export function UserManagement(props) {
-	const [rows, setRows] = useState([]);
+	// const [rows, setRows] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [arrayDetails, setArrayDetails] = useState([]);
   const [modal, setModal] = useState({
@@ -260,9 +260,9 @@ export function UserManagement(props) {
   });
   const [age, setAge] = React.useState('');
 
-	useEffect(() => {
-		setRows(props.user)
-	}, [props.user])
+	// useEffect(() => {
+	// 	setRows(props.user)
+	// }, [props.user])
 
 	const openModal = () => {
     setShowModal(prev => !prev);
@@ -286,12 +286,13 @@ export function UserManagement(props) {
 
   const toggleModal =(e,data, i)=>{
   	setModal(true);
+    setArrayDetails(rows[i]);
     if(data == 'delete'){
       setModal({
         deleteModal: true
       })
     } else {
-			setArrayDetails(rows[i]);
+			
       setModal({
         details: true
       })
@@ -311,12 +312,17 @@ export function UserManagement(props) {
 			props.setUserData(data)
 		}
 
+    // function for adding user or Setting IsEdit False
+    const addUser = () => {
+      props.setIsEditFalse(false)
+    }
+
   return(
     <div className={styles.main}>
       <div className={styles.header}>
         <div className={styles.title}>User Management</div>
         <Link to="/user-management/add">
-        <Button className={classes.button1} variant="contained">
+        <Button className={classes.button1} onClick={addUser} variant="contained">
           + Add User
         </Button>
         </Link>
@@ -457,7 +463,7 @@ export function UserManagement(props) {
                 <div className={styles.dropdown_content}>
                   <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
                   <Link to={`user-management/${index}`}><div onClick={(e) =>editUser(e, index, row)}>Edit Details</div></Link>
-                  <a><div onClick={(e) => toggleModal(e, 'delete')}>Delete User</div></a>
+                  <a><div onClick={(e) => toggleModal(e, 'delete', index)}>Delete User</div></a>
                 </div>
                 </div></TableCell>
             </TableRow>
@@ -491,7 +497,7 @@ export function UserManagement(props) {
       {<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deleteModal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={delete_logo} />
-				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to delete John User?</strong>  </p>
+				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to delete {arrayDetails.userName} User?</strong>  </p>
 
 					</ModalBody>
 					<ModalFooter className={styles.footer}>
@@ -593,6 +599,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
+    setIsEditFalse: (value) => 
+      dispatch(actions.setIsEditFalse(value)),
 		// add_user: (user) =>
 		// 	dispatch(actions.userActions(user))
 	setUserData	: (data) =>

@@ -32,6 +32,7 @@ import InputBase from '@material-ui/core/InputBase';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { idea } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 
 const GreenCheckbox = withStyles({
   root: {
@@ -255,6 +256,7 @@ export function AddStation(props) {
   // close modal
   const toggleModalClose =()=>{
     setModal(false)
+    history.push('/station-management');
   }
 
   // Handle Submit Station
@@ -265,15 +267,15 @@ export function AddStation(props) {
           return
       }
 			let merged = {...state, ...details};
-			setAddDetails(merged)
-			props.add_station(add_details)
+			// setAddDetails(merged)
+      merged.stationCode = merged.stationCode.toUpperCase();
+			props.add_station(merged)
       setModal(true);
 			if(station_id == 'add'){
 				setIsAdd(true);
 			} else {
 				setIsAdd(false);
 			}
-      // state.orgId=localStorage.getItem('orgId')
       // props.addPackage(state)
   }
 
@@ -283,7 +285,7 @@ export function AddStation(props) {
        var emailValid = details.adminEmail.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
        var personEmail = details.personEmail.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
        var mobileValid = details.adminNumber.toString().match(/^[0]?[6789]\d{9}$/);
-       var usernameRegex = state.stationName.toString().match(/^[a-zA-Z0-9]+$/);
+       var usernameRegex = state.stationName.toString().match(/^[a-zA-Z ]+$/);
        var code = state.stationCode.match(/^[a-zA-Z]+$/);
 
        var isValid= true;
@@ -318,20 +320,20 @@ export function AddStation(props) {
           isValid =false;
       }
 
-      else if(state.contractGiver.trim()=='' || !state.contractGiver.toString().match(/^[a-zA-Z0-9]+$/)){
+      else if(state.contractGiver.trim()=='' || !state.contractGiver.toString().match(/^[a-zA-Z ]+$/)){
           errors.contractGiver="contract giver field is empty or accept only alphabets";
           isValid =false;
       }
-      else if(state.contractWinner.trim()==''|| !state.contractWinner.toString().match(/^[a-zA-Z0-9]+$/)){
+      else if(state.contractWinner.trim()==''|| !state.contractWinner.toString().match(/^[a-zA-Z ]+$/)){
           errors.contractWinner="contract winner field is empty";
           isValid =false;
       }
-      else if(state.contractTenure.trim()=='' || !state.contractTenure.toString().match(/^[a-zA-Z0-9]+$/)){
+      else if(state.contractTenure.trim()=='' || !state.contractTenure.toString().match(/^[a-zA-Z0-9 ]+$/)){
           errors.contractTenure="contract tenure is required or invalid field";
           isValid =false;
       }
 
-      else if(details.personName.trim()=='' || !details.personName.toString().match(/^[a-zA-Z0-9]+$/)){
+      else if(details.personName.trim()=='' || !details.personName.toString().match(/^[a-zA-Z ]+$/)){
           errors.personName="person name is required or invalid field";
           isValid =false;
       }
@@ -339,11 +341,11 @@ export function AddStation(props) {
           errors.personNumber="phone number is required or invalid number";
           isValid =false;
       }
-      // else if(details.personEmail.trim()=='' || !personEmail){
-      //     errors.personEmail="email is required or invalid field";
-      //     isValid =false;
-      // }
-      else if(details.adminName.trim()=='' || !details.adminName.toString().match(/^[a-zA-Z0-9]+$/)){
+      else if(details.personEmail.trim()!=='' && !personEmail){
+          errors.personEmail="invalid email address";
+          isValid =false;
+      }
+      else if(details.adminName.trim()=='' || !details.adminName.toString().match(/^[a-zA-Z ]+$/)){
           errors.adminName="admin name is required or invalid field";
           isValid =false;
       }
@@ -351,14 +353,15 @@ export function AddStation(props) {
           errors.adminNumber="number is required or invalid number";
           isValid =false;
       }
-      // else if(details.adminEmail.trim()=='' || !emailValid){
-      //     errors.adminEmail="email is required or invalid email Id";
-      //     isValid =false;
-      // }
-      // else if(state.quantity.trim()==''){
-      //     errors.quantity=(t("add_package.quantity_error"));
-      //     isValid =false;
-      // }
+      else if(details.adminEmail.trim()!=='' && !emailValid){
+          errors.adminEmail="invalid email address";
+          isValid =false;
+      }
+      else if(!props.isEdit && (details.adminPassword.trim()=='' || 
+      !(details.adminPassword.length >= 3 && details.adminPassword.length <= 10))){
+        errors.adminPassword="password is in between 3 to 10 characters"  
+        isValid =false;
+      }
       setErros({...errors, errors:errors})
       return isValid
    }
@@ -375,6 +378,13 @@ export function AddStation(props) {
 
     // setChecked(event.target.checked);
   };
+
+  useEffect(() => {
+    if(props.isEdit){
+      setState(props.stationData)
+      setDetails(props.stationData)
+    }
+  }, [])
 
   const passwordGenerate = () => {
     var randomstring = Math.random().toString(36).slice(-8);
@@ -592,7 +602,7 @@ export function AddStation(props) {
             <input autocomplete="off" disabled={pchecked?true:false} name="adminEmail" value={details.adminEmail} onChange={handleDetails} className={styles.inputfield} type="text" />
             <div className={styles.error_message}>{errors.adminEmail}</div>
           </div>
-          <div className={styles.textfield}>
+          {!props.isEdit && <div className={styles.textfield}>
             <label style={{color: 'black'}}>Password</label>
             <div className={styles.passwordDiv} style={{display: 'flex'}}>
             <input autocomplete="off" name="adminPassword" value={details.adminPassword} onChange={handleDetails} className={styles.inputfield} type="text" />
@@ -600,7 +610,8 @@ export function AddStation(props) {
             <img style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={logo} />
             <small style={{display: 'flex', alignItems: 'center',color: 'black'}}>Autogenerate</small>
             </button></div>
-          </div>
+            <div className={styles.error_message}>{errors.adminPassword}</div>
+          </div>}
 
           <div className={styles.textfield}>
           <FormControlLabel
@@ -662,7 +673,9 @@ export function AddStation(props) {
 
 const mapStateToProps = (state) => {
 	return {
-		details: state.addStation.details,
+		details: state.Stations.details,
+    isEdit: state.Stations.isEdit,
+    stationData: state.Stations.stationData
 		// loading: state.auth.loading,
 		// error: state.auth.error,
 		// isAuthenticated: state.auth.token !== null,

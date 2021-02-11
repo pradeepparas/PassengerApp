@@ -18,7 +18,7 @@ import todoReducer from '../Todo/redux/reducer';
 
 const reducer = combineReducers({
   Users: userReducer,
-  addStation: stationReducer,
+  Stations: stationReducer,
   form: reduxFormReducer, // mounted under "form",
   theme: themeReducer,
   rtl: rtlReducer,
