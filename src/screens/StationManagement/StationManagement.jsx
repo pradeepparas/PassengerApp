@@ -269,8 +269,8 @@ const rows = [
 
 export function StationManagement(props) {
   const [date, setDate] = useState({
-    start: moment(new Date()).format("MM-DD-YYYY"),
-    end: moment(new Date()).format("MM-DD-YYYY")
+    start: new Date().toISOString().slice(0, 10),
+    end: new Date().toISOString().slice(0, 10),
   })
 	const [showModal, setShowModal] = useState(false);
 	// const [rows, setRows] = useState([]);
@@ -295,12 +295,20 @@ export function StationManagement(props) {
   };
 // Handle Delete function
 	const handleDeleteSubmit = () => {
+    console.log(arrayDetails.id)
+    debugger
+    props.deleteStation(arrayDetails.id)
 		// set delete modal false
 		setModal({
 			deleteModal: false,
 			deletedModal: true
 		})
 	}
+
+  useEffect(() => {
+    console.log(date.start)
+    // debugger
+  }, [date.start])
 
 	// useEffect for Getting Data
 	// useEffect(() => {
@@ -324,17 +332,20 @@ export function StationManagement(props) {
   };
 
   const toggleModal =(e,data, i)=>{
+    rows[i].id = i;
+    console.log(rows[i])
+    debugger
   	setArrayDetails(rows[i]);
     setModal(true);
     console.log(arrayDetails)
-    debugger
+    // debugger
     if(data == 'delete'){
       setModal({
         deleteModal: true
       })
     } else {
 			console.log(arrayDetails)
-			debugger
+			// debugger
       setModal({
         details: true
       })
@@ -345,16 +356,16 @@ export function StationManagement(props) {
     // Changing Date fields
     const handleDateChange = (data, type) => {
       console.log(data)
-      debugger
+      // debugger
       if(type == 'start') {
         setDate({
           ...date,
-          start: moment(data.target.value).format("MM-DD-YYYY")
+          start: data.target.value
         })
       } else {
         setDate({
           ...date,
-          end: moment(data.target.value).format("MM-DD-YYYY")
+          end: data.target.value
         })
       }
     }
@@ -454,30 +465,17 @@ export function StationManagement(props) {
 					variant="outlined"
 					type="date"
 					size="small"
-					defaultValue={new Date()}
-          // value={date.start}
-          // onChange={(e) => handleDateChange(e, 'start')}
+          name="start"
+          value={date.start}
+          onChange={(e) => handleDateChange(e, 'start')}
 					className={classes.date1}
-					// InputLabelProps={{
-					//   label: 'To Date',
-					// 	shrink: true,
-					//   classes: { input: classes.input1 },
-					//   focused: classes.focused1,
-					// }}
 					InputProps={{
 						placeholder: "From Date",
 						classes: { input: classes.input1 },
-						focused: classes.focused1,
+						max: new Date().toISOString().slice(0, 10),
+            focused: classes.focused1,
 					}}
 				/>
-          {/*<DatePicker
-            className={styles.input_s}
-            peekNextMonth showMonthDropdown showYearDropdown
-            dropdownMode="select"
-            selected={new Date()}
-            value={new Date()}
-            onChange={(e) => handleChange(e,'end')} placeholderText='Start Date' />
-            <img style={{width: 15, height: 15}} src={downArrow} />*/}
     		</div>
 
         <div className={classes.container1}>
@@ -486,9 +484,12 @@ export function StationManagement(props) {
 					variant="outlined"
 					type="date"
 					size="small"
-					defaultValue={new Date()}
+          name="end"
+          value={date.end}
+          onChange={(e) => handleDateChange(e, 'end')}
 					className={classes.date1}
 					InputProps={{
+            min: date.start.toString().slice(0, 10),
 						placeholder: "From Date",
 						classes: { input: classes.input1 },
 						focused: classes.focused1,
@@ -720,6 +721,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     setIsEditFalse: (value) => {
       dispatch(actions.setIsEditFalse(value))
+    },
+    deleteStation: (id) => {
+      dispatch(actions.deleteStation(id))
     }
 		// add_station: (details) =>
 		// 	dispatch(actions.stationActions(details))

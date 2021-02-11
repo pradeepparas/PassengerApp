@@ -218,6 +218,10 @@ const rows = [
 ];
 
 export default function StationManagement(props) {
+  const [date, setDate] = useState({
+    start: new Date().toISOString().slice(0, 10),
+    end: new Date().toISOString().slice(0, 10),
+  })
 	const [showModal, setShowModal] = useState(false);
 	const [arrayDetails, setArrayDetails] = useState([]);
   const [modal, setModal] = useState({
@@ -247,6 +251,24 @@ export default function StationManagement(props) {
 		})
 	}
 
+   // Changing Date fields
+   const handleDateChange = (data, type) => {
+    console.log(data)
+    // debugger
+    if(type == 'start') {
+      setDate({
+        ...date,
+        start: data.target.value
+      })
+    } else {
+      setDate({
+        ...date,
+        end: data.target.value
+      })
+    }
+  }
+
+  // Search Field Value
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
@@ -349,7 +371,10 @@ export default function StationManagement(props) {
     				type="date"
     				size="small"
             placeholder="From Date"
-    				defaultValue={new Date()}
+    				// defaultValue={new Date()}
+            name="start"
+            value={date.start}
+            onChange={(e) => handleDateChange(e, 'start')}
     				className={classes.date1}
             InputProps={{
               placeholder: "From Date",
@@ -371,7 +396,10 @@ export default function StationManagement(props) {
     				variant="outlined"
     				type="date"
     				size="small"
-    				defaultValue={new Date()}
+    				// defaultValue={new Date()}
+            name="end"
+            value={date.end}
+            onChange={(e) => handleDateChange(e, 'end')}
     				className={classes.date1}
     				// InputLabelProps={{
             //   label: 'To Date',

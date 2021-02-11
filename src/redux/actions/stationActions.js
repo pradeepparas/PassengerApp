@@ -1,5 +1,6 @@
 export const ADD_STATION = 'ADD_STATION';
-export const EDIT_STATION = "EDIT_STATION"
+export const EDIT_STATION = "EDIT_STATION";
+export const DELETE_STATION = "DELETE_STATION";
 // export const AUTHENTICATE_ERROR_AUTH = 'AUTHENTICATE_ERROR_AUTH';
 
 export function stationActions(details) {
@@ -20,6 +21,13 @@ export function setIsEditFalse(value) {
   return {
     type: "SET_ISADD",
     value: value
+  }
+}
+
+export function deleteStation(id) {
+  return {
+    type: DELETE_STATION,
+    deleteId: id
   }
 }
  

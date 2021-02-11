@@ -1,4 +1,4 @@
-import { ADD_USER } from "../actions/userActions";
+import { ADD_USER, DELETE_USER } from "../actions/userActions";
 
 const initialState = {
   usersList: [],
@@ -27,6 +27,13 @@ const userReducer = (state = initialState, action) => {
         return {
           ...state,
           isEdit: action.value
+        }
+
+      case DELETE_USER:
+        let users = state.usersList.filter((item, index) => index !== action.userId)
+        return {
+          ...state,
+          usersList: users
         }
     default:
       return state;

@@ -164,7 +164,7 @@ export const Log_in = (props) => {
 
   const handleSubmit = (event) => {
 		var number = username.match(/^([_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,5}))|(\d+$)$/);
-		var emailValid = username.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+		// var emailValid = username.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
     console.log('clicked')
 		event.preventDefault();
 		if(username.trim()=='' || !number){
@@ -189,6 +189,8 @@ export const Log_in = (props) => {
 
 		setIsLoading(true);
 		// props.onAuth(username, password);
+    localStorage.setItem('rememberMe', checked);
+    localStorage.setItem('userName', checked ? username : '');
 		history.push('/dashboard')
 	};
 

@@ -104,6 +104,14 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
+  button1: {
+    "&:hover":{
+      backgroundColor: 'white',
+    },
+    "&:active": {
+      backgroundColor: 'white',
+    }
+  },
   menuButton: {
     marginLeft: 1,
     // color: 'black',
@@ -169,11 +177,19 @@ export default function MiniDrawer(props) {
   const theme = useTheme();
   const history = useHistory()
   const [open, setOpen] = React.useState(false);
-
+  const [profileName, setProfileName] = React.useState('');
 
   // Profile
   const [open_Profile, setOpenProfile] = React.useState(false);
   const anchorRef = React.useRef(null);
+
+  React.useEffect(() => {
+    let a = localStorage.getItem('rememberMe')
+    console.log(a)
+    let profile = localStorage.getItem("userName")
+    setProfileName(profile)
+    debugger
+  }, [])
 
   const handleToggle = () => {
     setOpenProfile((prevOpen) => !prevOpen);
@@ -215,6 +231,7 @@ export default function MiniDrawer(props) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  // header
 
   return (
     <div style={{color: 'white'}} className={classes.root}>
@@ -245,6 +262,8 @@ export default function MiniDrawer(props) {
           <div style={{ width: '77%'}}>
           <div style={{float: 'right'}}>
             <Button
+              disableRipple={true}
+              className={classes.button1}
               ref={anchorRef}
               aria-controls={open_Profile ? 'menu-list-grow' : undefined}
               aria-haspopup="true"
@@ -294,49 +313,49 @@ export default function MiniDrawer(props) {
         </div>
         <List style={{paddingTop: 40}}>
         <Link to="/dashboard">
-            <ListItem className={path == 'dashboard' ? styles.active : styles.list} button>
+            <ListItem disableRipple={true} className={path == 'dashboard' ? styles.active : styles.list} button>
               <ListItemIcon><img className={path == 'dashboard' ? styles.selected : styles.filter } src={home} /></ListItemIcon>
               <ListItemText className={path == 'dashboard' ? styles.selectedText : styles.listText } primary={"Dashboard"} />
             </ListItem>
             </Link>
 
             <Link to="/station-management">
-            <ListItem className={path == 'station-management' ? styles.active : styles.list} button>
+            <ListItem disableRipple={true} className={path == 'station-management' ? styles.active : styles.list} button>
               <ListItemIcon><img className={path == 'station-management' ? styles.selected : styles.filter} src={train} /></ListItemIcon>
               <ListItemText className={path == 'station-management' ? styles.selectedText : styles.listText} primary={"Station Management"} />
             </ListItem>
             </Link>
 
             <Link to="/user-management">
-            <ListItem className={path == 'user-management' ? styles.active : styles.list} button>
+            <ListItem disableRipple={true} className={path == 'user-management' ? styles.active : styles.list} button>
               <ListItemIcon><img className={path == 'user-management' ? styles.selected : styles.filter} src={user_alt} /></ListItemIcon>
               <ListItemText className={path == 'user-management' ? styles.selectedText : styles.listText} primary={"User Management"} />
             </ListItem>
             </Link>
 
             <Link to="/vendors">
-            <ListItem className={path == 'vendors' ? styles.active : styles.list} button>
+            <ListItem disableRipple={true} className={path == 'vendors' ? styles.active : styles.list} button>
               <ListItemIcon><img className={path == 'vendors' ? styles.selected : styles.filter} src={user_astronaut} /></ListItemIcon>
               <ListItemText className={path == 'vendors' ? styles.selectedText : styles.listText} primary={"Vendor Reports"} />
             </ListItem>
             </Link>
 
             <Link to="/revenue">
-            <ListItem className={path == 'revenue' ? styles.active : styles.list} button>
+            <ListItem disableRipple={true} className={path == 'revenue' ? styles.active : styles.list} button>
               <ListItemIcon><img className={path == 'revenue' ? styles.selected : styles.filter} src={rupee} /></ListItemIcon>
               <ListItemText className={path == 'revenue' ? styles.selectedText : styles.listText} primary={"Revene Reports"} />
             </ListItem>
             </Link>
 
             <Link to="/users">
-            <ListItem className={path == 'users' ? styles.active : styles.list} button>
+            <ListItem disableRipple={true} className={path == 'users' ? styles.active : styles.list} button>
               <ListItemIcon><img className={path == 'users' ? styles.selected : styles.filter} src={users} /></ListItemIcon>
               <ListItemText className={path == 'users' ? styles.selectedText : styles.listText} primary={"App User Reports"} />
             </ListItem>
             </Link>
 
             <Link to="/profile">
-            <ListItem className={path == 'profile' ? styles.active : styles.list} button>
+            <ListItem disableRipple={true} className={path == 'profile' ? styles.active : styles.list} button>
               <ListItemIcon><img className={path == 'profile' ? styles.selected : styles.filter} src={users_cog} /></ListItemIcon>
               <ListItemText className={path == 'profile' ? styles.selectedText : styles.listText} primary={"Profile Settings"} />
             </ListItem>

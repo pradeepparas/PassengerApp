@@ -171,8 +171,6 @@ border-color: #cac7c7;
   display: block;
 }
 
-.dropdown_content a:hover {  }
-
 .dropdown_content div:hover { cursor: pointer; }
 
 .dropdown:hover .dropdown_content {display: block;}

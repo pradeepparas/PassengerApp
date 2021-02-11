@@ -297,12 +297,21 @@ export function AddStation(props) {
           errors.stationCode="station code is required or invalid code";
           isValid =false;
       }
-    else  if(state.stationType.trim()==''){
+      else  if(state.stationType.trim()==''){
           errors.stationType="station type is required";
           isValid =false;
       }
       else if(state.managedBy.trim()==''){
-          errors.managedBy="managed by is required";
+        errors.managedBy="managed by is required";
+        isValid =false;
+      }
+      else if(state.stationLatitude.toString().trim()=='' || isNaN(state.stationLatitude)){
+        errors.stationLatitude="Latitude is required or invalid value";
+        isValid =false;
+      }
+
+      else if(state.stationLongitude.toString().trim()=='' || isNaN(state.stationLongitude)){
+          errors.stationLongitude="Longitude is required or invalid value";
           isValid =false;
       }
       else if(state.noPlatforms.toString().trim()=='' || isNaN(state.noPlatforms)){
@@ -465,7 +474,8 @@ export function AddStation(props) {
               </select>
               <div className={styles.error_message}>{errors.stationType}</div>
               </div>
-            <div className={styles.textfield}>
+
+              <div className={styles.textfield}>
               <label style={{color: 'black'}}>Managed By</label>
               <select className={styles.select1} name="managedBy" /*value={state.managedBy}*/ onChange={handleInputs}>
                 <option selected disabled>Managed By</option>
@@ -475,23 +485,24 @@ export function AddStation(props) {
             <div className={styles.error_message}>{errors.managedBy}</div>
             </div>
 
-            <div className={styles.textfield}>
-              <label style={{color: 'black'}}>No. of Platforms </label>
-              <input autocomplete="off" name="noPlatforms" value={state.noPlatforms} onChange={handleInputs} className={styles.inputfield} type="text" />
-              <div className={styles.error_message}>{errors.noPlatforms}</div>
-            </div>
-
-            <div className={styles.textfield}>
-              <label style={{color: 'black'}}>Station GPS Latitude</label>
-              <input autocomplete="off" name="stationLatitude" value={state.stationLatitude} onChange={handleInputs} className={styles.inputfield} type="text" />
-              <div className={styles.error_message}>{errors.stationLatitude}</div>
-            </div>
+              <div className={styles.textfield}>
+                <label style={{color: 'black'}}>Station GPS Latitude</label>
+                <input autocomplete="off" name="stationLatitude" value={state.stationLatitude} onChange={handleInputs} className={styles.inputfield} type="text" />
+                <div className={styles.error_message}>{errors.stationLatitude}</div>
+              </div>
 
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Station GPS Longitude</label>
                 <input autocomplete="off" className={styles.inputfield} type="text" name="stationLongitude" value={state.stationLongitude} onChange={handleInputs}/>
                 <div className={styles.error_message}>{errors.stationLongitude}</div>
               </div>
+
+            <div className={styles.textfield}>
+              <label style={{color: 'black'}}>No. of Platforms </label>
+              <input autocomplete="off" name="noPlatforms" value={state.noPlatforms} onChange={handleInputs} className={styles.inputfield} type="text" />
+              <div className={styles.error_message}>{errors.noPlatforms}</div>
+            </div>
+
             </div>
         </div>
 

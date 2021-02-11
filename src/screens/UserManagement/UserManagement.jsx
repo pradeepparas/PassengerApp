@@ -242,6 +242,10 @@ const rows = [
 ];
 
 export function UserManagement(props) {
+  const [date, setDate] = useState({
+    start: new Date().toISOString().slice(0, 10),
+    end: new Date().toISOString().slice(0, 10),
+  })
 	// const [rows, setRows] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [arrayDetails, setArrayDetails] = useState([]);
@@ -270,12 +274,31 @@ export function UserManagement(props) {
 // Handle Delete function
 	const handleDeleteSubmit = () => {
 		// set delete modal false
+    props.deleteUser(arrayDetails.id)
 		setModal({
 			deleteModal: false,
 			deletedModal: true
 		})
 	}
 
+   // Changing Date fields
+   const handleDateChange = (data, type) => {
+    console.log(data)
+    // debugger
+    if(type == 'start') {
+      setDate({
+        ...date,
+        start: data.target.value
+      })
+    } else {
+      setDate({
+        ...date,
+        end: data.target.value
+      })
+    }
+  }
+
+  // Search field Change
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
@@ -286,6 +309,7 @@ export function UserManagement(props) {
 
   const toggleModal =(e,data, i)=>{
   	setModal(true);
+    rows[i].id = i;
     setArrayDetails(rows[i]);
     if(data == 'delete'){
       setModal({
@@ -382,7 +406,10 @@ export function UserManagement(props) {
     				type="date"
     				size="small"
             placeholder="From Date"
-    				defaultValue={new Date()}
+            name="start"
+            value={date.start}
+            onChange={(e) => handleDateChange(e, 'start')}
+    				// defaultValue={new Date()}
     				className={classes.date1}
             InputProps={{
               placeholder: "From Date",
@@ -412,7 +439,10 @@ export function UserManagement(props) {
     				variant="outlined"
     				type="date"
     				size="small"
-    				defaultValue={new Date()}
+    				// defaultValue={new Date()}
+            name="end"
+            value={date.end}
+            onChange={(e) => handleDateChange(e, 'end')}
     				className={classes.date1}
     				// InputLabelProps={{
             //   label: 'To Date',
@@ -604,7 +634,9 @@ const mapDispatchToProps = (dispatch) => {
 		// add_user: (user) =>
 		// 	dispatch(actions.userActions(user))
 	setUserData	: (data) =>
-			dispatch(actions.setUserData(data))
+			dispatch(actions.setUserData(data)),
+  deleteUser: (id) => 
+    dispatch(actions.deleteUser(id))
 	}
 }
 

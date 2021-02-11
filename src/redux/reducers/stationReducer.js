@@ -2,7 +2,7 @@
 //   AUTHENTICATE,
 //   AUTHENTICATE_ERROR_AUTH,
 // } from '../actions/authActions';
-import { ADD_STATION, EDIT_STATION } from "../actions/stationActions";
+import { ADD_STATION, EDIT_STATION, DELETE_STATION } from "../actions/stationActions";
 
 const initialState = {
   details: [],
@@ -31,6 +31,13 @@ const stationReducer = (state = initialState, action) => {
       return {
         ...state,
         isEdit: action.value
+      }
+
+    case DELETE_STATION: 
+      let stations = state.details.filter((item, index) => index !== action.deleteId)
+      return {
+        ...state,
+        details: stations       
       }
     default:
       return state;

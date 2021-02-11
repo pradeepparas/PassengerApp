@@ -220,7 +220,10 @@ const rows = [
 
 export default function StationManagement(props) {
 // name, calories, fat, carbs, protein
-
+  const [date, setDate] = useState({
+    start: new Date().toISOString().slice(0, 10),
+    end: new Date().toISOString().slice(0, 10),
+  })
 
 	const [arrayDetails, setArrayDetails] = useState([]);
 	const [showModal, setShowModal] = useState(false);
@@ -251,6 +254,23 @@ export default function StationManagement(props) {
 			deletedModal: true
 		})
 	}
+
+  // Changing Date fields
+  const handleDateChange = (data, type) => {
+    console.log(data)
+    // debugger
+    if(type == 'start') {
+      setDate({
+        ...date,
+        start: data.target.value
+      })
+    } else {
+      setDate({
+        ...date,
+        end: data.target.value
+      })
+    }
+  }
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
@@ -328,18 +348,15 @@ export default function StationManagement(props) {
     				type="date"
     				size="small"
             placeholder="From Date"
-    				defaultValue={new Date()}
+            name="start"
+            value={date.start}
+            onChange={(e) => handleDateChange(e, 'start')}
     				className={classes.date1}
             InputProps={{
               placeholder: "From Date",
-              // endAdornment: null,
               classes: { input: classes.input1 },
               focused: classes.focused1,
             }}
-    				// InputLabelProps={{
-            //   placeholder: 'From Date',
-    				// 	shrink: true,
-    				// }}
     			/>
     		</div>
 
@@ -350,14 +367,10 @@ export default function StationManagement(props) {
     				variant="outlined"
     				type="date"
     				size="small"
-    				defaultValue={new Date()}
+            name="end"
+            value={date.end}
+            onChange={(e) => handleDateChange(e, 'end')}
     				className={classes.date1}
-    				// InputLabelProps={{
-            //   label: 'To Date',
-    				// 	shrink: true,
-            //   classes: { input: classes.input1 },
-            //   focused: classes.focused1,
-    				// }}
             InputProps={{
               placeholder: "From Date",
               // endAdornment: null,
