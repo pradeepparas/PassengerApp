@@ -17,6 +17,7 @@ import { config as i18nextConfig } from '../../translations';
 import firebaseConfig from '../../config/firebase';
 import Auth0Provider from '../../shared/components/auth/withAuth0';
 import auth0Config from '../../config/auth0';
+import { ToastContainer, toast } from 'react-toastify';
 
 i18n.init(i18nextConfig);
 
@@ -58,6 +59,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
+        <ToastContainer hideProgressBar />
       <Auth0Provider
         domain={auth0Config.domain}
         clientId={auth0Config.clientId}

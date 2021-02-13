@@ -1,6 +1,8 @@
-import React from 'react';
-import { Link, useHistory, useRouteMatch } from 'react-router-dom';
-// zIndex
+import React, { useEffect, useState } from 'react';
+import { connect } from "react-redux";
+import { compose } from 'redux';
+import { Link, useHistory, useRouteMatch, Redirect } from 'react-router-dom';
+
 // Material UI
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -45,6 +47,7 @@ import users from './images/users.svg';
 import users_cog from './images/users_cog.svg';
 
 // components
+import * as actions from "../../redux/actions/auth";
 import styles from "./Drawer.module.css";
 
 const drawerWidth = 240;
@@ -106,9 +109,11 @@ const useStyles = makeStyles((theme) => ({
   },
   button1: {
     "&:hover":{
+      color: "#b22222",
       backgroundColor: 'white',
     },
     "&:active": {
+      color: "#b22222",
       backgroundColor: 'white',
     }
   },
@@ -170,7 +175,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MiniDrawer(props) {
+export function MiniDrawer(props) {
+  var userDataLS = JSON.parse(localStorage.getItem('userDataLS'));
   const url = useRouteMatch()
 	const path = url.path.split('/')[1]
   const classes = useStyles();
@@ -178,6 +184,11 @@ export default function MiniDrawer(props) {
   const history = useHistory()
   const [open, setOpen] = React.useState(false);
   const [profileName, setProfileName] = React.useState('');
+  const [modules, setModules] = React.useState({
+    Station: false,
+    User: false,
+    Vendor: false,
+  })
 
   // Profile
   const [open_Profile, setOpenProfile] = React.useState(false);
@@ -188,23 +199,55 @@ export default function MiniDrawer(props) {
     console.log(a)
     let profile = localStorage.getItem("userName")
     setProfileName(profile)
-    debugger
+    // debugger
   }, [])
 
   const handleToggle = () => {
     setOpenProfile((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event, type) => {
+  const handleClose = async(event, type) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
     setOpenProfile(false);
     if(type == 'logout'){
+      await props.logOut();
       history.push("/")
     }
   };
 
+  React.useEffect(() => {
+    // debugger
+    if(props.authData){
+      // debugger
+      props.authData.role.access_module.map((data) => {
+        if(data.status){
+          setModules({
+            ...modules,
+            [data.module]: data.status
+          })
+        }
+      })
+    }
+    
+  }, [props.authenData])
+
+  // function hasAccess(arr){
+  //   debugger
+  //     // debugger
+  //     let item = []
+  //     arr.role.access_module.map((data) => {
+  //       debugger
+  //       if(data.status){
+  //         item.push({
+  //           [data.module]: data.status
+  //         })
+  //       }
+  //     })
+  //     setModules(item)
+  // }
+  
   function handleListKeyDown(event) {
     if (event.key === 'Tab') {
       event.preventDefault();
@@ -224,7 +267,7 @@ export default function MiniDrawer(props) {
 
   const handleDrawerOpen = () => {
     console.log(path)
-    debugger
+    // debugger
     setOpen((prevState) => !prevState);
   };
 
@@ -232,6 +275,28 @@ export default function MiniDrawer(props) {
     setOpen(false);
   };
   // header
+
+  // Check auth here
+  const checkAuth =(name, type)=>{
+  // debugger
+  // debugger
+  const module = userDataLS.role.access_module;
+  let auth= module.find(x=>x.status==true && x.module==name)
+  // debugger
+  if(auth){
+    // debugger
+    return true
+  }
+  else{
+    auth=module.find(x=>x.submodule.find(o=>o.name==type&&o.status==true))
+    if(auth){ 
+      return true
+    }
+    else{
+     return false
+    }
+  }
+  }
 
   return (
     <div style={{color: 'white'}} className={classes.root}>
@@ -244,7 +309,10 @@ export default function MiniDrawer(props) {
         }*/)}
       >
         <Toolbar style={{backgroundColor: 'white',minHeight: 57}}>
-        <div className={styles.header} style={{ borderRightStyle: 'groove'}}>MASTER ADMIN</div>
+        <div className={styles.header} 
+        style={{ borderRightStyle: 'solid',
+            borderColor: '#f2f2f3',
+            borderWidth: '4px'}}>MASTER ADMIN</div>
           <IconButton
             color="black"
             aria-label="open drawer"
@@ -260,8 +328,9 @@ export default function MiniDrawer(props) {
 
           </Typography>
           <div style={{ width: '77%'}}>
-          <div style={{float: 'right'}}>
+          <div style={{float: 'right'}} className={styles.profileDiv}>
             <Button
+              style={{color: open_Profile? '#b22222': ''}}
               disableRipple={true}
               className={classes.button1}
               ref={anchorRef}
@@ -269,7 +338,7 @@ export default function MiniDrawer(props) {
               aria-haspopup="true"
               onClick={handleToggle}
             >
-              John Doe <img style={{width: 15, height: 15, marginLeft: 10}} src={dropdown_circle} />
+              John Doe <img className={!open_Profile?styles.profileImg: ''} style={{width: 15, height: 15, marginLeft: 10}} src={dropdown_circle} />
             </Button>
             <Popper  open={open_Profile} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
           {({ TransitionProps, placement }) => (
@@ -319,26 +388,26 @@ export default function MiniDrawer(props) {
             </ListItem>
             </Link>
 
-            <Link to="/station-management">
+          {checkAuth('Station') && <Link to="/station-management">
             <ListItem disableRipple={true} className={path == 'station-management' ? styles.active : styles.list} button>
               <ListItemIcon><img className={path == 'station-management' ? styles.selected : styles.filter} src={train} /></ListItemIcon>
               <ListItemText className={path == 'station-management' ? styles.selectedText : styles.listText} primary={"Station Management"} />
             </ListItem>
-            </Link>
+            </Link>}
 
-            <Link to="/user-management">
+            {checkAuth('User') && <Link to="/user-management">
             <ListItem disableRipple={true} className={path == 'user-management' ? styles.active : styles.list} button>
               <ListItemIcon><img className={path == 'user-management' ? styles.selected : styles.filter} src={user_alt} /></ListItemIcon>
               <ListItemText className={path == 'user-management' ? styles.selectedText : styles.listText} primary={"User Management"} />
             </ListItem>
-            </Link>
+            </Link>}
 
-            <Link to="/vendors">
+            {checkAuth('Vendor') &&<Link to="/vendors">
             <ListItem disableRipple={true} className={path == 'vendors' ? styles.active : styles.list} button>
               <ListItemIcon><img className={path == 'vendors' ? styles.selected : styles.filter} src={user_astronaut} /></ListItemIcon>
               <ListItemText className={path == 'vendors' ? styles.selectedText : styles.listText} primary={"Vendor Reports"} />
             </ListItem>
-            </Link>
+            </Link>}
 
             <Link to="/revenue">
             <ListItem disableRipple={true} className={path == 'revenue' ? styles.active : styles.list} button>
@@ -370,25 +439,27 @@ export default function MiniDrawer(props) {
   );
 }
 
-// const mapStateToProps = (state) => {
-//
-// 	return {
-//     email: state.
-// 		// loading: state.auth.loading,
-// 		// error: state.auth.error,
-// 		// isAuthenticated: state.auth.token !== null,
-// 		// authRedirectPath: state.auth.authRedirectPath,
-// 	};
-// };
-//
-// const mapDispatchToProps = (dispatch) => {
-// 	return {
-// 		// onAuth: (username, password) =>
-// 		// 	dispatch(actions.auth(username, password)),
-// 		// 	updateSignup:()=>
-// 		// 	  dispatch(actions.updateSingupFlag()),
-// 		// onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
-// 	};
-// };
-//
-// export default compose(connect(mapStateToProps,  mapDispatchToProps))(MiniDrawer);
+const mapStateToProps = (state) => {
+
+	return {
+    loginMessage: state.Auth.loginMessage,
+    token: state.Auth.tokenId,
+    authData: state.Auth.authData,
+		// loading: state.auth.loading,
+		// error: state.auth.error,
+		// isAuthenticated: state.auth.token !== null,
+		// authRedirectPath: state.auth.authRedirectPath,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		logOut: () =>
+			dispatch(actions.auth()),
+		// 	updateSignup:()=>
+		// 	  dispatch(actions.updateSingupFlag()),
+		// onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
+	};
+};
+
+export default compose(connect(mapStateToProps,  mapDispatchToProps))(MiniDrawer);

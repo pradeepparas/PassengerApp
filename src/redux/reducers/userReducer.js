@@ -1,4 +1,4 @@
-import { ADD_USER, DELETE_USER } from "../actions/userActions";
+import { ADD_USER, DELETE_USER, EDIT_USER, SET_ISADD } from '../actions/actionTypes';
 
 const initialState = {
   usersList: [],
@@ -7,7 +7,7 @@ const initialState = {
 };
 
 const userReducer = (state = initialState, action) => {
-  debugger
+  // debugger
   switch (action.type) {
     case ADD_USER:
       var value = action.user;
@@ -15,7 +15,7 @@ const userReducer = (state = initialState, action) => {
         ...state,
         usersList: state.usersList.concat(value)
       }
-      case 'EDIT_USER':
+      case EDIT_USER:
         var value = action.data;
         return {
           ...state,
@@ -23,7 +23,7 @@ const userReducer = (state = initialState, action) => {
           isEdit:true
         }
 
-      case "SET_ISADD":
+      case SET_ISADD:
         return {
           ...state,
           isEdit: action.value

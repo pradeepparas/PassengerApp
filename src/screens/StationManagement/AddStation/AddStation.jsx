@@ -186,34 +186,44 @@ export function AddStation(props) {
 	const { station_id } = useParams();
   const [isAdd, setIsAdd] = useState(false);
   const [modal, setModal] = useState(false);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [contract_start_date, setcontract_start_date] = useState('');
+  const [exp_end_date, setexp_end_date] = useState('');
   const classes = useStyles();
   const history= useHistory();
+  const [managedByList, setManagedByList] = useState([])
   const [state, setState]=useState({
-      stationName:"",
-      stationCode:"",
-      stationType:"",
-      managedBy:"",
-      noPlatforms:"",
-      stationLatitude:"",
-      stationLongitude:"",
-      contractGiver:"",
-      contractWinner:"",
-      startDate:"",
-      endDate:"",
-      contractTenure:"",
+      station_name:"",
+      station_code:"",
+      station_type:"",
+      managed_by:"",
+      no_of_platform:"",
+      station__gps_ltd:"",
+      station__gps_lng:"",
+      contract_giver:"",
+      contract_winner:"",
+      contract_start_date:"",
+      exp_end_date:"",
+      contract_tenure:"",
   });
 
   const [details, setDetails] = useState({
-    personName: "",
-    personNumber: "",
-    personEmail: "",
-    adminName: "",
-    adminNumber: "",
-    adminEmail: "",
+    contact_name: "",
+    contact_mobile: "",
+    contact_email: "",
+    name: "",
+    mobile: "",
+    email: "",
     adminPassword: ""
   })
+
+  // GET Contractors List
+  useEffect(() => {
+    props.GetContractors()
+  }, [])
+
+  useEffect(() => {
+    setManagedByList(props.contractorsList)
+  }, [props.contractorsList])
 
 	// if(id == 'add') {
 	// 	setIsAdd(true)
@@ -239,16 +249,16 @@ export function AddStation(props) {
       debugger
       setDetails({
         ...details,
-        adminName: details.personName,
-        adminNumber: details.personNumber,
-        adminEmail: details.personEmail
+        name: details.contact_name,
+        mobile: details.contact_mobile,
+        email: details.contact_email
       })
     } else {
       setDetails({
         ...details,
-        adminName: "",
-        adminNumber: "",
-        adminEmail: ""
+        name: "",
+        mobile: "",
+        email: ""
       })
     }
   }
@@ -256,114 +266,143 @@ export function AddStation(props) {
   // close modal
   const toggleModalClose =()=>{
     setModal(false)
-    history.push('/station-management');
+    // history.push('/station-management');
   }
 
   // Handle Submit Station
-  const handleSubmit = (e) => {
-
+  const handleSubmit = async(e) => {
+    debugger
       e.preventDefault();
       if (!validateForm()) {
           return
       }
+      // state.contract_start_date = moment(state.contract_start_date).format("DD-MM-YYYY")
+      // state.exp_end_date = moment(state.exp_end_date).format("DD-MM-YYYY")
+
 			let merged = {...state, ...details};
+      merged.is_assign_as_admin = pchecked;
 			// setAddDetails(merged)
-      merged.stationCode = merged.stationCode.toUpperCase();
-			props.add_station(merged)
-      setModal(true);
-			if(station_id == 'add'){
-				setIsAdd(true);
-			} else {
-				setIsAdd(false);
-			}
+      merged.station_code = merged.station_code.toUpperCase();
+		  let response = await props.add_station(merged)
+      console.log(response)
+      debugger
+      
+      // setModal(true);
+			// if(station_id == 'add'){
+			// 	setIsAdd(true);
+			// } else {
+			// 	setIsAdd(false);
+			// }
       // props.addPackage(state)
   }
+
+  useEffect(() => {
+    if(props.isSubmitted){
+      setModal(true);
+      if(station_id == 'add'){
+        setIsAdd(true);
+      } else {
+        setIsAdd(false);
+      } 
+    } else {
+         
+    }
+  }, [])
 
   // validate form
   const validateForm =()=>{
     // All regex for validation
-       var emailValid = details.adminEmail.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-       var personEmail = details.personEmail.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-       var mobileValid = details.adminNumber.toString().match(/^[0]?[6789]\d{9}$/);
-       var usernameRegex = state.stationName.toString().match(/^[a-zA-Z ]+$/);
-       var code = state.stationCode.match(/^[a-zA-Z]+$/);
+       var emailValid = details.email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+       var contact_email = details.contact_email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+       var mobileValid = details.mobile.toString().match(/^[0]?[6789]\d{9}$/);
+       var usernameRegex = state.station_name.toString().match(/^[a-zA-Z ]+$/);
+       var code = state.station_code.match(/^[a-zA-Z]+$/);
 
        var isValid= true;
-       if(state.stationName.trim()==''|| !usernameRegex){
-           errors.stationName="station name is required or invalid name";
+       if(state.station_name.trim()==''|| !usernameRegex){
+           errors.station_name="station name is required or invalid name";
            isValid =false;
        }
-      else if(state.stationCode.toString().trim()==''|| !code){
-          errors.stationCode="station code is required or invalid code";
+      else if(state.station_code.toString().trim()==''|| !code){
+          errors.station_code="station code is required or invalid code";
           isValid =false;
       }
-      else  if(state.stationType.trim()==''){
-          errors.stationType="station type is required";
+      else  if(state.station_type.trim()==''){
+          errors.station_type="station type is required";
           isValid =false;
       }
-      else if(state.managedBy.trim()==''){
-        errors.managedBy="managed by is required";
+      else if(state.managed_by ==''){
+        errors.managed_by="managed by is required";
         isValid =false;
       }
-      else if(state.stationLatitude.toString().trim()=='' || isNaN(state.stationLatitude)){
-        errors.stationLatitude="Latitude is required or invalid value";
+      else if(state.station__gps_ltd.toString().trim()=='' || isNaN(state.station__gps_ltd)){
+        errors.station__gps_ltd="Latitude is required or invalid value";
         isValid =false;
       }
 
-      else if(state.stationLongitude.toString().trim()=='' || isNaN(state.stationLongitude)){
-          errors.stationLongitude="Longitude is required or invalid value";
+      else if(state.station__gps_lng.toString().trim()=='' || isNaN(state.station__gps_lng)){
+          errors.station__gps_lng="Longitude is required or invalid value";
           isValid =false;
       }
-      else if(state.noPlatforms.toString().trim()=='' || isNaN(state.noPlatforms)){
-          errors.noPlatforms="number of platforms is required or invalid number";
-          isValid =false;
-      }
-
-      else if(state.stationLatitude.toString().trim()=='' || isNaN(state.stationLatitude)){
-          errors.stationLatitude="Latitude is required or invalid value";
+      else if(state.no_of_platform.toString().trim()=='' || isNaN(state.no_of_platform)){
+          errors.no_of_platform="mobile of platforms is required or invalid mobile";
           isValid =false;
       }
 
-      else if(state.stationLongitude.toString().trim()=='' || isNaN(state.stationLongitude)){
-          errors.stationLongitude="Longitude is required or invalid value";
+      else if(state.station__gps_ltd.toString().trim()=='' || isNaN(state.station__gps_ltd)){
+          errors.station__gps_ltd="Latitude is required or invalid value";
           isValid =false;
       }
 
-      else if(state.contractGiver.trim()=='' || !state.contractGiver.toString().match(/^[a-zA-Z ]+$/)){
-          errors.contractGiver="contract giver field is empty or accept only alphabets";
-          isValid =false;
-      }
-      else if(state.contractWinner.trim()==''|| !state.contractWinner.toString().match(/^[a-zA-Z ]+$/)){
-          errors.contractWinner="contract winner field is empty";
-          isValid =false;
-      }
-      else if(state.contractTenure.trim()=='' || !state.contractTenure.toString().match(/^[a-zA-Z0-9 ]+$/)){
-          errors.contractTenure="contract tenure is required or invalid field";
+      else if(state.station__gps_lng.toString().trim()=='' || isNaN(state.station__gps_lng)){
+          errors.station__gps_lng="Longitude is required or invalid value";
           isValid =false;
       }
 
-      else if(details.personName.trim()=='' || !details.personName.toString().match(/^[a-zA-Z ]+$/)){
-          errors.personName="person name is required or invalid field";
+      else if(state.contract_giver.trim()=='' || !state.contract_giver.toString().match(/^[a-zA-Z ]+$/)){
+          errors.contract_giver="contract giver field is empty or accept only alphabets";
           isValid =false;
       }
-      else if(details.personNumber.trim()=='' || !details.personNumber.toString().match(/^[0]?[6789]\d{9}$/)){
-          errors.personNumber="phone number is required or invalid number";
+      else if(state.contract_winner.trim()==''|| !state.contract_winner.toString().match(/^[a-zA-Z ]+$/)){
+          errors.contract_winner="contract winner field is empty";
           isValid =false;
       }
-      else if(details.personEmail.trim()!=='' && !personEmail){
-          errors.personEmail="invalid email address";
+      // contract_start_date:"", exp_end_date:"",
+      else if(state.contract_start_date ==''){
+        errors.contract_start_date="start date is required";
+        isValid =false;
+      }
+      else if(state.exp_end_date ==''){
+        errors.exp_end_date="date is required";
+        isValid =false;
+      }
+      else if(state.contract_tenure.trim()=='' || !state.contract_tenure.toString().match(/^[a-zA-Z0-9. ]+$/)){
+          errors.contract_tenure="contract tenure is required or invalid field";
           isValid =false;
       }
-      else if(details.adminName.trim()=='' || !details.adminName.toString().match(/^[a-zA-Z ]+$/)){
-          errors.adminName="admin name is required or invalid field";
+
+      else if(details.contact_name.trim()=='' || !details.contact_name.toString().match(/^[a-zA-Z ]+$/)){
+          errors.contact_name="person name is required or invalid field";
           isValid =false;
       }
-      else if(details.adminNumber.trim()=='' || !mobileValid){
-          errors.adminNumber="number is required or invalid number";
+      else if(details.contact_mobile.trim()=='' || !details.contact_mobile.toString().match(/^[0]?[6789]\d{9}$/)){
+          errors.contact_mobile="phone number is required or invalid number";
           isValid =false;
       }
-      else if(details.adminEmail.trim()!=='' && !emailValid){
-          errors.adminEmail="invalid email address";
+      else if(details.contact_email.trim()!=='' && !contact_email){
+          errors.contact_email="invalid email address";
+          isValid =false;
+      }
+      else if(details.name.trim()=='' || !details.name.toString().match(/^[a-zA-Z ]+$/)){
+          errors.name="admin name is required or invalid field";
+          isValid =false;
+      }
+      else if(details.mobile.trim()=='' || !mobileValid){
+          errors.mobile="mobile is required or invalid mobile";
+          isValid =false;
+      }
+      else if(details.email.trim()!=='' && !emailValid){
+          errors.email="invalid email address";
           isValid =false;
       }
       else if(!props.isEdit && (details.adminPassword.trim()=='' || 
@@ -389,6 +428,34 @@ export function AddStation(props) {
   };
 
   useEffect(() => {
+    if(state.exp_end_date && state.contract_start_date){
+      let start = state.contract_start_date;
+      let end = state.exp_end_date;
+
+      let months = end.getMonth() - start.getMonth();
+      let years = end.getFullYear() - start.getFullYear();
+      
+      let tenure = '';
+
+      if(end.getFullYear() - start.getFullYear() > 0){
+        tenure = years + " " + "Years"
+        if(end.getMonth() - start.getMonth() > 0){
+          tenure += " " + months + " " + "Months"
+        }
+      } else {
+        tenure = months + " " + "Months"
+      }
+
+      console.log(tenure)
+      debugger
+      setState({
+        ...state,
+        contract_tenure: tenure
+      })
+    }
+  }, [state.exp_end_date, state.contract_start_date])
+
+  useEffect(() => {
     if(props.isEdit){
       setState(props.stationData)
       setDetails(props.stationData)
@@ -408,10 +475,23 @@ export function AddStation(props) {
   const handleInputs = (event) => {
     console.log(event.target.name)
     console.log(event.target.value)
+    debugger
     setState({
       ...state,
       [event.target.name]: event.target.value
     })
+
+    debugger
+    if(event.target.name == 'managed_by'){
+      debugger
+      let value = managedByList.find(x => x._id == event.target.value)
+      // state.contract_winner = value.name
+      setState({
+        ...state,
+        [event.target.name]: event.target.value,
+        contract_winner: value.name
+      })
+    }
     // debugger
     setErros({errors, [event.target.name]:""})
   }
@@ -430,16 +510,17 @@ export function AddStation(props) {
         if(type=='start'){
           setState({
             ...state,
-            startDate:moment(date).format("DD-MM-YYYY")
+            // contract_start_date:moment(date).format("DD-MM-YYYY")
+            contract_start_date: date
           })
         } else {
           setState({
             ...state,
-            endDate:moment(date).format("DD-MM-YYYY")
+            // exp_end_date:moment(date).format("DD-MM-YYYY")
+            exp_end_date: date
           })
 					//props.match.params.
         }
-
    };
 
   return(
@@ -456,51 +537,53 @@ export function AddStation(props) {
             <div className={styles.grid}>
               <div className={styles.textfield}>
               <label style={{color: 'black'}}>Station Name</label>
-                <input autocomplete="off" name="stationName" value={state.stationName} onChange={handleInputs} className={styles.inputfield} type="text" />
-                <div className={styles.error_message}>{errors.stationName}</div>
+                <input autocomplete="off" name="station_name" value={state.station_name} onChange={handleInputs} className={styles.inputfield} type="text" />
+                <div className={styles.error_message}>{errors.station_name}</div>
               </div>
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Station Code</label>
-                <input style={{textTransform:'uppercase'}} autocomplete="off" name="stationCode" value={state.stationCode} onChange={handleInputs} className={styles.inputfield} type="text" />
-                <div className={styles.error_message}>{errors.stationCode}</div>
+                <input style={{textTransform:'uppercase'}} autocomplete="off" name="station_code" value={state.station_code} onChange={handleInputs} className={styles.inputfield} type="text" />
+                <div className={styles.error_message}>{errors.station_code}</div>
               </div>
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Station Type</label>
-                <select className={styles.select1} name="stationType" /*value={state.stationType}*/ onChange={handleInputs}>
+                <select className={styles.select1} name="station_type" /*value={state.station_type}*/ onChange={handleInputs}>
+                  {/* RURAL, URBAN, SEMI RURAL */}
                   <option selected disabled>Station Type</option>
-                  <option value="Bhopal">Bhopal</option>
-                  <option value="Indore">Indore</option>
-                  <option value="Habib Ganj">Habib Ganj</option>
+                  <option value="RURAL">RURAL</option>
+                  <option value="SEMI RURAL">SEMI RURAL</option>
+                  <option value="URBAN">URBAN</option>
               </select>
-              <div className={styles.error_message}>{errors.stationType}</div>
+              <div className={styles.error_message}>{errors.station_type}</div>
               </div>
 
               <div className={styles.textfield}>
               <label style={{color: 'black'}}>Managed By</label>
-              <select className={styles.select1} name="managedBy" /*value={state.managedBy}*/ onChange={handleInputs}>
+              <select className={styles.select1} name="managed_by" /*value={state.managed_by}*/ onChange={handleInputs}>
                 <option selected disabled>Managed By</option>
-                <option value="Indian Railways">Indian Railways</option>
-                <option value="Bansal Constructions">Bansal Constructions</option>
+                {managedByList.length > 0 ? managedByList.map(data =>
+                  <option key={data._id} value={data._id}>{data.name}</option>
+                  ) : null}
             </select>
-            <div className={styles.error_message}>{errors.managedBy}</div>
+            <div className={styles.error_message}>{errors.managed_by}</div>
             </div>
 
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Station GPS Latitude</label>
-                <input autocomplete="off" name="stationLatitude" value={state.stationLatitude} onChange={handleInputs} className={styles.inputfield} type="text" />
-                <div className={styles.error_message}>{errors.stationLatitude}</div>
+                <input autocomplete="off" name="station__gps_ltd" value={state.station__gps_ltd} onChange={handleInputs} className={styles.inputfield} type="text" />
+                <div className={styles.error_message}>{errors.station__gps_ltd}</div>
               </div>
 
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Station GPS Longitude</label>
-                <input autocomplete="off" className={styles.inputfield} type="text" name="stationLongitude" value={state.stationLongitude} onChange={handleInputs}/>
-                <div className={styles.error_message}>{errors.stationLongitude}</div>
+                <input autocomplete="off" className={styles.inputfield} type="text" name="station__gps_lng" value={state.station__gps_lng} onChange={handleInputs}/>
+                <div className={styles.error_message}>{errors.station__gps_lng}</div>
               </div>
 
             <div className={styles.textfield}>
               <label style={{color: 'black'}}>No. of Platforms </label>
-              <input autocomplete="off" name="noPlatforms" value={state.noPlatforms} onChange={handleInputs} className={styles.inputfield} type="text" />
-              <div className={styles.error_message}>{errors.noPlatforms}</div>
+              <input autocomplete="off" name="no_of_platform" value={state.no_of_platform} onChange={handleInputs} className={styles.inputfield} type="text" />
+              <div className={styles.error_message}>{errors.no_of_platform}</div>
             </div>
 
             </div>
@@ -511,13 +594,13 @@ export function AddStation(props) {
             <div className={styles.grid1}>
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Contract Giver</label>
-                <input autocomplete="off" name="contractGiver" value={state.contractGiver} onChange={handleInputs} className={styles.inputfield} type="text" />
-                <div className={styles.error_message}>{errors.contractGiver}</div>
+                <input autocomplete="off" name="contract_giver" value={state.contract_giver} onChange={handleInputs} className={styles.inputfield} type="text" />
+                <div className={styles.error_message}>{errors.contract_giver}</div>
               </div>
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Contract Winner</label>
-                <input autocomplete="off" name="contractWinner" value={state.contractWinner} onChange={handleInputs} className={styles.inputfield} type="text" />
-                <div className={styles.error_message}>{errors.contractWinner}</div>
+                <input autocomplete="off" name="contract_winner" value={state.contract_winner} onChange={handleInputs} className={styles.inputfield} type="text" />
+                <div className={styles.error_message}>{errors.contract_winner}</div>
               </div>
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Contract Start Date</label>
@@ -526,9 +609,9 @@ export function AddStation(props) {
                   peekNextMonth showMonthDropdown showYearDropdown
                   dropdownMode="select"
                   selected={new Date()}
-                  value={state.startDate}
+                  value={state.contract_start_date}
                   onChange={(e) => handleChange(e,'start')} placeholderText='' />
-                <div className={styles.error_message}>{errors.startDate}</div>
+                <div className={styles.error_message}>{errors.contract_start_date}</div>
               </div>
 
               <div className={styles.textfield}>
@@ -538,14 +621,14 @@ export function AddStation(props) {
                   peekNextMonth showMonthDropdown showYearDropdown
                   dropdownMode="select"
                   selected={new Date()}
-                  value={state.endDate}
+                  value={state.exp_end_date}
                   onChange={(e) => handleChange(e,'end')} placeholderText='' />
-                  <div className={styles.error_message}>{errors.endDate}</div>
+                  <div className={styles.error_message}>{errors.exp_end_date}</div>
               </div>
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Contract Tenure</label>
-                <input autocomplete="off" name="contractTenure" value={state.contractTenure} onChange={handleInputs} className={styles.inputfield} type="text" />
-                <div className={styles.error_message}>{errors.contractTenure}</div>
+                <input disabled={true} autocomplete="off" name="contract_tenure" value={state.contract_tenure} onChange={handleInputs} className={styles.inputfield} type="text" />
+                <div className={styles.error_message}>{errors.contract_tenure}</div>
               </div>
             </div>
         </div>
@@ -556,18 +639,18 @@ export function AddStation(props) {
           <div>
             <div className={styles.textfield}>
               <label style={{color: 'black'}}>Name</label>
-              <input autocomplete="off" name="personName" value={details.personName} onChange={handleDetails} className={styles.inputfield} type="text" />
-              <div className={styles.error_message}>{errors.personName}</div>
+              <input autocomplete="off" name="contact_name" value={details.contact_name} onChange={handleDetails} className={styles.inputfield} type="text" />
+              <div className={styles.error_message}>{errors.contact_name}</div>
             </div>
             <div className={styles.textfield}>
               <label style={{color: 'black'}}>Phone Number</label>
-              <input autocomplete="off" name="personNumber" value={details.personNumber} onChange={handleDetails} className={styles.inputfield} type="text" />
-              <div className={styles.error_message}>{errors.personNumber}</div>
+              <input autocomplete="off" name="contact_mobile" value={details.contact_mobile} onChange={handleDetails} className={styles.inputfield} type="text" />
+              <div className={styles.error_message}>{errors.contact_mobile}</div>
             </div>
             <div className={styles.textfield}>
               <label style={{color: 'black'}}>Email</label>
-              <input autocomplete="off" name="personEmail" value={details.personEmail} onChange={handleDetails} className={styles.inputfield} type="text" />
-              <div className={styles.error_message}>{errors.personEmail}</div>
+              <input autocomplete="off" name="contact_email" value={details.contact_email} onChange={handleDetails} className={styles.inputfield} type="text" />
+              <div className={styles.error_message}>{errors.contact_email}</div>
             </div>
             <div className={styles.textfield}>
             <FormControlLabel
@@ -600,18 +683,18 @@ export function AddStation(props) {
         <div>
           <div className={styles.textfield}>
             <label style={{color: 'black'}}>Name</label>
-            <input autocomplete="off" disabled={pchecked?true:false} name="adminName" value={details.adminName} onChange={handleDetails} className={styles.inputfield} type="text" />
-            <div className={styles.error_message}>{errors.adminName}</div>
+            <input autocomplete="off" disabled={pchecked?true:false} name="name" value={details.name} onChange={handleDetails} className={styles.inputfield} type="text" />
+            <div className={styles.error_message}>{errors.name}</div>
           </div>
           <div className={styles.textfield}>
             <label style={{color: 'black'}}>Phone</label>
-            <input autocomplete="off" disabled={pchecked?true:false} name="adminNumber" value={details.adminNumber} onChange={handleDetails} className={styles.inputfield} type="text" />
-            <div className={styles.error_message}>{errors.adminNumber}</div>
+            <input autocomplete="off" disabled={pchecked?true:false} name="mobile" value={details.mobile} onChange={handleDetails} className={styles.inputfield} type="text" />
+            <div className={styles.error_message}>{errors.mobile}</div>
           </div>
           <div className={styles.textfield}>
             <label style={{color: 'black'}}>Email</label>
-            <input autocomplete="off" disabled={pchecked?true:false} name="adminEmail" value={details.adminEmail} onChange={handleDetails} className={styles.inputfield} type="text" />
-            <div className={styles.error_message}>{errors.adminEmail}</div>
+            <input autocomplete="off" disabled={pchecked?true:false} name="email" value={details.email} onChange={handleDetails} className={styles.inputfield} type="text" />
+            <div className={styles.error_message}>{errors.email}</div>
           </div>
           {!props.isEdit && <div className={styles.textfield}>
             <label style={{color: 'black'}}>Password</label>
@@ -686,7 +769,9 @@ const mapStateToProps = (state) => {
 	return {
 		details: state.Stations.details,
     isEdit: state.Stations.isEdit,
-    stationData: state.Stations.stationData
+    stationData: state.Stations.stationData,
+    contractorsList: state.Stations.contractorsList,
+    isSubmitted: state.Stations.isSubmitted
 		// loading: state.auth.loading,
 		// error: state.auth.error,
 		// isAuthenticated: state.auth.token !== null,
@@ -697,7 +782,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
 	return {
 		add_station: (details) =>
-			dispatch(actions.stationActions(details))
+			dispatch(actions.stationActions(details)),
+    GetContractors: () => {
+      dispatch(actions.GetContractors())
+    }
 		// onAuth: (username, password) =>
 		// 	dispatch(actions.auth(username, password)),
 		// 	updateSignup:()=>

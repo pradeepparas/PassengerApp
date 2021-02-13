@@ -8,6 +8,7 @@ import todoReducer from './todoReducer';
 import authReducer from './authReducer';
 import stationReducer from './stationReducer';
 import userReducer from './userReducer'
+import auth from './auth';
 
 export {
   themeReducer,
@@ -19,5 +20,6 @@ export {
   todoReducer,
   authReducer,
   stationReducer,
-  userReducer
+  userReducer,
+  auth
 };

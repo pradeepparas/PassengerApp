@@ -56,7 +56,7 @@ export default function SimpleCard(props) {
 				<div className={styles.details}>
 
 					<div className={styles.image}>
-						{props.title == 'Total Services'?<div></div>: <Link to={props.link}><div className={styles.arrow1}>{props.arrow}</div></Link>}
+						{props.title == 'Total Services' || props.title == "Today's Revenue"?<div></div>: <Link to={props.link}><div className={styles.arrow1}>{props.arrow}</div></Link>}
 					</div>
 				</div>
 			</CardContent>

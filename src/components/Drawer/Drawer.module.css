@@ -76,6 +76,14 @@
   }
 }
 
+.profileImg {
+  filter: invert(0%) sepia(3%) saturate(0%) hue-rotate(250deg) brightness(103%) contrast(104%)
+}
+
+.profileDiv:hover .profileImg {
+  filter: none
+}
+
   /* .imageColor {
     filter: invert(0%) sepia(3%) saturate(0%) hue-rotate(250deg) brightness(103%) contrast(104%)
   } */

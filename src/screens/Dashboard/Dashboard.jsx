@@ -32,7 +32,8 @@ export default function DashBoard(props) {
 			{<Card title={'Total Users'} arrow={<CallMadeSharpIcon />} link="/users" number="20K" icon={servicestack} color="#7d00b5" />}
 			{<Card title={'Total Vendors'} arrow={<CallMadeSharpIcon />} link="/vendors" number="146" icon={user_friends} color="#ff007c" />}
 			{<Card title={'Total Services'} number="180" icon={user_check} color="#0a4491" />}
-		  {<Card title={'Total Revenue'} arrow={<CallMadeSharpIcon />} number="256K" link="/revenue" icon={rupee} color="#025e87" />}
+		  	{<Card title={'Total Revenue'} arrow={<CallMadeSharpIcon />} number="256K" link="/revenue" icon={rupee} color="#025e87" />}
+		  	{<Card title={"Today's Revenue"} arrow={<CallMadeSharpIcon />} number="2500" icon={rupee} color="#02873d" />}
 			</div>
 		</>
 	);

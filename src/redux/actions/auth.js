@@ -1,8 +1,9 @@
 import axios from 'axios';
+import * as API from '../../constants/APIs';
 import * as myConstClass from '../../screens/constants/constants';
 import * as actionTypes from './actionTypes';
-// import { ToastContainer, toast } from 'react-toastify';
-import { useHistory } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+// import { useHistory } from "react-router-dom";
 // import jwt_decode from "jwt-decode";
 
 const api_url = myConstClass.apiUrl;
@@ -13,65 +14,69 @@ export const authStart = () => {
     };
 };
 
-export const authSuccess = (token, userId) => {
+export const authSuccess = (token, user_data, message) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
         idToken: token,
-        userId: userId
+        authData: user_data,
+        message: message
     };
 };
 
 export const authFail = (error) => {
-
     return {
         type: actionTypes.AUTH_FAIL,
         error: error
     };
 };
 
+export const logOut = () => {
+    return {
+        type: actionTypes.AUTH_LOGOUT
+    }
+}
+
 export const auth = (username, password) => {
 
     return dispatch => {
-        dispatch(authStart());
+        var qs = require('qs');
+        // dispatch(authStart());
         const authData = {
-            value: username,
-            password: password,
-        };
+            username: username,
+            password: password
+        }
+        
+        var data = qs.stringify(authData);
+           var config = {
+             method: 'post',
+             url: API.LoginAPI,
+             headers: { 
+            //    'Accept-Language': 'hi', 
+               'Content-Type': 'application/x-www-form-urlencoded'
+             },
+             data : data
+           };
 
-        // axios.post(api_url+'user/login', authData, {
-        //         headers: {
-        //             'content-type': 'application/json'
-        //         }
-        //     })
-        //     .then(response => {
-        //
-        //         if(response.data.data.isActive){
-        //             toast.success('Logged In Successfully',{})
-        //         }
-        //         localStorage.setItem('token', response.data.token);
-        //
-        //            localStorage.setItem('status', response.data.data.isActive);
-        //            localStorage.setItem('orgId', response.data.data.organisation.length>0?response.data.data.organisation[0].organisationId:"");
-        //
-        //            localStorage.setItem('email', response.data.data.email);
-        //            localStorage.setItem('username', response.data.data.username);
-        //            localStorage.setItem('firstname', response.data.data.name);
-        //            localStorage.setItem('lastname', response.data.data.lastName);
-        //            localStorage.setItem('image', response.data.data.profileImage);
-        //
-        //            localStorage.setItem('phone', response.data.data.phone);
-        //
-        //
-        //
-        //         localStorage.setItem('userId', response.data.data._id);
-             // dispatch(authSuccess(response.data.token, response.data.data._id));
+        axios(config)
+            .then(response => {
+                debugger
+                if(response.data.success){
+                    debugger
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('username', response.data.user_data.name)
+                    localStorage.setItem('userId', response.data.user_data._id);
+                    localStorage.setItem('userDataLS', JSON.stringify(response.data.user_data))
+                    // localStorage.setItem('user', user));
+                    dispatch(authSuccess(response.data.token, response.data.user_data, response.data.message));
+                    toast.success(response.data.message)
+                }
+            }).then(() => {
 
-            // })
-            // .catch(err => {
-
+            })
+            .catch(err => {
                 dispatch(authFail({
-                    // error: err.response ? err.response.data : null
+                    error: err.message ? err.message : null
                 }));
-            // });
+            });
     };
 };

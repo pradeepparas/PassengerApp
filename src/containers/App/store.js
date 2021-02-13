@@ -10,7 +10,8 @@ import {
   sidebarReducer,
   authReducer,
   stationReducer,
-  userReducer
+  userReducer,
+  auth
 } from '../../redux/reducers/index';
 import appConfigReducer from '../../redux/reducers/appConfigReducer';
 import covidReducer from '../Maps/VectorMapWithRequestData/redux/covidReducer';
@@ -18,6 +19,7 @@ import todoReducer from '../Todo/redux/reducer';
 
 const reducer = combineReducers({
   Users: userReducer,
+  Auth: auth,
   Stations: stationReducer,
   form: reduxFormReducer, // mounted under "form",
   theme: themeReducer,

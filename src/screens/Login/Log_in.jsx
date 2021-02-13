@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container } from "reactstrap";
 import { Row, Col } from "reactstrap";
 import { connect } from "react-redux";
 import { compose } from 'redux';
 import Cookies from 'js-cookie';
 import { Link, Redirect, useHistory } from "react-router-dom";
+import { toast,ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
 
 // Images
 import background1 from "./images/background1.png";
@@ -15,7 +17,7 @@ import button1 from "./images/button1.png";
 
 // Components
 import styles from "./Log_in.module.css";
-import * as actions from "../../redux/index";
+import * as actions from "../../redux/actions/auth";
 
 // Material UI
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
@@ -162,7 +164,7 @@ export const Log_in = (props) => {
 		event.preventDefault();
 	};
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
 		var number = username.match(/^([_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,5}))|(\d+$)$/);
 		// var emailValid = username.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
     console.log('clicked')
@@ -188,14 +190,24 @@ export const Log_in = (props) => {
 		}
 
 		setIsLoading(true);
-		// props.onAuth(username, password);
+		await props.onAuth(username, password)
     localStorage.setItem('rememberMe', checked);
     localStorage.setItem('userName', checked ? username : '');
-		history.push('/dashboard')
+    debugger
 	};
+
+  
+
+  useEffect(() => {
+    if(props.token){
+      history.push('/dashboard')
+    }
+  }, [props.token])
 
   return(
     <div>
+
+      
       <Container fluid={true}>
       <Row>
         <Col md="6" className={styles.left}>
@@ -343,6 +355,8 @@ export const Log_in = (props) => {
 const mapStateToProps = (state) => {
 
 	return {
+    loginMessage: state.Auth.loginMessage,
+    token: state.Auth.tokenId
 		// loading: state.auth.loading,
 		// error: state.auth.error,
 		// isAuthenticated: state.auth.token !== null,
@@ -352,8 +366,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		// onAuth: (username, password) =>
-		// 	dispatch(actions.auth(username, password)),
+		onAuth: (username, password) =>
+			dispatch(actions.auth(username, password)),
 		// 	updateSignup:()=>
 		// 	  dispatch(actions.updateSingupFlag()),
 		// onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
