@@ -5,15 +5,14 @@ import moment from 'moment';
 import { connect } from "react-redux";
 import { compose } from 'redux';
 import * as actions from "../../../redux/actions/userActions";
+import * as API from "../../../constants/APIs";
+import axios from 'axios';
+import { getStationData } from "../../../redux/actions/stationActions";
 import {
 	Modal,
 	ModalHeader,
 	ModalBody,
 	ModalFooter,
-	Input,
-	Label,
-	Form,
-	FormGroup,
 } from "reactstrap";
 
 // components saveButton
@@ -184,7 +183,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function AddUser(props) {
+  const [dropDownDetails, setDropDownDetails] = useState([]);
   const [isAdd, setIsAdd] = useState(false);
+  const [role, setRole] = useState([]);
   const [modal, setModal] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -213,7 +214,47 @@ export function AddUser(props) {
     setModal(false)
     history.push('/user-management')
   }
-//
+
+  // Getting User Data By Id
+  // useEffect(() => {
+  //   if(props.isEdit){
+  //     axios({
+  //       url: `${API.GetStationAPI}/${station_id}`,
+  //       headers: { 
+  //         //    'Accept-Language': 'hi', 
+  //         "accept": "application/json",
+  //         'Authorization': 'Bearer ' + localStorage.getItem('token'),
+  //          },
+  //     }).then(response => {
+  //       if(response.data.success){
+  //         debugger
+  //         // setState(response.data.staion)
+  //           let data = response.data.staion;
+  //           data.exp_end_date = moment(data.exp_end_date)
+  //           data.contract_start_date = moment(data.contract_start_date)
+  //           data.name=response.data.staion.station_admin.name;
+  //           data.mobile = response.data.staion.station_admin.mobile;
+  //           data.email =response.data.staion.station_admin.email;
+  //           data.station_admin_id = response.data.staion.station_admin._id;
+  //           data.managed_by = data.managed_by?response.data.staion.managed_by._id: "";
+  //           if(data.is_assign_as_admin){
+  //             data.mobile = response.data.staion.contact_mobile
+  //             setPChecked(data.is_assign_as_admin)
+  //           }
+  //           // data.is_assign_as_admin
+  //           delete data["station_admin"];
+  //           setState(data)
+
+  //       } else {
+  //         setState([]);
+  //       }
+  //     })
+  //     setState(props.stationData)
+  //     // setDetails(props.stationData)
+  //   }
+  // }, [])
+
+    // 
 		useEffect(()=>{
 		if(props.isEdit){
 			console.log(props.user)
@@ -224,6 +265,30 @@ export function AddUser(props) {
 			//funciton
 		}
 		},[])
+
+    //  Getting dropdown details  
+    useEffect(() => {
+      if(props.userDetails){
+        setDropDownDetails(props.userDetails)
+        console.log(props.userDetails)
+        // debugger
+      }
+    }, [props.userDetails])
+
+    useEffect(() => {
+      axios({
+        url: API.GetRoleAPI,
+        headers: {
+          "accept": "application/json",
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        }
+      }).then((response)=> {
+        setRole(response.data.role)
+      })
+    }, [])
+
+
   // Handle Submit Station
   const handleSubmit = (e) => {
 
@@ -233,6 +298,19 @@ export function AddUser(props) {
       }
       state.date = moment(new Date()).format("DD-MM-YYYY")
       
+      // Add and Update User
+      if(user_id == 'add'){
+        
+        console.log(state)
+        debugger
+		    props.addUser(state)
+        // debugger
+      } else {
+        console.log(state)
+        debugger
+        props.EditStationDetails(state)
+      }
+
       state.userName = state.userName.trim()
       console.log(state)
       debugger
@@ -249,10 +327,9 @@ export function AddUser(props) {
   }
 
 	// useEffect
-	// useEffect(() => {
-	// 	console.log(props.user)
-	//
-	// }, [])
+	useEffect(() => {
+		props.getUserData()	
+	}, [])
 
   // validate form
   const validateForm =()=>{
@@ -349,9 +426,9 @@ export function AddUser(props) {
               <label style={{color: 'black'}}>Station Name</label>
               <select className={styles.select1} name="stationName" /*value={state.stationName}*/ onChange={handleInputs}>
                 <option selected disabled>Station Name</option>
-                <option value="Bhopal">Bhopal</option>
-                <option value="Indore">Indore</option>
-                <option value="Habib Ganj">Habib Ganj</option>
+                {dropDownDetails.length > 0 && dropDownDetails.map(data => 
+                  <option key={data._id} value={data._id}>{data.station_name}</option>
+                )}
             </select>
             <div className={styles.error_message}>{errors.stationName}</div>
             </div>
@@ -360,8 +437,9 @@ export function AddUser(props) {
 							<label style={{color: 'black'}}>Role</label>
 							<select className={styles.select1} name="role" /*value={state.role}*/ onChange={handleInputs}>
 								<option selected disabled>Role</option>
-								<option value="Station Admin">Station Admin</option>
-								<option value="Master Admin">Master Admin</option>
+								{role.length > 0 && role.map(data => 
+                  <option key={data._id} value={data._id}>{data.role}</option>
+                  )}
 						</select>
 						<div className={styles.error_message}>{errors.role}</div>
 						</div>
@@ -435,14 +513,18 @@ export function AddUser(props) {
 const mapStateToProps = (state) => {
 	return {
 		user: state.Users.userData,
-		isEdit: state.Users.isEdit
+		isEdit: state.Users.isEdit,
+    userDetails: state.Stations.stationDetails,
 	}
 }
 
 const mapDispatchToProps = (dispatch) => {
 	return {
 		addUser: (user) =>
-			dispatch(actions.userActions(user))
+			dispatch(actions.userActions(user)),
+    getUserData: () => {
+      dispatch(getStationData())
+    },
 	}
 }
 

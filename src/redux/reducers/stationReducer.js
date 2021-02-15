@@ -10,11 +10,12 @@ const initialState = {
   stationData: {},
   isEdit: false,
   contractorsList: [],
-  isSubmitted: false
+  isSubmitted: false,
+  docs: []
 };
 
 const stationReducer = (state = initialState, action) => {
-  debugger
+  // debugger
   switch (action.type) {
     case actionTypes.ADD_STATION:
       var value = action.details;
@@ -65,6 +66,12 @@ const stationReducer = (state = initialState, action) => {
       return {
         ...state,
         stationDetails: action.stationData
+      }
+
+    case actionTypes.FETCH_STATION_BYPARAMS:
+      return {
+        ...state,
+        docs: action.docs
       }
     default:
       return state;

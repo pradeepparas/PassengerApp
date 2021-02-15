@@ -49,6 +49,7 @@ import Pagination from '@material-ui/lab/Pagination';
 import styles from './UserManagement.module.css';
 import styled from 'styled-components';
 import * as actions from "../../redux/actions/userActions";
+import { getStationData } from "../../redux/actions/stationActions";
 
 // import { Modal1 } from './Modal';
 // import { GlobalStyle } from './globalStyles';
@@ -242,11 +243,7 @@ const rows = [
 ];
 
 export function UserManagement(props) {
-  const [date, setDate] = useState({
-    start: new Date().toISOString().slice(0, 10),
-    end: new Date().toISOString().slice(0, 10),
-  })
-	// const [rows, setRows] = useState([]);
+	const [rows, setRows] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [arrayDetails, setArrayDetails] = useState([]);
   const [modal, setModal] = useState({
@@ -255,6 +252,14 @@ export function UserManagement(props) {
 		deletedModal: false
   });
   const classes = useStyles();
+  const [search, setSearch] = useState({
+    station_name: "",
+    name: "",
+    role: "",
+    start_date: new Date().toISOString().slice(0, 10),
+    end_date: new Date().toISOString().slice(0, 10),
+  })
+  const [dropDownDetails, setDropDownDetails] = useState([]);
   const [values, setValues] = React.useState({
     amount: '',
     password: '',
@@ -264,13 +269,10 @@ export function UserManagement(props) {
   });
   const [age, setAge] = React.useState('');
 
-	// useEffect(() => {
-	// 	setRows(props.user)
-	// }, [props.user])
-
 	const openModal = () => {
     setShowModal(prev => !prev);
   };
+
 // Handle Delete function
 	const handleDeleteSubmit = () => {
 		// set delete modal false
@@ -281,19 +283,40 @@ export function UserManagement(props) {
 		})
 	}
 
+  // Getting Users list By Parameters
+    useEffect(() => {
+      props.getUserData();
+      props.getUserDataByParams(1, 10);
+      // debugger
+    }, [])
+
+    useEffect(() => {
+      if(props.userDetails){
+        setDropDownDetails(props.userDetails)
+        console.log(props.userDetails)
+        // debugger
+      }
+
+      if(props.userDocs){
+        console.log("",props.userDocs)
+        setRows(props.userDocs)
+        debugger
+      }
+    }, [props.userDocs, props.userDetails])
+
    // Changing Date fields
    const handleDateChange = (data, type) => {
     console.log(data)
     // debugger
     if(type == 'start') {
-      setDate({
-        ...date,
-        start: data.target.value
+      setSearch({
+        ...search,
+        start_date: data.target.value
       })
     } else {
-      setDate({
-        ...date,
-        end: data.target.value
+      setSearch({
+        ...search,
+        end_date: data.target.value
       })
     }
   }
@@ -341,6 +364,19 @@ export function UserManagement(props) {
       props.setIsEditFalse(false)
     }
 
+    const searchUsers = () => {
+      console.log(search)
+      debugger
+      props.getUserDataByParams(1, 10, search)
+    }
+
+    const handleInputs = (event) => {
+      setSearch({
+        ...search,
+        [event.target.name]: [event.target.value]
+      })
+    }
+
   return(
     <div className={styles.main}>
       <div className={styles.header}>
@@ -359,8 +395,9 @@ export function UserManagement(props) {
             // label="Search"
             className={classes.textField1}
             id="outlined-adornment-weight"
-            value={values.weight}
-            onChange={handleChange('weight')}
+            value={search.name}
+            name="name"
+            onChange={handleInputs}
             startAdornment={<SearchOutlinedIcon />}
             aria-describedby="outlined-weight-helper-text"
             inputProps={{
@@ -374,22 +411,22 @@ export function UserManagement(props) {
         </FormControl>
 
         {/*Search Button*/}
-        <Button className={classes.button1} variant="contained">
+        <Button onClick={searchUsers} className={classes.button1} variant="contained">
           Search
         </Button>
 
          {/*Select*/}
          <div className={styles.selectDiv1}>
-           <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
+           <select className={styles.select1} name="station_name" /*value={this.state.courseId}*/ onChange={handleInputs}>
              <option selected disabled>Station Name</option>
-             <option value="1">Indore</option>
-             <option value="2">Bhopal</option>
-             <option value="3">Habib Ganj</option>
+             {dropDownDetails.length > 0 && dropDownDetails.map(data => 
+               <option key={data._id} value={data._id}>{data.station_name}</option>
+             )}
          </select>
          </div>
 
           <div className={styles.selectDiv1}>
-            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
+            <select className={styles.select1} name="role" /*value={this.state.courseId}*/ onChange={handleInputs}>
               <option selected disabled>Role</option>
               <option value="1">Station Admin</option>
               <option value="2">Master Admin</option>
@@ -406,8 +443,8 @@ export function UserManagement(props) {
     				type="date"
     				size="small"
             placeholder="From Date"
-            name="start"
-            value={date.start}
+            name="start_date"
+            value={search.start_date}
             onChange={(e) => handleDateChange(e, 'start')}
     				// defaultValue={new Date()}
     				className={classes.date1}
@@ -440,8 +477,8 @@ export function UserManagement(props) {
     				type="date"
     				size="small"
     				// defaultValue={new Date()}
-            name="end"
-            value={date.end}
+            name="end_date"
+            value={search.end_date}
             onChange={(e) => handleDateChange(e, 'end')}
     				className={classes.date1}
     				// InputLabelProps={{
@@ -481,18 +518,18 @@ export function UserManagement(props) {
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
-              <TableCell align="center">{row.userName}</TableCell>
-              <TableCell align="center">{row.userNumber}</TableCell>
-              <TableCell align="center">{row.userEmail}</TableCell>
-              <TableCell align="center">{row.role}</TableCell>
-              <TableCell align="center">{row.stationName}</TableCell>
-              <TableCell align="center">{row.date}</TableCell>
+              <TableCell align="center">{row.name}</TableCell>
+              <TableCell align="center">{row.mobile}</TableCell>
+              <TableCell align="center">{row.email? row.email:'-'}</TableCell>
+              <TableCell align="center">{row.role?row.role.role: '-'}</TableCell>
+              <TableCell align="center">{row.station_id?row.station_id.station_name: '-'}</TableCell>
+              <TableCell align="center">{moment(row.created_at).format("DD-MM-YYYY")}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
                   <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
-                  <Link to={`user-management/${index}`}><div onClick={(e) =>editUser(e, index, row)}>Edit Details</div></Link>
+                  <Link to={`user-management/${row._id}`}><div onClick={(e) =>editUser(e, index, row)}>Edit Details</div></Link>
                   <a><div onClick={(e) => toggleModal(e, 'delete', index)}>Delete User</div></a>
                 </div>
                 </div></TableCell>
@@ -580,19 +617,19 @@ export function UserManagement(props) {
 							{/*<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Details</div>*/}
 								<div className={styles.modalBox}>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Role</span><span style={{marginLeft: 130,marginRight: 25}}> - </span>{arrayDetails.role}
+								<span className={styles.textModal}>Role</span><span style={{marginLeft: 130,marginRight: 25}}> - </span>{arrayDetails.role?arrayDetails.role.role: '-'}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Name</span><span style={{marginLeft:  121,marginRight: 25}}> - </span>{arrayDetails.userName}
+								<span className={styles.textModal}>Name</span><span style={{marginLeft:  121,marginRight: 25}}> - </span>{arrayDetails.name}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>User Phone Number</span><span style={{marginLeft: 32,marginRight: 25}}> - </span>{arrayDetails.userNumber}
+								<span className={styles.textModal}>User Phone Number</span><span style={{marginLeft: 32,marginRight: 25}}> - </span>{arrayDetails.mobile}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>User Email</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>{arrayDetails.userEmail}
+								<span className={styles.textModal}>User Email</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>{arrayDetails.email}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 75,marginRight: 25}}> - </span>{arrayDetails.stationName}
+								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 75,marginRight: 25}}> - </span>{arrayDetails.station_id?arrayDetails.station_id.station_name: '-'}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>{arrayDetails.date}
+								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>{moment(arrayDetails.created_at).format("DD-MM-YYYY")}
 								</div>
 								</div>
 						</div>
@@ -623,20 +660,28 @@ export function UserManagement(props) {
 const mapStateToProps = (state) => {
 	debugger
 	return {
-		user: state.Users.usersList
+		// user: state.Users.usersList,
+    userDocs: state.Users.docs,
+    userDetails: state.Stations.stationDetails,
 	}
 }
 
 const mapDispatchToProps = (dispatch) => {
 	return {
+    getUserDataByParams: (pageNo, size, params) => {
+      dispatch(actions.getUserDataByParams(pageNo, size, params))
+    },
+    getUserData: () => {
+      dispatch(getStationData())
+    },
     setIsEditFalse: (value) => 
       dispatch(actions.setIsEditFalse(value)),
 		// add_user: (user) =>
 		// 	dispatch(actions.userActions(user))
-	setUserData	: (data) =>
+	  setUserData	: (data) =>
 			dispatch(actions.setUserData(data)),
-  deleteUser: (id) => 
-    dispatch(actions.deleteUser(id))
+    deleteUser: (id) => 
+      dispatch(actions.deleteUser(id))
 	}
 }
 

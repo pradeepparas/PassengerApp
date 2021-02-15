@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { compose } from 'redux';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import axios from 'axios'
 import { Link, Redirect } from "react-router-dom";
 import {
 	Modal,
@@ -53,7 +54,8 @@ import { Modal1 } from './Modal';
 import { GlobalStyle } from './globalStyles';
 import * as constantValue from '../constants/constants';
 import * as actions from "../../redux/actions/stationActions";
-const api_url = constantValue.apiUrl;
+import * as API from "../../constants/APIs";
+import { toast } from 'react-toastify';
 
 const Container = styled.div`
   display: flex;
@@ -268,12 +270,19 @@ const rows = [
 ];
 
 export function StationManagement(props) {
-  const [date, setDate] = useState({
-    start: new Date().toISOString().slice(0, 10),
-    end: new Date().toISOString().slice(0, 10),
+  const [search, setSearch] = useState({
+    station_name: "",
+    name: "",
+    station_code: "",
+    station_type: "",
+    managed_by: "",
+    start_date: new Date().toISOString().slice(0, 10),
+    end_date: new Date().toISOString().slice(0, 10),
   })
+  const [managedByList, setManagedByList] = useState([])
 	const [showModal, setShowModal] = useState(false);
 	const [rows, setRows] = useState([]);
+  const [dropDownDetails, setDropDownDetails] = useState([]);
   const [modal, setModal] = useState({
     deleteModal: false,
     details: false,
@@ -296,25 +305,45 @@ export function StationManagement(props) {
 
   useEffect(() => {
     if(props.stationDetails){
-      setRows(props.stationDetails)
+      setDropDownDetails(props.stationDetails)
       console.log(props.stationDetails)
-      debugger
+      // debugger
     }
-  }, [props.stationDetails])
+    if(props.stationDocs){
+      console.log("props.stateionDocs",props.stationDocs)
+      setRows(props.stationDocs)
+      // debugger
+    }
+  }, [props.stationDetails, props.stationDocs])
 
 // Handle Delete function
-	const handleDeleteSubmit = () => {
-    console.log(arrayDetails.id)
+	const handleDeleteSubmit = (e, id) => {
+    console.log(id)
     debugger
-    props.deleteStation(arrayDetails.id)
+    axios({
+      url: `${API.DeleteStationAPI}/${id}`,
+      method: "DELETE",
+      headers: { 
+        //    'Accept-Language': 'hi', 
+        "accept": "application/json",
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+         },
+    }).then((response) => {
+      if(response.data.success){
+        // toast.success(response.data.message)
+        setModal({
+          deleteModal: false,
+          deletedModal: true
+        })
+      }
+    })
+    // props.deleteStation(arrayDetails.id)
 		// set delete modal false
-		setModal({
-			deleteModal: false,
-			deletedModal: true
-		})
 	}
 
+  // GET Station Lists
   useEffect(() => {
+    props.getStationDataByParams(1, 10);
     props.getStationData()
     // debugger
   }, [])
@@ -326,9 +355,18 @@ export function StationManagement(props) {
 	// 	debugger
 	// }, [props.details])
 
+   // GET Contractors List
+   useEffect(() => {
+    props.GetContractors()
+  }, [])
+
+  useEffect(() => {
+    setManagedByList(props.contractorsList)
+  }, [props.contractorsList])
+
   // Edit Station
   const editStation=(e, data, i)=>{
-    data.id=i
+    // data.id=i
     props.setStationData(data)
   }
 
@@ -341,9 +379,9 @@ export function StationManagement(props) {
   };
 
   const toggleModal =(e,data, i)=>{
-    rows[i].id = i;
-    console.log(rows[i])
-    debugger
+    // rows[i].id = i;
+    // console.log(rows[i])
+    // debugger
   	setArrayDetails(rows[i]);
     setModal(true);
     console.log(arrayDetails)
@@ -367,14 +405,14 @@ export function StationManagement(props) {
       console.log(data)
       // debugger
       if(type == 'start') {
-        setDate({
-          ...date,
-          start: data.target.value
+        setSearch({
+          ...search,
+          start_date: data.target.value
         })
       } else {
-        setDate({
-          ...date,
-          end: data.target.value
+        setSearch({
+          ...search,
+          end_date: data.target.value
         })
       }
     }
@@ -391,6 +429,19 @@ export function StationManagement(props) {
     // function for adding station or Setting IsEdit False
     const addStation = () => {
       props.setIsEditFalse(false)
+    }
+
+    const searchStations = () => {
+      console.log(search)
+      debugger
+      props.getStationDataByParams(1, 10, search.name)
+    }
+
+    const handleInputs = (event) => {
+      setSearch({
+        ...search,
+        [event.target.name]: [event.target.value]
+      })
     }
 
   return(
@@ -413,8 +464,9 @@ export function StationManagement(props) {
             // label="Search"
             className={classes.textField1}
             id="outlined-adornment-weight"
-            value={values.weight}
-            onChange={handleChange('weight')}
+            name="name"
+            value={search.name}
+            onChange={handleInputs}
             startAdornment={<SearchOutlinedIcon />}
             aria-describedby="outlined-weight-helper-text"
             inputProps={{
@@ -428,43 +480,44 @@ export function StationManagement(props) {
         </FormControl>
 
         {/*Search Button*/}
-        <Button className={classes.button1} variant="contained">
+        <Button className={classes.button1} onClick={searchStations} variant="contained">
           Search
         </Button>
 
          {/*Select*/}
          <div className={styles.selectDiv1}>
-           <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
+           <select className={styles.select1} name="station_name" /*value={this.state.courseId}*/ onChange={handleInputs}>
              <option selected disabled>Station Name</option>
-             <option value="1">Indore</option>
-             <option value="2">Bhopal</option>
-             <option value="3">Habib Ganj</option>
+             {dropDownDetails.length > 0 && dropDownDetails.map(data => 
+               <option key={data._id} value={data.station_name}>{data.station_name}</option>
+             )}
          </select>
          </div>
 
           <div className={styles.selectDiv1}>
-            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
+            <select className={styles.select1} name="station_code" /*value={this.state.courseId}*/ onChange={handleInputs}>
               <option selected disabled>Station Code</option>
-              <option value="1">HBJ</option>
-              <option value="2">IND</option>
-              <option value="3">DWX</option>
+              {dropDownDetails.length > 0 && dropDownDetails.map(data => 
+                <option key={data._id} value={data.station_code}>{data.station_code}</option>  
+              )}
           </select>
           </div>
 
             <div className={styles.selectDiv1}>
-              <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
+              <select className={styles.select1} name="station_type" /*value={this.state.courseId}*/ onChange={handleInputs}>
                 <option selected disabled>Station Type</option>
-                <option value="1">Urban</option>
-                <option value="2">Rural</option>
-                <option value="3">Semi Rural</option>
+                <option value="RURAL">Rural</option>
+                <option value="URBAN">Urban</option>
+                <option value="SEMI RURAL">Semi Rural</option>
             </select>
             </div>
 
           <div className={styles.selectDiv1}>
-            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
+            <select className={styles.select1} name="managed_by" /*value={this.state.courseId}*/ onChange={handleInputs}>
               <option selected disabled>Managed By</option>
-              <option value="1">Indian Railways</option>
-              <option value="2">Bansal Constructions</option>
+              {managedByList.length && managedByList.map(data => 
+                <option key={data._id} value={data._id}>{data.name}</option>  
+              )}
           </select>
           </div>
 
@@ -474,8 +527,8 @@ export function StationManagement(props) {
 					variant="outlined"
 					type="date"
 					size="small"
-          name="start"
-          value={date.start}
+          name="start_date"
+          value={search.start_date}
           onChange={(e) => handleDateChange(e, 'start')}
 					className={classes.date1}
 					InputProps={{
@@ -493,12 +546,12 @@ export function StationManagement(props) {
 					variant="outlined"
 					type="date"
 					size="small"
-          name="end"
-          value={date.end}
+          name="end_date"
+          value={search.end_date}
           onChange={(e) => handleDateChange(e, 'end')}
 					className={classes.date1}
 					InputProps={{
-            min: date.start.toString().slice(0, 10),
+            min: search.start_date.toString().slice(0, 10),
 						placeholder: "From Date",
 						classes: { input: classes.input1 },
 						focused: classes.focused1,
@@ -519,8 +572,8 @@ export function StationManagement(props) {
             <TableCell align="center">No. of Platforms</TableCell>
             <TableCell align="center">Contact Person</TableCell>
             <TableCell align="center">Contact Person Mobile</TableCell>
-            <TableCell align="center">Start Date</TableCell>
-            <TableCell align="center">End Date</TableCell>
+            <TableCell style={{minWidth: 110}} align="center">Start Date</TableCell>
+            <TableCell style={{minWidth: 110}} align="center">End Date</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -533,18 +586,18 @@ export function StationManagement(props) {
 							<TableCell align="center">{row.station_name}</TableCell>
               <TableCell align="center">{row.station_code}</TableCell>
               <TableCell align="center">{row.station_type}</TableCell>
-              <TableCell align="center">{row.managed_by}</TableCell>
+              <TableCell align="center">{row.managed_by?row.managed_by.name: '-'}</TableCell>
               <TableCell align="center">{row.no_of_platform}</TableCell>
               <TableCell align="center">{row.contact_name}</TableCell>
               <TableCell align="center">{row.contact_mobile}</TableCell>
-              <TableCell align="center">{row.contract_start_date}</TableCell>
-              <TableCell align="center">{row.exp_end_date}</TableCell>
+              <TableCell align="center">{moment(row.contract_start_date).format("DD-MM-YYYY")}</TableCell>
+              <TableCell align="center">{moment(row.exp_end_date).format("DD-MM-YYYY")}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
                   <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
-                  <Link to={`station-management/${index}`}><div onClick={(e) => editStation(e, row, index)}>Edit Details</div></Link>
+                  <Link to={`station-management/${row._id}`}><div onClick={(e) => editStation(e, row, index)}>Edit Details</div></Link>
                   <a><div onClick={(e) => toggleModal(e, 'delete', index)}>Delete Station</div></a>
                 </div>
                 </div></TableCell>
@@ -576,11 +629,11 @@ export function StationManagement(props) {
 					</ModalFooter>
 				</Modal>
 
+      {/* Modal for deleting Station */}
       <Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deleteModal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={delete_logo} />
 				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to delete {arrayDetails.station_name} Station?</strong>  </p>
-
 					</ModalBody>
 					<ModalFooter className={styles.footer}>
 						<Button
@@ -596,7 +649,7 @@ export function StationManagement(props) {
               style={{width: 100}}
 							variant="contained"
 							className={classes.button1}
-							onClick={(e) => { handleDeleteSubmit(e) }}
+							onClick={(e) => { handleDeleteSubmit(e, arrayDetails._id) }}
 						>
 							YES
 						</Button>
@@ -621,7 +674,7 @@ export function StationManagement(props) {
 					 onClick={toggleModalClose}
 				 />
 				 <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-				 <Link to={`station-management/1`}><button className={styles.modalButton}/*style={{display: 'contents'}}*/ /*onClick={passwordGenerate}*/>
+				 <Link to={`station-management/${arrayDetails._id}`}><button className={styles.modalButton}/*style={{display: 'contents'}}*/ onClick={(e) => editStation(e, arrayDetails)}>
 				 <img className={styles.modalImage} style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={edit} />
 				 <small style={{display: 'flex', alignItems: 'center'}}>Edit Details</small>
 				 </button></Link>
@@ -648,7 +701,7 @@ export function StationManagement(props) {
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>Station GPS Coordinates</span><span style={{marginLeft: 15,marginRight: 25}}> - </span>{arrayDetails.station__gps_ltd}°N, {arrayDetails.station__gps_lng}°E
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Managed By</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>{arrayDetails.managed_by}
+								<span className={styles.textModal}>Managed By</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>{arrayDetails.managed_by?arrayDetails.managed_by.name: '-'}
 								</div>
 								</div>
 						</div>
@@ -661,11 +714,11 @@ export function StationManagement(props) {
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 							<span className={styles.textModal}>Contract Winner</span><span style={{marginLeft: 46,marginRight: 25}}> - </span>{arrayDetails.contract_winner}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Contract Start Date</span><span style={{marginLeft: 29,marginRight: 25}}> - </span>{arrayDetails.contract_start_date}
+							<span className={styles.textModal}>Contract Start Date</span><span style={{marginLeft: 29,marginRight: 25}}> - </span>{moment(arrayDetails.contract_start_date).format("DD-MM-YYYY")}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 							<span className={styles.textModal}>Contract Tenure</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>{arrayDetails.contract_tenure}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Expected End Date</span><span style={{marginLeft: 31,marginRight: 25}}> - </span>{arrayDetails.exp_end_date}
+							<span className={styles.textModal}>Expected End Date</span><span style={{marginLeft: 31,marginRight: 25}}> - </span>{moment(arrayDetails.exp_end_date).format("DD-MM-YYYY")}
 							</div>
 							<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 							<span className={styles.textModal}></span><span style={{marginLeft: 80,marginRight: 25}}> </span>
@@ -683,7 +736,7 @@ export function StationManagement(props) {
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>Phone Number</span><span style={{marginLeft: 76,marginRight: 25}}> - </span>{arrayDetails.contact_mobile}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Email</span><span style={{marginLeft: 137,marginRight: 25}}> - </span>{arrayDetails.contract_email}
+								<span className={styles.textModal}>Email</span><span style={{marginLeft: 137,marginRight: 25}}> - </span>{arrayDetails.contact_email}
 								</div>
 								</div>
 						</div>
@@ -692,11 +745,11 @@ export function StationManagement(props) {
 						<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Admin Details</div>
 							<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 							<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Name</span><span style={{marginLeft: 115,marginRight: 25}}> - </span>{arrayDetails.adminName}
+							<span className={styles.textModal}>Name</span><span style={{marginLeft: 115,marginRight: 25}}> - </span>{arrayDetails.station_admin?arrayDetails.station_admin.name: '-'}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Phone Number</span><span style={{marginLeft: 57,marginRight: 25}}> - </span>{arrayDetails.adminNumber}
+							<span className={styles.textModal}>Phone Number</span><span style={{marginLeft: 57,marginRight: 25}}> - </span>{arrayDetails.station_admin?arrayDetails.station_admin.mobile: '-'}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Email</span><span style={{marginLeft: 118,marginRight: 25}}> - </span>{arrayDetails.adminEmail}
+							<span className={styles.textModal}>Email</span><span style={{marginLeft: 118,marginRight: 25}}> - </span>{arrayDetails.station_admin?arrayDetails.station_admin.email: '-'}
 							</div>
 							</div>
 							</div>
@@ -716,7 +769,9 @@ export function StationManagement(props) {
 const mapStateToProps = (state) => {
 	return {
 		details: state.Stations.details,
+    contractorsList: state.Stations.contractorsList,
     stationDetails: state.Stations.stationDetails,
+    stationDocs: state.Stations.docs,
 		// loading: state.auth.loading,
 		// error: state.auth.error,
 		// isAuthenticated: state.auth.token !== null,
@@ -729,6 +784,8 @@ const mapDispatchToProps = (dispatch) => {
     getStationData: () => {
       dispatch(actions.getStationData())
     },
+    getStationDataByParams: (pageNo, limit, value) => 
+      dispatch(actions.getStationDataByParams(pageNo, limit, value)),
     setStationData: (data) => {
       dispatch(actions.setStationDate(data)) 
     },
@@ -737,14 +794,10 @@ const mapDispatchToProps = (dispatch) => {
     },
     deleteStation: (id) => {
       dispatch(actions.deleteStation(id))
+    },
+    GetContractors: () => {
+      dispatch(actions.GetContractors())
     }
-		// add_station: (details) =>
-		// 	dispatch(actions.stationActions(details))
-		// onAuth: (username, password) =>
-		// 	dispatch(actions.auth(username, password)),
-		// 	updateSignup:()=>
-		// 	  dispatch(actions.updateSingupFlag()),
-		// onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
 	};
 };
 

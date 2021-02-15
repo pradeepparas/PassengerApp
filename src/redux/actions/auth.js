@@ -69,14 +69,17 @@ export const auth = (username, password) => {
                     // localStorage.setItem('user', user));
                     dispatch(authSuccess(response.data.token, response.data.user_data, response.data.message));
                     toast.success(response.data.message)
+                } else {
+
                 }
             }).then(() => {
 
             })
             .catch(err => {
-                dispatch(authFail({
-                    error: err.message ? err.message : null
-                }));
+                toast.error(err.response.data.message)
+                // dispatch(authFail({
+                //     error: err.message ? err.message : null
+                // }));
             });
     };
 };

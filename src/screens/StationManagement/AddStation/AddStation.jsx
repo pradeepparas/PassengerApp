@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import { connect } from "react-redux";
 import { compose } from 'redux';
+import axios from "axios";
 import {Link, useHistory, useParams }  from  'react-router-dom';
 import moment from 'moment';
+// docs
+import * as API from '../../../constants/APIs';
 import {
 	Modal,
 	ModalHeader,
@@ -186,12 +189,12 @@ export function AddStation(props) {
 	const { station_id } = useParams();
   const [isAdd, setIsAdd] = useState(false);
   const [modal, setModal] = useState(false);
-  const [contract_start_date, setcontract_start_date] = useState('');
-  const [exp_end_date, setexp_end_date] = useState('');
+  // const [contract_start_date, setcontract_start_date] = useState('');
+  // const [exp_end_date, setexp_end_date] = useState('');
   const classes = useStyles();
   const history= useHistory();
   const [managedByList, setManagedByList] = useState([])
-  const [state, setState]=useState({
+  const [state, setState] = useState({
       station_name:"",
       station_code:"",
       station_type:"",
@@ -204,16 +207,16 @@ export function AddStation(props) {
       contract_start_date:"",
       exp_end_date:"",
       contract_tenure:"",
-  });
-
-  const [details, setDetails] = useState({
-    contact_name: "",
-    contact_mobile: "",
-    contact_email: "",
-    name: "",
-    mobile: "",
-    email: "",
-    adminPassword: ""
+      is_assign_as_admin: false,
+  // });
+  // const [details, setDetails] = useState({
+      contact_name: "",
+      contact_mobile: "",
+      contact_email: "",
+      name: "",
+      mobile: "",
+      email: "",
+      adminPassword: ""
   })
 
   // GET Contractors List
@@ -247,25 +250,27 @@ export function AddStation(props) {
   const autofillDetails = () => {
     if(pchecked == true){
       debugger
-      setDetails({
-        ...details,
-        name: details.contact_name,
-        mobile: details.contact_mobile,
-        email: details.contact_email
+      setState({
+        ...state,
+        name: state.contact_name,
+        mobile: state.contact_mobile,
+        email: state.contact_email
       })
     } else {
-      setDetails({
-        ...details,
+      setState({
+        ...state,
         name: "",
         mobile: "",
         email: ""
       })
     }
   }
+  // details
 
   // close modal
   const toggleModalClose =()=>{
     setModal(false)
+    props.setIsSubmitted(false);
     // history.push('/station-management');
   }
 
@@ -276,17 +281,20 @@ export function AddStation(props) {
       if (!validateForm()) {
           return
       }
-      // state.contract_start_date = moment(state.contract_start_date).format("DD-MM-YYYY")
-      // state.exp_end_date = moment(state.exp_end_date).format("DD-MM-YYYY")
+      if(station_id == 'add'){
+        let merged = state
+        merged.is_assign_as_admin = pchecked;
+			  // setAddDetails(merged)
+        merged.station_code = merged.station_code.toUpperCase();
+		    let response = await props.add_station(merged)
+        console.log(response)
+        // debugger
+      } else {
+        console.log(state)
+        debugger
+        props.EditStationDetails(state)
+      }
 
-			let merged = {...state, ...details};
-      merged.is_assign_as_admin = pchecked;
-			// setAddDetails(merged)
-      merged.station_code = merged.station_code.toUpperCase();
-		  let response = await props.add_station(merged)
-      console.log(response)
-      debugger
-      
       // setModal(true);
 			// if(station_id == 'add'){
 			// 	setIsAdd(true);
@@ -297,6 +305,7 @@ export function AddStation(props) {
   }
 
   useEffect(() => {
+    debugger
     if(props.isSubmitted){
       setModal(true);
       if(station_id == 'add'){
@@ -307,14 +316,14 @@ export function AddStation(props) {
     } else {
          
     }
-  }, [])
+  }, [props.isSubmitted])
 
   // validate form
   const validateForm =()=>{
     // All regex for validation
-       var emailValid = details.email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-       var contact_email = details.contact_email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-       var mobileValid = details.mobile.toString().match(/^[0]?[6789]\d{9}$/);
+       var emailValid = state.email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+       var contact_email = state.contact_email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+       var mobileValid = state.mobile.toString().match(/^[0]?[6789]\d{9}$/);
        var usernameRegex = state.station_name.toString().match(/^[a-zA-Z ]+$/);
        var code = state.station_code.match(/^[a-zA-Z]+$/);
 
@@ -381,32 +390,32 @@ export function AddStation(props) {
           isValid =false;
       }
 
-      else if(details.contact_name.trim()=='' || !details.contact_name.toString().match(/^[a-zA-Z ]+$/)){
+      else if(state.contact_name.trim()=='' || !state.contact_name.toString().match(/^[a-zA-Z ]+$/)){
           errors.contact_name="person name is required or invalid field";
           isValid =false;
       }
-      else if(details.contact_mobile.trim()=='' || !details.contact_mobile.toString().match(/^[0]?[6789]\d{9}$/)){
+      else if(state.contact_mobile.trim()=='' || !state.contact_mobile.toString().match(/^[0]?[6789]\d{9}$/)){
           errors.contact_mobile="phone number is required or invalid number";
           isValid =false;
       }
-      else if(details.contact_email.trim()!=='' && !contact_email){
+      else if(state.contact_email.trim()!=='' && !contact_email){
           errors.contact_email="invalid email address";
           isValid =false;
       }
-      else if(details.name.trim()=='' || !details.name.toString().match(/^[a-zA-Z ]+$/)){
+      else if(state.name.trim()=='' || !state.name.toString().match(/^[a-zA-Z ]+$/)){
           errors.name="admin name is required or invalid field";
           isValid =false;
       }
-      else if(details.mobile.trim()=='' || !mobileValid){
+      else if(state.mobile.trim()=='' || !mobileValid){
           errors.mobile="mobile is required or invalid mobile";
           isValid =false;
       }
-      else if(details.email.trim()!=='' && !emailValid){
+      else if(state.email.trim()!=='' && !emailValid){
           errors.email="invalid email address";
           isValid =false;
       }
-      else if(!props.isEdit && (details.adminPassword.trim()=='' || 
-      !(details.adminPassword.length >= 3 && details.adminPassword.length <= 10))){
+      else if(!props.isEdit && (state.adminPassword.trim()=='' || 
+      !(state.adminPassword.length >= 3 && state.adminPassword.length <= 10))){
         errors.adminPassword="password is in between 3 to 10 characters"  
         isValid =false;
       }
@@ -417,7 +426,7 @@ export function AddStation(props) {
   const handlecheckedChange = (event) => {
     console.log(event.target.checked);
     console.log(event.target.value);
-    debugger
+    // debugger
     if(event.target.name === 'person'){
       setPChecked(event.target.checked)
     } else {
@@ -429,17 +438,19 @@ export function AddStation(props) {
 
   useEffect(() => {
     if(state.exp_end_date && state.contract_start_date){
-      let start = state.contract_start_date;
-      let end = state.exp_end_date;
+      let start = moment(state.contract_start_date);
+      let end = moment(state.exp_end_date);
 
-      let months = end.getMonth() - start.getMonth();
-      let years = end.getFullYear() - start.getFullYear();
+      let months = end.diff(start , 'months');
+      let years = end.diff(start , 'years');
+      console.log(months, years)
+      // debugger
       
       let tenure = '';
 
-      if(end.getFullYear() - start.getFullYear() > 0){
+      if( end.diff(start , 'years') > 0){
         tenure = years + " " + "Years"
-        if(end.getMonth() - start.getMonth() > 0){
+        if( end.diff(start , 'months') > 0){
           tenure += " " + months + " " + "Months"
         }
       } else {
@@ -447,7 +458,7 @@ export function AddStation(props) {
       }
 
       console.log(tenure)
-      debugger
+      // debugger
       setState({
         ...state,
         contract_tenure: tenure
@@ -457,15 +468,46 @@ export function AddStation(props) {
 
   useEffect(() => {
     if(props.isEdit){
+      axios({
+        url: `${API.GetStationAPI}/${station_id}`,
+        headers: { 
+          //    'Accept-Language': 'hi', 
+          "accept": "application/json",
+          'Authorization': 'Bearer ' + localStorage.getItem('token'),
+           },
+      }).then(response => {
+        if(response.data.success){
+          debugger
+          // setState(response.data.staion)
+            let data = response.data.staion;
+            data.exp_end_date = moment(data.exp_end_date)
+            data.contract_start_date = moment(data.contract_start_date)
+            data.name=response.data.staion.station_admin.name;
+            data.mobile = response.data.staion.station_admin.mobile;
+            data.email =response.data.staion.station_admin.email;
+            data.station_admin_id = response.data.staion.station_admin._id;
+            data.managed_by = data.managed_by?response.data.staion.managed_by._id: "";
+            if(data.is_assign_as_admin){
+              data.mobile = response.data.staion.contact_mobile
+              setPChecked(data.is_assign_as_admin)
+            }
+            // data.is_assign_as_admin
+            delete data["station_admin"];
+            setState(data)
+
+        } else {
+          setState([]);
+        }
+      })
       setState(props.stationData)
-      setDetails(props.stationData)
+      // setDetails(props.stationData)
     }
   }, [])
 
   const passwordGenerate = () => {
     var randomstring = Math.random().toString(36).slice(-8);
-    setDetails({
-        ...details,
+    setState({
+        ...state,
         adminPassword: randomstring
       })
     console.log(randomstring)
@@ -473,9 +515,9 @@ export function AddStation(props) {
   }
 
   const handleInputs = (event) => {
-    console.log(event.target.name)
-    console.log(event.target.value)
-    debugger
+    // console.log(event.target.name)
+    // console.log(event.target.value)
+    // debugger
     setState({
       ...state,
       [event.target.name]: event.target.value
@@ -496,28 +538,28 @@ export function AddStation(props) {
     setErros({errors, [event.target.name]:""})
   }
 
-  const handleDetails = (event) => {
-    setDetails({
-      ...details,
-      [event.target.name]: event.target.value
-    })
-    // debugger
-    setErros({errors, [event.target.name]:""})
-  }
+  // const handleDetails = (event) => {
+  //   setDetails({
+  //     ...details,
+  //     [event.target.name]: event.target.value
+  //   })
+  //   // debugger
+  //   setErros({errors, [event.target.name]:""})
+  // }
 
   const handleChange = (date, type) => {
       debugger
         if(type=='start'){
           setState({
             ...state,
-            // contract_start_date:moment(date).format("DD-MM-YYYY")
-            contract_start_date: date
+            contract_start_date:moment(date)
+            // contract_start_date: date
           })
         } else {
           setState({
             ...state,
-            // exp_end_date:moment(date).format("DD-MM-YYYY")
-            exp_end_date: date
+            exp_end_date:moment(date)
+            // exp_end_date: date
           })
 					//props.match.params.
         }
@@ -609,7 +651,7 @@ export function AddStation(props) {
                   peekNextMonth showMonthDropdown showYearDropdown
                   dropdownMode="select"
                   selected={new Date()}
-                  value={state.contract_start_date}
+                  value={state.contract_start_date?moment(state.contract_start_date).format("DD-MM-YYYY"): ''}
                   onChange={(e) => handleChange(e,'start')} placeholderText='' />
                 <div className={styles.error_message}>{errors.contract_start_date}</div>
               </div>
@@ -621,7 +663,7 @@ export function AddStation(props) {
                   peekNextMonth showMonthDropdown showYearDropdown
                   dropdownMode="select"
                   selected={new Date()}
-                  value={state.exp_end_date}
+                  value={state.exp_end_date?moment(state.exp_end_date).format("DD-MM-YYYY"): ''}
                   onChange={(e) => handleChange(e,'end')} placeholderText='' />
                   <div className={styles.error_message}>{errors.exp_end_date}</div>
               </div>
@@ -639,17 +681,17 @@ export function AddStation(props) {
           <div>
             <div className={styles.textfield}>
               <label style={{color: 'black'}}>Name</label>
-              <input autocomplete="off" name="contact_name" value={details.contact_name} onChange={handleDetails} className={styles.inputfield} type="text" />
+              <input autocomplete="off" name="contact_name" value={state.contact_name} onChange={handleInputs} className={styles.inputfield} type="text" />
               <div className={styles.error_message}>{errors.contact_name}</div>
             </div>
             <div className={styles.textfield}>
               <label style={{color: 'black'}}>Phone Number</label>
-              <input autocomplete="off" name="contact_mobile" value={details.contact_mobile} onChange={handleDetails} className={styles.inputfield} type="text" />
+              <input autocomplete="off" name="contact_mobile" value={state.contact_mobile} onChange={handleInputs} className={styles.inputfield} type="text" />
               <div className={styles.error_message}>{errors.contact_mobile}</div>
             </div>
             <div className={styles.textfield}>
               <label style={{color: 'black'}}>Email</label>
-              <input autocomplete="off" name="contact_email" value={details.contact_email} onChange={handleDetails} className={styles.inputfield} type="text" />
+              <input autocomplete="off" name="contact_email" value={state.contact_email} onChange={handleInputs} className={styles.inputfield} type="text" />
               <div className={styles.error_message}>{errors.contact_email}</div>
             </div>
             <div className={styles.textfield}>
@@ -683,23 +725,23 @@ export function AddStation(props) {
         <div>
           <div className={styles.textfield}>
             <label style={{color: 'black'}}>Name</label>
-            <input autocomplete="off" disabled={pchecked?true:false} name="name" value={details.name} onChange={handleDetails} className={styles.inputfield} type="text" />
+            <input autocomplete="off" disabled={pchecked?true:false} name="name" value={state.name} onChange={handleInputs} className={styles.inputfield} type="text" />
             <div className={styles.error_message}>{errors.name}</div>
           </div>
           <div className={styles.textfield}>
             <label style={{color: 'black'}}>Phone</label>
-            <input autocomplete="off" disabled={pchecked?true:false} name="mobile" value={details.mobile} onChange={handleDetails} className={styles.inputfield} type="text" />
+            <input autocomplete="off" disabled={pchecked?true:false} name="mobile" value={state.mobile} onChange={handleInputs} className={styles.inputfield} type="text" />
             <div className={styles.error_message}>{errors.mobile}</div>
           </div>
           <div className={styles.textfield}>
             <label style={{color: 'black'}}>Email</label>
-            <input autocomplete="off" disabled={pchecked?true:false} name="email" value={details.email} onChange={handleDetails} className={styles.inputfield} type="text" />
+            <input autocomplete="off" disabled={pchecked?true:false} name="email" value={state.email} onChange={handleInputs} className={styles.inputfield} type="text" />
             <div className={styles.error_message}>{errors.email}</div>
           </div>
           {!props.isEdit && <div className={styles.textfield}>
             <label style={{color: 'black'}}>Password</label>
             <div className={styles.passwordDiv} style={{display: 'flex'}}>
-            <input autocomplete="off" name="adminPassword" value={details.adminPassword} onChange={handleDetails} className={styles.inputfield} type="text" />
+            <input autocomplete="off" name="adminPassword" value={state.adminPassword} onChange={handleInputs} className={styles.inputfield} type="text" />
             <button style={{display: 'contents'}} onClick={passwordGenerate}>
             <img style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={logo} />
             <small style={{display: 'flex', alignItems: 'center',color: 'black'}}>Autogenerate</small>
@@ -743,7 +785,7 @@ export function AddStation(props) {
       </Button>
       </div>
 
-      {/* After Delete Modal */}
+      {/* Successfully Added and Updated Modal */}
 			<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={flag} />
@@ -781,6 +823,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
+    setIsSubmitted: flag => {
+      dispatch(actions.setIsSubmitted(flag))
+    },
+    EditStationDetails: data => {
+      dispatch(actions.EditStationDetails(data))
+    },
 		add_station: (details) =>
 			dispatch(actions.stationActions(details)),
     GetContractors: () => {

@@ -8,7 +8,7 @@ const initialState = {
 }
 
 const auth = (state = initialState, action) => {
-    debugger
+    // debugger
     switch (action.type) {
       case actionTypes.AUTH_SUCCESS: 
         return {

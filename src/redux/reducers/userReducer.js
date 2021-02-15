@@ -1,21 +1,22 @@
-import { ADD_USER, DELETE_USER, EDIT_USER, SET_ISADD } from '../actions/actionTypes';
+import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
   usersList: [],
   isEdit:false,
-  userData:{}
+  userData:{},
+  docs: []
 };
 
 const userReducer = (state = initialState, action) => {
   // debugger
   switch (action.type) {
-    case ADD_USER:
+    case actionTypes.ADD_USER:
       var value = action.user;
       return {
         ...state,
         usersList: state.usersList.concat(value)
       }
-      case EDIT_USER:
+      case actionTypes.EDIT_USER:
         var value = action.data;
         return {
           ...state,
@@ -23,17 +24,23 @@ const userReducer = (state = initialState, action) => {
           isEdit:true
         }
 
-      case SET_ISADD:
+      case actionTypes.SET_ISADD:
         return {
           ...state,
           isEdit: action.value
         }
 
-      case DELETE_USER:
+      case actionTypes.DELETE_USER:
         let users = state.usersList.filter((item, index) => index !== action.userId)
         return {
           ...state,
           usersList: users
+        }
+      
+      case actionTypes.FETCH_USER_BYPARAMS:
+        return {
+          ...state,
+          docs: action.docs
         }
     default:
       return state;

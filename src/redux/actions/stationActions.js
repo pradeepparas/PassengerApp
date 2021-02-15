@@ -4,7 +4,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 
-export function isSubmitted(success) {
+export function setIsSubmitted(success) {
   return {
     type: actionTypes.IS_SUBMITTED,
     isSubmitted: success
@@ -17,6 +17,53 @@ export function isSubmitted(success) {
 //     message: message
 //   }
 // }
+
+export function EditStationDetails(details) {
+  return dispatch => {
+    let data = {
+      "_id": details._id,
+      "station_name": details.station_name,
+      "station_code": details.station_code,
+      "station_type": details.station_type,
+      "managed_by": details.managed_by,
+      "contract_giver": details.contract_giver,
+      "contract_winner": details.contract_winner,
+      "no_of_platform": details.no_of_platform,
+      "station__gps_ltd": details.station__gps_lng,
+      "station__gps_lng": details.station__gps_lng,
+      "contract_start_date": moment(details.contract_start_date),
+      "exp_end_date": moment(details.exp_end_date),
+      "contract_tenure": details.contract_tenure,
+      "contact_name": details.contact_name,
+      "contact_mobile": details.contact_mobile,
+      "contact_email": details.contact_email,
+      "is_assign_as_admin": details.is_assign_as_admin,
+      "name": details.name,
+      "mobile": details.mobile,
+      "email": details.email,
+      "station_admin_id": details.station_admin_id
+    }
+    axios({
+      url: API.AddStationAPI,
+      method: "PUT",
+      data: data,
+      headers: {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      }
+    }).then((response) => {
+      if(response.data.success){
+        dispatch(setIsSubmitted(true))
+      } else {
+        dispatch(setIsSubmitted(false))
+      }
+  // "message": "Station updated succesfully",
+  // "success": true,
+  // "status": 200
+    })
+  }
+}
 
 export function stationActions(details) {
   details.password = details.adminPassword
@@ -44,8 +91,8 @@ export function stationActions(details) {
       data : JSON.stringify(details)
     }).then(response => {
       if(response.data.success){
-        toast.success(response.data.message)
-        dispatch(isSubmitted(true))
+        // toast.success(response.data.message)
+        dispatch(setIsSubmitted(true))
         console.log(response)
       } else {
         debugger
@@ -57,7 +104,7 @@ export function stationActions(details) {
       debugger
       toast.error(response.response.data.message)
       console.log(response.response.data.message)
-      dispatch(isSubmitted(false))
+      dispatch(setIsSubmitted(false))
     })
   }
 }
@@ -110,7 +157,34 @@ export function GetContractors() {
   }
 }
 
-// GET Stations Details
+// GET Stations Details by Parameters
+export function getStationDataByParams(page, limit, values) {
+  debugger
+  return (dispatch) => {
+    let link = `${API.GetStationAPI}/${page}/${limit}`;
+    console.log(link)
+    debugger
+    let url = values ? `${API.GetStationAPI}/${page}/${limit}?search=${values}`: `${API.GetStationAPI}/${page}/${limit}` 
+    axios({
+      url: url,
+      headers: {
+        "accept": "application/json",
+        // "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      },
+    }).then(response => {
+      debugger
+      if(response.data.success){
+        debugger
+        dispatch(fetchStationDataByParams(response.data.station.docs))
+      } else {
+        dispatch(fetchStationDataByParams(response.data.station.docs))
+      }
+    }).catch(err => console.log(err))
+  }
+}
+
+//  GET Stations Details for Dropdown
 export function getStationData() {
   return dispatch => {
     axios({
@@ -135,6 +209,13 @@ export function fetchStationData(stationData) {
   return {
     type: actionTypes.FETCH_STATIONS,
     stationData: stationData
+  }
+}
+
+export function fetchStationDataByParams(docs) {
+  return {
+    type: actionTypes.FETCH_STATION_BYPARAMS,
+    docs: docs
   }
 }
 

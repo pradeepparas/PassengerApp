@@ -14,9 +14,11 @@ export const FETCH_CONTRACTORS = "FETCH_CONTRACTORS";
 export const STATION_ERROR = "STATION_ERROR";
 export const STATION_SUCCESS = "STATION_SUCCESS";
 export const IS_SUBMITTED = "IS_SUBMITTED";
-export const FETCH_STATIONS = "FETCH_STATIONS"
+export const FETCH_STATIONS = "FETCH_STATIONS";
+export const FETCH_STATION_BYPARAMS = "FETCH_STATION_BYPARAMS";
 
 // User-Management Actions
+export const FETCH_USER_BYPARAMS = "FETCH_USER_BYPARAMS";
 export const ADD_USER = 'ADD_USER';
 export const DELETE_USER = "DELETE_USER";
 export const EDIT_USER = "EDIT_USER";
