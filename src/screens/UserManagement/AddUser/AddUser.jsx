@@ -7,7 +7,7 @@ import { compose } from 'redux';
 import * as actions from "../../../redux/actions/userActions";
 import * as API from "../../../constants/APIs";
 import axios from 'axios';
-import { getStationData } from "../../../redux/actions/stationActions";
+import { getStationData, setIsSubmitted } from "../../../redux/actions/stationActions";
 import {
 	Modal,
 	ModalHeader,
@@ -187,8 +187,6 @@ export function AddUser(props) {
   const [isAdd, setIsAdd] = useState(false);
   const [role, setRole] = useState([]);
   const [modal, setModal] = useState(false);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const classes = useStyles();
   const history= useHistory();
 	const { user_id } = useParams();
@@ -207,52 +205,13 @@ export function AddUser(props) {
 		showPassword: false,
 	})
   const [errors , setErros]= useState({})
-  // const [password, setPassword] = useState(''); setDetails
 
   // close modal
   const toggleModalClose =()=>{
     setModal(false)
+    props.setIsSubmitted(false)
     history.push('/user-management')
   }
-
-  // Getting User Data By Id
-  // useEffect(() => {
-  //   if(props.isEdit){
-  //     axios({
-  //       url: `${API.GetStationAPI}/${station_id}`,
-  //       headers: { 
-  //         //    'Accept-Language': 'hi', 
-  //         "accept": "application/json",
-  //         'Authorization': 'Bearer ' + localStorage.getItem('token'),
-  //          },
-  //     }).then(response => {
-  //       if(response.data.success){
-  //         debugger
-  //         // setState(response.data.staion)
-  //           let data = response.data.staion;
-  //           data.exp_end_date = moment(data.exp_end_date)
-  //           data.contract_start_date = moment(data.contract_start_date)
-  //           data.name=response.data.staion.station_admin.name;
-  //           data.mobile = response.data.staion.station_admin.mobile;
-  //           data.email =response.data.staion.station_admin.email;
-  //           data.station_admin_id = response.data.staion.station_admin._id;
-  //           data.managed_by = data.managed_by?response.data.staion.managed_by._id: "";
-  //           if(data.is_assign_as_admin){
-  //             data.mobile = response.data.staion.contact_mobile
-  //             setPChecked(data.is_assign_as_admin)
-  //           }
-  //           // data.is_assign_as_admin
-  //           delete data["station_admin"];
-  //           setState(data)
-
-  //       } else {
-  //         setState([]);
-  //       }
-  //     })
-  //     setState(props.stationData)
-  //     // setDetails(props.stationData)
-  //   }
-  // }, [])
 
     // 
 		useEffect(()=>{
@@ -286,45 +245,74 @@ export function AddUser(props) {
       }).then((response)=> {
         setRole(response.data.role)
       })
+
+      if(props.isEdit || user_id != 'add'){
+        axios({
+          url: `${API.GetUserAPI}/${user_id}`,
+          headers: { 
+            //    'Accept-Language': 'hi', 
+            "accept": "application/json",
+            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+             },
+        }).then(response => {
+          if(response.data.success){
+            console.log(response.data.user)
+            debugger  
+              // setState(data)
+              setState({
+                _id: response.data.user._id,
+                userName: response.data.user.name,
+                userNumber: response.data.user.mobile,
+                role: response.data.user.role,
+                stationName: response.data.user.station_id,
+                userEmail: response.data.user.email?response.data.user.email:'',
+                // date: response.data.user,
+              })
+          } else {
+            setState([]);
+          }
+        })
+        // setState(props.stationData)
+        // setDetails(props.stationData)
+      }
     }, [])
 
 
-  // Handle Submit Station
+  // Handle Submit User
   const handleSubmit = (e) => {
 
       e.preventDefault();
       if (!validateForm()) {
           return
       }
-      state.date = moment(new Date()).format("DD-MM-YYYY")
       
       // Add and Update User
-      if(user_id == 'add'){
-        
+      if(user_id === 'add') {
+        debugger
+        state.date = moment(new Date()).format("DD-MM-YYYY")
         console.log(state)
         debugger
-		    props.addUser(state)
+		    props.addUserDetails(state)
         // debugger
       } else {
-        console.log(state)
-        debugger
-        props.EditStationDetails(state)
+        props.EditUserDetails(state)
       }
-
-      state.userName = state.userName.trim()
-      console.log(state)
-      debugger
-			props.addUser(state);
-			console.log(props.user)
-      setModal(true);
-			if(user_id == 'add') {
-				setIsAdd(true);
-			} else {
-				setIsAdd(false);
-			}
-      // state.orgId=localStorage.getItem('orgId')
-      // props.addPackage(state)
   }
+
+  // Open Modal for Add User Successfully and Update User Successfully
+  useEffect(() => {
+    debugger
+    if(props.isSubmitted){
+      setModal(true);
+      if(user_id == 'add'){
+        setIsAdd(true);
+      } else {
+        setIsAdd(false);
+      } 
+    } else {
+         
+    }
+  }, [props.isSubmitted])
 
 	// useEffect
 	useEffect(() => {
@@ -351,15 +339,15 @@ export function AddUser(props) {
           errors.userEmail="invalid email example ";
           isValid =false;
       }
-    else  if(state.stationName.trim()==''){
+    else  if(state.stationName.trim()=='' || state.stationName == '0'){
           errors.stationName="station name is required";
           isValid =false;
       }
-      else if(state.role.trim()==''){
+      else if(state.role.trim()=='' || state.role == '0'){
           errors.role="role field is required";
           isValid =false;
       }
-      else if(!props.isEdit && (state.userPassword.toString().trim()==''|| 
+      else if((user_id == 'add') && (state.userPassword.toString().trim()==''|| 
                 !(state.userPassword.length >= 3 && state.userPassword.length <= 10))){
           errors.userPassword="password is in between 3 to 10 characters";
           isValid =false;
@@ -371,7 +359,8 @@ export function AddUser(props) {
 
   const handleInputs = (event) => {
 		console.log(event.target.name, event.target.value)
-		debugger
+		// debugger
+      
     setState({
       ...state,
       [event.target.name]: (event.target.name == 'userPassword' 
@@ -424,8 +413,8 @@ export function AddUser(props) {
 
             <div className={styles.textfield}>
               <label style={{color: 'black'}}>Station Name</label>
-              <select className={styles.select1} name="stationName" /*value={state.stationName}*/ onChange={handleInputs}>
-                <option selected disabled>Station Name</option>
+              <select className={styles.select1} name="stationName" value={state.stationName} onChange={handleInputs}>
+                <option value={'0'}>Station Name</option>
                 {dropDownDetails.length > 0 && dropDownDetails.map(data => 
                   <option key={data._id} value={data._id}>{data.station_name}</option>
                 )}
@@ -435,16 +424,16 @@ export function AddUser(props) {
 
 						<div className={styles.textfield}>
 							<label style={{color: 'black'}}>Role</label>
-							<select className={styles.select1} name="role" /*value={state.role}*/ onChange={handleInputs}>
-								<option selected disabled>Role</option>
+							<select className={styles.select1} name="role" value={state.role} onChange={handleInputs}>
+								<option value={'0'}>Role</option>
 								{role.length > 0 && role.map(data => 
-                  <option key={data._id} value={data._id}>{data.role}</option>
+                  <option key={data._id} value={data._id}>{data.role.replace('_', ' ')}</option>
                   )}
 						</select>
 						<div className={styles.error_message}>{errors.role}</div>
 						</div>
 
-            {!props.isEdit ? <div className={styles.textfield}>
+            {user_id == 'add' ? <div className={styles.textfield}>
               <label style={{color: 'black'}}>Password</label>
 
               <input style={{position: 'relative'}} autocomplete="off" name="userPassword" value={state.userPassword} onChange={handleInputs} className={styles.inputfield} type={values.showPassword? "text" : "password"} />
@@ -488,7 +477,7 @@ export function AddUser(props) {
 
       </div>
 
-      {/* After Delete Modal */}
+      {/* Modal for Add Update User */}
 			<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={flag} />
@@ -512,6 +501,7 @@ export function AddUser(props) {
 
 const mapStateToProps = (state) => {
 	return {
+    isSubmitted: state.Stations.isSubmitted,
 		user: state.Users.userData,
 		isEdit: state.Users.isEdit,
     userDetails: state.Stations.stationDetails,
@@ -520,11 +510,16 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		addUser: (user) =>
+    setIsSubmitted: flag => {
+      dispatch(setIsSubmitted(flag))
+    },
+		addUserDetails: (user) =>
 			dispatch(actions.userActions(user)),
     getUserData: () => {
       dispatch(getStationData())
     },
+    EditUserDetails: (details) => 
+      dispatch(actions.EditUserDetails(details))
 	}
 }
 

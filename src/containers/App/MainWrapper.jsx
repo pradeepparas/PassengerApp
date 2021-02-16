@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import Spinner from 'react-spinner-material';
 import {
   CustomizerProps, ThemeProps, RTLProps,
 } from '../../shared/prop-types/ReducerProps';
@@ -30,10 +31,15 @@ const MainWrapper = ({
   return (
     <Fragment>
       {isFetching ? (
-        <Loading loading={isFetching} />
+        <Spinner size={120} style={{display: 'flex',width: '100%', height: '100%',borderColor: '#b22222', justifyContent: 'center', alignItems: 'center'}} spinnerColor={"#b22222"} spinnerWidth={2} visible={true} />
+        // <Spinner loading={isFetching} animation="border" variant="light" />
+        //  {/*<Loading loading={isFetching} />*/}
       ) : (
         <div className={`${theme.className} ${direction(location, rtl)}-support`} dir={direction(location, rtl)}>
           <div className={wrapperClass(customizer)}>
+            {/* <div>
+            <Spinner size={120} style={{display: 'flex',width: '100%', height: '100%', justifyContent: 'center', borderColor: '#cb2020', alignItems: 'center'}} spinnerColor={"#b22222"} spinnerWidth={2} visible={true} />
+            </div> */}
             {children}
           </div>
         </div>

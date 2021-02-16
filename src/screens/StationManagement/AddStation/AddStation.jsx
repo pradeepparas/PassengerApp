@@ -271,7 +271,7 @@ export function AddStation(props) {
   const toggleModalClose =()=>{
     setModal(false)
     props.setIsSubmitted(false);
-    // history.push('/station-management');
+    history.push('/station-management');
   }
 
   // Handle Submit Station
@@ -321,12 +321,18 @@ export function AddStation(props) {
   // validate form
   const validateForm =()=>{
     // All regex for validation
-       var emailValid = state.email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+       if(!state.contact_email){
+         state.contact_email = '';
+       }
+       if(!state.adminPassword) {
+        state.adminPassword = ''
+       }
+       var emailValid = state.email?state.email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/): state.email='';
        var contact_email = state.contact_email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
        var mobileValid = state.mobile.toString().match(/^[0]?[6789]\d{9}$/);
        var usernameRegex = state.station_name.toString().match(/^[a-zA-Z ]+$/);
        var code = state.station_code.match(/^[a-zA-Z]+$/);
-
+       
        var isValid= true;
        if(state.station_name.trim()==''|| !usernameRegex){
            errors.station_name="station name is required or invalid name";
@@ -414,7 +420,7 @@ export function AddStation(props) {
           errors.email="invalid email address";
           isValid =false;
       }
-      else if(!props.isEdit && (state.adminPassword.trim()=='' || 
+      else if((station_id == 'add') && (state.adminPassword.trim()=='' || 
       !(state.adminPassword.length >= 3 && state.adminPassword.length <= 10))){
         errors.adminPassword="password is in between 3 to 10 characters"  
         isValid =false;
@@ -441,16 +447,18 @@ export function AddStation(props) {
       let start = moment(state.contract_start_date);
       let end = moment(state.exp_end_date);
 
-      let months = end.diff(start , 'months');
       let years = end.diff(start , 'years');
+      let months;
+      months = end.diff(start , 'months') - years*12;
+      
       console.log(months, years)
       // debugger
       
       let tenure = '';
 
-      if( end.diff(start , 'years') > 0){
+      if( years > 0){
         tenure = years + " " + "Years"
-        if( end.diff(start , 'months') > 0){
+        if( months > 0){
           tenure += " " + months + " " + "Months"
         }
       } else {
@@ -467,7 +475,7 @@ export function AddStation(props) {
   }, [state.exp_end_date, state.contract_start_date])
 
   useEffect(() => {
-    if(props.isEdit){
+    if(props.isEdit || station_id != 'add'){
       axios({
         url: `${API.GetStationAPI}/${station_id}`,
         headers: { 
@@ -482,13 +490,18 @@ export function AddStation(props) {
             let data = response.data.staion;
             data.exp_end_date = moment(data.exp_end_date)
             data.contract_start_date = moment(data.contract_start_date)
-            data.name=response.data.staion.station_admin.name;
-            data.mobile = response.data.staion.station_admin.mobile;
-            data.email =response.data.staion.station_admin.email;
-            data.station_admin_id = response.data.staion.station_admin._id;
+            if(response.data.staion.station_admin){
+              data.name=response.data.staion.station_admin.name;
+              data.mobile = response.data.staion.station_admin.mobile;
+              data.email =response.data.staion.station_admin.email;
+              data.station_admin_id = response.data.staion.station_admin._id;
+            }
+            
             data.managed_by = data.managed_by?response.data.staion.managed_by._id: "";
             if(data.is_assign_as_admin){
               data.mobile = response.data.staion.contact_mobile
+              data.email = response.data.staion.contact_email
+              data.name = response.data.staion.contact_name
               setPChecked(data.is_assign_as_admin)
             }
             // data.is_assign_as_admin
@@ -589,7 +602,7 @@ export function AddStation(props) {
               </div>
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Station Type</label>
-                <select className={styles.select1} name="station_type" /*value={state.station_type}*/ onChange={handleInputs}>
+                <select className={styles.select1} name="station_type" value={state.station_type?state.station_type: ''} onChange={handleInputs}>
                   {/* RURAL, URBAN, SEMI RURAL */}
                   <option selected disabled>Station Type</option>
                   <option value="RURAL">RURAL</option>
@@ -601,7 +614,7 @@ export function AddStation(props) {
 
               <div className={styles.textfield}>
               <label style={{color: 'black'}}>Managed By</label>
-              <select className={styles.select1} name="managed_by" /*value={state.managed_by}*/ onChange={handleInputs}>
+              <select className={styles.select1} name="managed_by" value={state.managed_by?state.managed_by: ''} onChange={handleInputs}>
                 <option selected disabled>Managed By</option>
                 {managedByList.length > 0 ? managedByList.map(data =>
                   <option key={data._id} value={data._id}>{data.name}</option>
@@ -738,7 +751,7 @@ export function AddStation(props) {
             <input autocomplete="off" disabled={pchecked?true:false} name="email" value={state.email} onChange={handleInputs} className={styles.inputfield} type="text" />
             <div className={styles.error_message}>{errors.email}</div>
           </div>
-          {!props.isEdit && <div className={styles.textfield}>
+          {(station_id == 'add') && <div className={styles.textfield}>
             <label style={{color: 'black'}}>Password</label>
             <div className={styles.passwordDiv} style={{display: 'flex'}}>
             <input autocomplete="off" name="adminPassword" value={state.adminPassword} onChange={handleInputs} className={styles.inputfield} type="text" />
@@ -815,9 +828,6 @@ const mapStateToProps = (state) => {
     contractorsList: state.Stations.contractorsList,
     isSubmitted: state.Stations.isSubmitted
 		// loading: state.auth.loading,
-		// error: state.auth.error,
-		// isAuthenticated: state.auth.token !== null,
-		// authRedirectPath: state.auth.authRedirectPath,
 	};
 };
 

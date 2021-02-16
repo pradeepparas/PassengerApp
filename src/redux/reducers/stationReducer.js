@@ -11,7 +11,9 @@ const initialState = {
   isEdit: false,
   contractorsList: [],
   isSubmitted: false,
-  docs: []
+  docs: [],
+  total: '',
+  limit: ''
 };
 
 const stationReducer = (state = initialState, action) => {
@@ -71,7 +73,9 @@ const stationReducer = (state = initialState, action) => {
     case actionTypes.FETCH_STATION_BYPARAMS:
       return {
         ...state,
-        docs: action.docs
+        docs: action.docs,
+        total: action.total,
+        limit: action.limit
       }
     default:
       return state;

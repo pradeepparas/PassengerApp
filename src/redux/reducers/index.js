@@ -9,8 +9,10 @@ import authReducer from './authReducer';
 import stationReducer from './stationReducer';
 import userReducer from './userReducer'
 import auth from './auth';
+import vendorReducer from './vendorReducer';
 
 export {
+  vendorReducer,
   themeReducer,
   rtlReducer,
   sidebarReducer,

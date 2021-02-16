@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { Link, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
+import { compose } from 'redux';
 import {
 	Modal,
 	ModalHeader,
@@ -45,6 +47,7 @@ import Pagination from '@material-ui/lab/Pagination';
 
 // components
 import styles from './Vendors.module.css';
+import * as actions from "../../redux/actions/vendorActions";
 // import styled from 'styled-components';
 
 const BootstrapInput = withStyles((theme) => ({
@@ -205,23 +208,24 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(userName, userNumber, userEmail, service, stationName, hours, date) {
-  return { userName, userNumber, userEmail, service, stationName, hours, date };
-}
+// function createData(userName, userNumber, userEmail, service, stationName, hours, date) {
+//   return { userName, userNumber, userEmail, service, stationName, hours, date };
+// }
 
-const rows = [
-  createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-  createData("John Doe", 8854875896, "john@gmail.com", "Food and Beverages", "Bhopal","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-  createData("Mark", 8854875896, "john@gmail.com", "Medicines", "Indore","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-  createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-  createData("Jack", 8854875896, "john@gmail.com", "Food and Beverages", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-];
+// const rows = [
+//   createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "Food and Beverages", "Bhopal","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+//   createData("Mark", 8854875896, "john@gmail.com", "Medicines", "Indore","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+//   createData("Jack", 8854875896, "john@gmail.com", "Food and Beverages", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+// ];
 
-export default function StationManagement(props) {
+export function Vendors(props) {
   const [date, setDate] = useState({
     start: new Date().toISOString().slice(0, 10),
     end: new Date().toISOString().slice(0, 10),
   })
+  const [rows, setRows] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [arrayDetails, setArrayDetails] = useState([]);
   const [modal, setModal] = useState({
@@ -251,6 +255,29 @@ export default function StationManagement(props) {
 		})
 	}
 
+  useEffect(() => {
+    // setRoleList(props.role)
+    // if(props.userDetails){
+    //   setDropDownDetails(props.userDetails)
+    //   console.log(props.userDetails)
+    //   // debugger
+    // }
+
+    if(props.vendorDocs){
+      // console.log("",props.vendorDocs)
+      setRows(props.vendorDocs)
+      debugger
+    }
+  }, [props.vendorDocs])
+
+  // Getting Vendors List
+  useEffect(() => {
+    // props.getRole();
+    // props.getUserData();
+    props.getVendorDataByParams(1, 10);
+    // debugger
+  }, [])
+
    // Changing Date fields
    const handleDateChange = (data, type) => {
     console.log(data)
@@ -267,6 +294,9 @@ export default function StationManagement(props) {
       })
     }
   }
+
+  // Get Vendors Data List
+
 
   // Search Field Value
   const handleChange = (prop) => (event) => {
@@ -423,13 +453,11 @@ export default function StationManagement(props) {
         <TableHead style={{backgroundColor: '#e4e4e4'}}>
           <TableRow>
             <TableCell>S.No.</TableCell>
-            <TableCell align="center">Name</TableCell>
+            <TableCell align="center">Vendor Name</TableCell>
             <TableCell align="center">Phone Number</TableCell>
             <TableCell align="center">Email</TableCell>
-            <TableCell align="center">Service Offered</TableCell>
-            <TableCell align="center">Delivery Station</TableCell>
-            <TableCell align="center">Operational Hours</TableCell>
             <TableCell align="center">Registration Date</TableCell>
+            <TableCell align="center">Status</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -439,13 +467,11 @@ export default function StationManagement(props) {
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
-              <TableCell align="center">{row.userName}</TableCell>
-              <TableCell align="center">{row.userNumber}</TableCell>
-              <TableCell align="center">{row.userEmail}</TableCell>
-              <TableCell align="center">{row.service}</TableCell>
-              <TableCell align="center">{row.stationName}</TableCell>
-              <TableCell align="center">{row.hours}</TableCell>
-              <TableCell align="center">{row.date}</TableCell>
+              <TableCell align="center">{row.name}</TableCell>
+              <TableCell align="center">{row.mobile}</TableCell>
+              <TableCell align="center">{row.email}</TableCell>
+              <TableCell align="center">{moment(row.createdAt).format("DD-MM-YYYY")}</TableCell>
+              <TableCell align="center">{row.status}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
@@ -530,15 +556,15 @@ export default function StationManagement(props) {
 						<div className={styles.box1}>
 								<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 60,marginRight: 25}}> - </span>{arrayDetails.userName}
+								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 60,marginRight: 25}}> - </span>{arrayDetails.name}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Mobile Number</span><span style={{marginLeft: 49,marginRight: 25}}> - </span>{arrayDetails.userNumber}
+								<span className={styles.textModal}>Mobile Number</span><span style={{marginLeft: 49,marginRight: 25}}> - </span>{arrayDetails.mobile}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Email</span><span style={{marginLeft: 112,marginRight: 25}}> - </span>{arrayDetails.userEmail}
+								<span className={styles.textModal}>Email</span><span style={{marginLeft: 112,marginRight: 25}}> - </span>{arrayDetails.email}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Warehouse Address</span><span style={{marginLeft: 22,marginRight: 25}}> - </span>107 Abc street no. 7 Bhopal
+								<span className={styles.textModal}>Warehouse Address</span><span style={{marginLeft: 22,marginRight: 25}}> - </span>{arrayDetails.warehouse_address}
 								</div>
                 {/* Empty Div */}
                 <div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
@@ -550,11 +576,11 @@ export default function StationManagement(props) {
 						<div className={styles.box1}>
 							<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 							<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Service Offered</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>{arrayDetails.service}
+							<span className={styles.textModal}>Service Offered</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>-
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Delivery Station</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>{arrayDetails.stationName}
+							<span className={styles.textModal}>Delivery Station</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>-
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Operational Hours</span><span style={{marginLeft: 75,marginRight: 25}}> - </span>{arrayDetails.hours}
+							<span className={styles.textModal}>Operational Hours</span><span style={{marginLeft: 75,marginRight: 25}}> - </span>-
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 							<span className={styles.textModal}>Delivery Preparation Duration</span><span style={{marginLeft: 2,marginRight: 25}}> - </span>45 mins
 							</div>
@@ -587,3 +613,37 @@ export default function StationManagement(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+	debugger
+	return {
+	  vendorDocs: state.Vendors.docs,
+    total: state.Vendors.total,
+    limit: state.Vendors.limit
+    
+	}
+}
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+    getVendorDataByParams: (pageNo, size, params) => {
+      dispatch(actions.getVendorDataByParams(pageNo, size, params))
+    },
+    // getRole: () => {
+    //   dispatch(actions.getRole())
+    // },
+    // getUserData: () => {
+    //   dispatch(getStationData())
+    // },
+    // setIsEditFalse: (value) => 
+    //   dispatch(actions.setIsEditFalse(value)),
+		// // add_user: (user) =>
+		// // 	dispatch(actions.userActions(user))
+	  // setUserData	: (data) =>
+		// 	dispatch(actions.setUserData(data)),
+    // deleteUser: (id) => 
+    //   dispatch(actions.deleteUser(id))
+	}
+}
+
+export default compose(connect(mapStateToProps, mapDispatchToProps))(Vendors);

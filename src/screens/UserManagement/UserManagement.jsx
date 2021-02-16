@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { connect } from "react-redux";
 import { compose } from 'redux';
 import { Link, Redirect } from "react-router-dom";
+import axios from 'axios';
+import * as API from '../../constants/APIs';
 import {
 	Modal,
-	ModalHeader,
+	// ModalHeader,
 	ModalBody,
 	ModalFooter,
-	Input,
-	Label,
-	Form,
-	FormGroup,
+	// Input,
+	// Label,
+	// Form,
+	// FormGroup,
 } from "reactstrap";
 
 // Images
@@ -25,7 +27,7 @@ import flag from '../StationManagement/flag.svg';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import CancelIcon from "@material-ui/icons/Cancel";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -47,9 +49,10 @@ import Pagination from '@material-ui/lab/Pagination';
 
 // components
 import styles from './UserManagement.module.css';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 import * as actions from "../../redux/actions/userActions";
 import { getStationData } from "../../redux/actions/stationActions";
+import { toast } from 'react-toastify';
 
 // import { Modal1 } from './Modal';
 // import { GlobalStyle } from './globalStyles';
@@ -244,8 +247,10 @@ const rows = [
 
 export function UserManagement(props) {
 	const [rows, setRows] = useState([]);
+  const [pageNo, setPageNo] = useState();
 	const [showModal, setShowModal] = useState(false);
 	const [arrayDetails, setArrayDetails] = useState([]);
+  const [role, setRoleList] = useState([]);
   const [modal, setModal] = useState({
     deleteModal: false,
     details: false,
@@ -274,8 +279,40 @@ export function UserManagement(props) {
   };
 
 // Handle Delete function
-	const handleDeleteSubmit = () => {
+	const handleDeleteSubmit = (e, userData) => {
 		// set delete modal false
+    console.log(userData)
+    debugger
+    let data = {
+      "block_status": userData.is_blocked,
+      "user_id": userData._id
+    }
+    
+    axios({
+      url: `${API.BlockUserAPI}/${userData._id}`,
+      method: "DELETE",
+      headers: {
+        //    'Accept-Language': 'hi', 
+        "accept": "application/json",
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      }
+    }).then((response) => {
+      if(response.data.success){
+        debugger
+        // toast.success(response.data.message)
+        setModal({
+          deleteModal: false,
+          deletedModal: true
+        })
+        props.getUserDataByParams(pageNo, props.limit)
+      } else {
+        debugger
+        toast.error(response.data.message)
+      }
+    }).catch(err => {
+      toast.error(err.response.data.message)
+    })
+
     props.deleteUser(arrayDetails.id)
 		setModal({
 			deleteModal: false,
@@ -285,12 +322,14 @@ export function UserManagement(props) {
 
   // Getting Users list By Parameters
     useEffect(() => {
+      props.getRole();
       props.getUserData();
       props.getUserDataByParams(1, 10);
       // debugger
     }, [])
 
     useEffect(() => {
+      setRoleList(props.role)
       if(props.userDetails){
         setDropDownDetails(props.userDetails)
         console.log(props.userDetails)
@@ -320,6 +359,26 @@ export function UserManagement(props) {
       })
     }
   }
+
+  const handleChangePage = (event, page) => {
+    setPageNo(page)
+    props.getUserDataByParams(page, props.limit, search)
+	}
+
+  // Used for Pagination
+  const setPage = () => {
+		let total = Math.ceil(props.total / props.limit)
+		return (
+
+        <Pagination 
+          onChange={handleChangePage}
+    			count={total} 
+          shape="rounded" 
+          classes={{ ul: classes.ul1 }} 
+          size='small'/>
+		)
+
+	}
 
   // Search field Change
   const handleChange = (prop) => (event) => {
@@ -428,8 +487,9 @@ export function UserManagement(props) {
           <div className={styles.selectDiv1}>
             <select className={styles.select1} name="role" /*value={this.state.courseId}*/ onChange={handleInputs}>
               <option selected disabled>Role</option>
-              <option value="1">Station Admin</option>
-              <option value="2">Master Admin</option>
+              {role.length > 0 && role.map(data => 
+                  <option key={data._id} value={data._id}>{data.role.replace('_', ' ')}</option>
+                  )}
           </select>
           </div>
           </div>
@@ -521,7 +581,7 @@ export function UserManagement(props) {
               <TableCell align="center">{row.name}</TableCell>
               <TableCell align="center">{row.mobile}</TableCell>
               <TableCell align="center">{row.email? row.email:'-'}</TableCell>
-              <TableCell align="center">{row.role?row.role.role: '-'}</TableCell>
+              <TableCell align="center">{row.role?row.role.role.replace('_', ' '): '-'}</TableCell>
               <TableCell align="center">{row.station_id?row.station_id.station_name: '-'}</TableCell>
               <TableCell align="center">{moment(row.created_at).format("DD-MM-YYYY")}</TableCell>
               <TableCell align="center">
@@ -581,7 +641,7 @@ export function UserManagement(props) {
               style={{width: 100}}
 							variant="contained"
 							className={classes.button1}
-							onClick={(e) => { handleDeleteSubmit(e) }}
+							onClick={(e) => { handleDeleteSubmit(e, arrayDetails) }}
 						>
 							YES
 						</Button>
@@ -617,7 +677,7 @@ export function UserManagement(props) {
 							{/*<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Details</div>*/}
 								<div className={styles.modalBox}>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Role</span><span style={{marginLeft: 130,marginRight: 25}}> - </span>{arrayDetails.role?arrayDetails.role.role: '-'}
+								<span className={styles.textModal}>Role</span><span style={{marginLeft: 130,marginRight: 25}}> - </span>{arrayDetails.role?arrayDetails.role.role.replace('_', ' '): '-'}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>Name</span><span style={{marginLeft:  121,marginRight: 25}}> - </span>{arrayDetails.name}
@@ -650,7 +710,7 @@ export function UserManagement(props) {
 
       {rows.length > 0 &&<div className={styles.pageDiv}>
       <div style={{marginTop: 40}}>
-      <Pagination count={rows.length} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
+      {rows.length > 0 && setPage()}
       </div>
       </div>}
     </div>
@@ -663,6 +723,9 @@ const mapStateToProps = (state) => {
 		// user: state.Users.usersList,
     userDocs: state.Users.docs,
     userDetails: state.Stations.stationDetails,
+    total: state.Users.total,
+    limit: state.Users.limit,
+    role: state.Users.role
 	}
 }
 
@@ -670,6 +733,9 @@ const mapDispatchToProps = (dispatch) => {
 	return {
     getUserDataByParams: (pageNo, size, params) => {
       dispatch(actions.getUserDataByParams(pageNo, size, params))
+    },
+    getRole: () => {
+      dispatch(actions.getRole())
     },
     getUserData: () => {
       dispatch(getStationData())

@@ -4,11 +4,15 @@ const initialState = {
   usersList: [],
   isEdit:false,
   userData:{},
-  docs: []
+  docs: [],
+  total: '',
+  limit: '',
+  role: []
 };
 
 const userReducer = (state = initialState, action) => {
   // debugger
+  
   switch (action.type) {
     case actionTypes.ADD_USER:
       var value = action.user;
@@ -40,8 +44,17 @@ const userReducer = (state = initialState, action) => {
       case actionTypes.FETCH_USER_BYPARAMS:
         return {
           ...state,
-          docs: action.docs
+          docs: action.docs,
+          total: action.total,
+          limit: action.limit
         }
+
+      case actionTypes.SET_ROLES:
+        return {
+          ...state,
+          role: action.role
+        }
+        
     default:
       return state;
   }

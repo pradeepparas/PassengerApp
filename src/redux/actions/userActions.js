@@ -4,6 +4,7 @@ import axios from 'axios';
 // import moment from 'moment';
 import { toast } from 'react-toastify';
 import { setIsSubmitted } from './stationActions';
+import { mapProps } from 'recompose';
 // export function userActions(user) {
 //   return {
 //     type: actionTypes.ADD_USER,
@@ -18,12 +19,13 @@ export function userActions(details) {
     debugger
     const data = {
       "name": details.userName,
-      "email": details.userEmail,
+      // "email": details.userEmail,
       "mobile": details.userNumber,
       "station_id": details.stationName,
       "role": details.role,
       "password": details.userPassword
     }
+    if(details.userEmail)data.email= details.userEmail;
 
     axios({
       method: 'post',
@@ -43,12 +45,49 @@ export function userActions(details) {
         debugger
       }
     }).catch((response) => {
-      debugger
-      // console.log(response.data)
-      console.log(response.response.data.message)
-      debugger
+      // debugger
       toast.error(response.response.data.message)
-      console.log(response.response.data.message)
+      dispatch(setIsSubmitted(false))
+    })
+  }
+}
+
+export function EditUserDetails(details) {
+  return dispatch => {
+    console.log(details)
+    debugger
+    // return
+    let data = {
+        "name": details.userName,
+        // "email": details.userEmail,
+        "mobile": details.userNumber,
+        "station_id": details.stationName,
+        "role": details.role
+    }
+    if(details.userEmail)data.email= details.userEmail;
+    
+    let UpdateUser = `${API.GetUserAPI}/${details._id}`;
+
+    axios({
+      url: UpdateUser,
+      method: "PUT",
+      data: data,
+      headers: {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      }
+    }).then((response) => {
+      if(response.data.success){
+        dispatch(setIsSubmitted(true))
+      } else {
+        dispatch(setIsSubmitted(false))
+      }
+  // "message": "Station updated succesfully",
+  // "success": true,
+  // "status": 200
+    }).catch(err => {
+      toast.error(err.response.data.message)
       dispatch(setIsSubmitted(false))
     })
   }
@@ -82,7 +121,7 @@ export function getUserDataByParams(page, limit, values) {
       debugger
       if(response.data.success){
         debugger
-        dispatch(fetchUserDataByParams(response.data.user.docs))
+        dispatch(fetchUserDataByParams(response.data.user.docs, response.data.user.total, response.data.user.limit))
       } else {
         dispatch(fetchUserDataByParams(response.data.user.docs))
       }
@@ -90,10 +129,12 @@ export function getUserDataByParams(page, limit, values) {
   }
 }
 
-export function fetchUserDataByParams(docs) {
+export function fetchUserDataByParams(docs, total, limit) {
   return {
     type: actionTypes.FETCH_USER_BYPARAMS,
-    docs: docs
+    docs: docs,
+    total: total,
+    limit: limit
   }
 }
 
@@ -108,5 +149,29 @@ export function deleteUser(userId) {
   return {
     type: actionTypes.DELETE_USER,
     userId: userId
+  }
+}
+
+// For Getting Roles Like Admin, Super Admin
+export function getRole(){
+  return dispatch => {
+    axios({
+      url: API.GetRoleAPI,
+      headers: {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      }
+    }).then((response)=> {
+      dispatch(setRole(response.data.role))
+      // setRole(response.data.role)
+    })
+}
+}
+
+export function setRole(role) {
+  return {
+    type: actionTypes.SET_ROLES,
+    role: role
   }
 }

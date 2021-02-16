@@ -36,10 +36,10 @@ import home from "./images/home.svg";
 import user_alt1 from './images/user_alt1.svg';
 import account_logout from "./images/account_logout.svg";
 import dropdown_circle from "./images/dropdown_circle.svg";
-import Logo from './images/Logo.svg';
+// import Logo from './images/Logo.svg';
 import rupee from './images/rupee.svg';
-import servicestack from './images/servicestack.svg';
-import train1 from './images/train1.svg';
+// import servicestack from './images/servicestack.svg';
+// import train1 from './images/train1.svg';
 import train from './images/train.svg';
 import user_alt from './images/user_alt.svg';
 import user_astronaut from './images/user_astronaut.svg';
@@ -212,8 +212,14 @@ export function MiniDrawer(props) {
     }
     setOpenProfile(false);
     if(type == 'logout'){
-      await props.logOut();
+      // await props.logOut();
       history.push("/")
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userDataLS');
+      
+      
     }
   };
 
@@ -280,22 +286,24 @@ export function MiniDrawer(props) {
   const checkAuth =(name, type)=>{
   // debugger
   // debugger
-  const module = userDataLS.role.access_module;
-  let auth= module.find(x=>x.status==true && x.module==name)
-  // debugger
-  if(auth){
+  if(userDataLS) {
+    const module = userDataLS.role.access_module;
+    let auth= module.find(x=>x.status==true && x.module==name)
     // debugger
-    return true
-  }
-  else{
-    auth=module.find(x=>x.submodule.find(o=>o.name==type&&o.status==true))
-    if(auth){ 
+    if(auth){
+    // debugger
       return true
     }
-    else{
-     return false
-    }
-  }
+      else{
+      auth=module.find(x=>x.submodule.find(o=>o.name==type&&o.status==true))
+      if(auth){ 
+        return true
+       }
+      else{
+        return false
+        }
+      }
+    } 
   }
 
   return (

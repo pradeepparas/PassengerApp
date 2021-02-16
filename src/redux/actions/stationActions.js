@@ -36,13 +36,17 @@ export function EditStationDetails(details) {
       "contract_tenure": details.contract_tenure,
       "contact_name": details.contact_name,
       "contact_mobile": details.contact_mobile,
-      "contact_email": details.contact_email,
+      // "contact_email": details.contact_email,
       "is_assign_as_admin": details.is_assign_as_admin,
       "name": details.name,
       "mobile": details.mobile,
-      "email": details.email,
+      // "email": details.email,
       "station_admin_id": details.station_admin_id
     }
+
+    if(details.email)data.email = details.email;
+    if(details.contact_email)data.contact_email = details.contact_email;
+
     axios({
       url: API.AddStationAPI,
       method: "PUT",
@@ -61,7 +65,10 @@ export function EditStationDetails(details) {
   // "message": "Station updated succesfully",
   // "success": true,
   // "status": 200
-    })
+    }).catch(err => {
+        toast.error(err.response.data.message)
+        dispatch(setIsSubmitted(false))
+      })
   }
 }
 
@@ -72,6 +79,15 @@ export function stationActions(details) {
   // change date format using Moment
   details.contract_start_date = moment(details.contract_start_date).format("YYYY-MM-DD")
   details.exp_end_date = moment(details.exp_end_date).format("YYYY-MM-DD")
+  
+  if(details.contact_email == ''){
+    delete details["contact_email"];
+  }
+  if(details.email == ''){
+    delete details["email"];
+  }
+  console.log(details)
+  debugger
 
   delete details[key];
   console.log('details action', details) 
@@ -153,7 +169,10 @@ export function GetContractors() {
       } else {
 
       }
-    }).catch(err => console.log(err))
+    }).catch(err => {
+      toast.error(err.response.data.message)
+      // dispatch(setIsSubmitted(false))
+    })
   }
 }
 
@@ -176,11 +195,16 @@ export function getStationDataByParams(page, limit, values) {
       debugger
       if(response.data.success){
         debugger
-        dispatch(fetchStationDataByParams(response.data.station.docs))
+        // "total": 2,
+        // "limit": 10,
+        dispatch(fetchStationDataByParams(response.data.station.docs, response.data.station.total, response.data.station.limit))
       } else {
-        dispatch(fetchStationDataByParams(response.data.station.docs))
+        dispatch(fetchStationDataByParams(response.data.station.docs ))
       }
-    }).catch(err => console.log(err))
+    }).catch(err => {
+      toast.error(err.response.data.message)
+      // dispatch(setIsSubmitted(false))
+    })
   }
 }
 
@@ -201,7 +225,10 @@ export function getStationData() {
       } else {
 
       }
-    }).catch(err => console.log(err))
+    }).catch(err => {
+      toast.error(err.response.data.message)
+      // dispatch(setIsSubmitted(false))
+    })
   }
 }
 
@@ -212,10 +239,12 @@ export function fetchStationData(stationData) {
   }
 }
 
-export function fetchStationDataByParams(docs) {
+export function fetchStationDataByParams(docs, total, limit) {
   return {
     type: actionTypes.FETCH_STATION_BYPARAMS,
-    docs: docs
+    docs: docs,
+    total: total,
+    limit: limit
   }
 }
 

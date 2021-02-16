@@ -11,6 +11,7 @@ import {
   authReducer,
   stationReducer,
   userReducer,
+  vendorReducer,
   auth
 } from '../../redux/reducers/index';
 import appConfigReducer from '../../redux/reducers/appConfigReducer';
@@ -18,6 +19,7 @@ import covidReducer from '../Maps/VectorMapWithRequestData/redux/covidReducer';
 import todoReducer from '../Todo/redux/reducer';
 
 const reducer = combineReducers({
+  Vendors: vendorReducer,
   Users: userReducer,
   Auth: auth,
   Stations: stationReducer,

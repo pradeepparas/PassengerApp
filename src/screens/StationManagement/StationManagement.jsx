@@ -27,7 +27,7 @@ import flag from './flag.svg';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import CancelIcon from "@material-ui/icons/Cancel";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -40,10 +40,10 @@ import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
+// import InputLabel from '@material-ui/core/InputLabel';
+// import InputAdornment from '@material-ui/core/InputAdornment';
+// import Select from '@material-ui/core/Select';
+// import NativeSelect from '@material-ui/core/NativeSelect';
 import InputBase from '@material-ui/core/InputBase';
 import Pagination from '@material-ui/lab/Pagination';
 
@@ -270,6 +270,7 @@ const rows = [
 ];
 
 export function StationManagement(props) {
+  const [pageNo, setPageNo] = useState();
   const [search, setSearch] = useState({
     station_name: "",
     name: "",
@@ -312,9 +313,30 @@ export function StationManagement(props) {
     if(props.stationDocs){
       console.log("props.stateionDocs",props.stationDocs)
       setRows(props.stationDocs)
-      // debugger
+      debugger
     }
   }, [props.stationDetails, props.stationDocs])
+
+  // Handling Pagination
+  const handleChangePage = (event, page) => {
+    setPageNo(page)
+    props.getStationDataByParams(page, props.limit, search.name)
+	}
+
+  // Used for Pagination
+  const setPage = () => {
+		let total = Math.ceil(props.total / props.limit)
+		return (
+
+        <Pagination 
+          onChange={handleChangePage}
+    			count={total} 
+          shape="rounded" 
+          classes={{ ul: classes.ul1 }} 
+          size='small'/>
+		)
+
+	}
 
 // Handle Delete function
 	const handleDeleteSubmit = (e, id) => {
@@ -335,6 +357,7 @@ export function StationManagement(props) {
           deleteModal: false,
           deletedModal: true
         })
+        props.getStationDataByParams(pageNo, props.limit)
       }
     })
     // props.deleteStation(arrayDetails.id)
@@ -379,9 +402,7 @@ export function StationManagement(props) {
   };
 
   const toggleModal =(e,data, i)=>{
-    // rows[i].id = i;
-    // console.log(rows[i])
-    // debugger
+    
   	setArrayDetails(rows[i]);
     setModal(true);
     console.log(arrayDetails)
@@ -424,6 +445,7 @@ export function StationManagement(props) {
         details: false,
 				deletedModal: false
       })
+
     }
 
     // function for adding station or Setting IsEdit False
@@ -759,7 +781,7 @@ export function StationManagement(props) {
 
       {rows.length > 0 &&<div className={styles.pageDiv}>
       <div style={{marginTop: 40}}>
-      <Pagination count={rows.length} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
+      {rows.length > 0 && setPage()}
       </div>
       </div>}
 			</div>
@@ -772,6 +794,8 @@ const mapStateToProps = (state) => {
     contractorsList: state.Stations.contractorsList,
     stationDetails: state.Stations.stationDetails,
     stationDocs: state.Stations.docs,
+    total: state.Stations.total,
+    limit: state.Stations.limit
 		// loading: state.auth.loading,
 		// error: state.auth.error,
 		// isAuthenticated: state.auth.token !== null,

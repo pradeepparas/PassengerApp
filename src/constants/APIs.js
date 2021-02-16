@@ -12,3 +12,8 @@ export const DeleteStationAPI = `${url}/stations`;
 export const GetUserAPI = `${url}/users`
 export const AddUserAPI = `${url}/users/add`;
 export const GetRoleAPI = `${url}/roles`;
+export const BlockUserAPI = `${url}/users`;
+
+// Vendors
+// http://13.235.102.214:8000/vendors/1/10
+export const GetVendorAPI = `${url}/vendors`
