@@ -23,6 +23,7 @@ import styles from './AddStation.module.css';
 import logo from './logo.png';
 import flag from '../flag.svg';
 import * as actions from '../../../redux/actions/stationActions';
+// import Loading from '../../../components/Loading/Loading';
 
 // Material UI
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -36,6 +37,7 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { idea } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
+import { toast } from 'react-toastify';
 
 const GreenCheckbox = withStyles({
   root: {
@@ -185,6 +187,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function AddStation(props) {
+  // const history = useHistory();
+  const [stationType, setStationType] = useState([])
+  const token = localStorage.getItem('token')
 	const [add_details, setAddDetails] = useState([]);
 	const { station_id } = useParams();
   const [isAdd, setIsAdd] = useState(false);
@@ -221,12 +226,18 @@ export function AddStation(props) {
 
   // GET Contractors List
   useEffect(() => {
+    if(token == null){
+      history.push('/');
+    } else {
     props.GetContractors()
+    props.getStationData()
+    }
   }, [])
 
   useEffect(() => {
+    setStationType(props.stationType)
     setManagedByList(props.contractorsList)
-  }, [props.contractorsList])
+  }, [props.contractorsList, props.stationType])
 
 	// if(id == 'add') {
 	// 	setIsAdd(true)
@@ -239,9 +250,9 @@ export function AddStation(props) {
   const [errors , setErros]= useState({})
   // const [password, setPassword] = useState('');
 
-	useEffect(() => {
-		console.log(props.details)
-	}, [props.details])
+	// useEffect(() => {
+	// 	console.log(props.details)
+	// }, [props.details])
 
   useEffect(()=>{
 		autofillDetails()
@@ -327,6 +338,10 @@ export function AddStation(props) {
        if(!state.adminPassword) {
         state.adminPassword = ''
        }
+
+       if(!state.mobile){
+        state.mobile = ''
+       }
        var emailValid = state.email?state.email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/): state.email='';
        var contact_email = state.contact_email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
        var mobileValid = state.mobile.toString().match(/^[0]?[6789]\d{9}$/);
@@ -342,11 +357,11 @@ export function AddStation(props) {
           errors.station_code="station code is required or invalid code";
           isValid =false;
       }
-      else  if(state.station_type.trim()==''){
+      else  if(state.station_type=='0'|| state.station_type==''){
           errors.station_type="station type is required";
           isValid =false;
       }
-      else if(state.managed_by ==''){
+      else if(state.managed_by =='0' || state.managed_by ==''){
         errors.managed_by="managed by is required";
         isValid =false;
       }
@@ -450,7 +465,8 @@ export function AddStation(props) {
       let years = end.diff(start , 'years');
       let months;
       months = end.diff(start , 'months') - years*12;
-      
+      // let days = end.diff(start , 'days') - ;
+
       console.log(months, years)
       // debugger
       
@@ -475,7 +491,11 @@ export function AddStation(props) {
   }, [state.exp_end_date, state.contract_start_date])
 
   useEffect(() => {
+    if(token == null){
+      history.push()
+    } else {
     if(props.isEdit || station_id != 'add'){
+      props.setIsLoading(true)
       axios({
         url: `${API.GetStationAPI}/${station_id}`,
         headers: { 
@@ -511,9 +531,16 @@ export function AddStation(props) {
         } else {
           setState([]);
         }
+        // props.setIsLoading(false)
+      }).catch(err => {
+        toast.error(err.response.data.message)
+        props.setIsLoading(false)
       })
       setState(props.stationData)
+      props.setIsLoading(false)
+      debugger
       // setDetails(props.stationData)
+      }
     }
   }, [])
 
@@ -602,20 +629,20 @@ export function AddStation(props) {
               </div>
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Station Type</label>
-                <select className={styles.select1} name="station_type" value={state.station_type?state.station_type: ''} onChange={handleInputs}>
+                <select className={styles.select1} name="station_type" value={state.station_type} onChange={handleInputs}>
                   {/* RURAL, URBAN, SEMI RURAL */}
-                  <option selected disabled>Station Type</option>
-                  <option value="RURAL">RURAL</option>
-                  <option value="SEMI RURAL">SEMI RURAL</option>
-                  <option value="URBAN">URBAN</option>
+                  <option value={'0'} >Station Type</option>
+                  {stationType.length > 0 ? stationType.map(data =>
+                  <option key={data._id} value={data.station_type}>{data.station_type}</option>
+                  ) : null}
               </select>
               <div className={styles.error_message}>{errors.station_type}</div>
               </div>
 
               <div className={styles.textfield}>
               <label style={{color: 'black'}}>Managed By</label>
-              <select className={styles.select1} name="managed_by" value={state.managed_by?state.managed_by: ''} onChange={handleInputs}>
-                <option selected disabled>Managed By</option>
+              <select className={styles.select1} name="managed_by" value={state.managed_by} onChange={handleInputs}>
+                <option value={'0'} >Managed By</option>
                 {managedByList.length > 0 ? managedByList.map(data =>
                   <option key={data._id} value={data._id}>{data.name}</option>
                   ) : null}
@@ -654,12 +681,14 @@ export function AddStation(props) {
               </div>
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Contract Winner</label>
-                <input autocomplete="off" name="contract_winner" value={state.contract_winner} onChange={handleInputs} className={styles.inputfield} type="text" />
+                <input disabled={true} autocomplete="off" name="contract_winner" value={state.contract_winner} onChange={handleInputs} className={styles.inputfield} type="text" />
                 <div className={styles.error_message}>{errors.contract_winner}</div>
               </div>
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Contract Start Date</label>
                 <DatePicker
+                  minDate={new Date()}
+                  maxDate={state.exp_end_date?new Date(state.exp_end_date): ''}
                   className={styles.input_s}
                   peekNextMonth showMonthDropdown showYearDropdown
                   dropdownMode="select"
@@ -672,7 +701,9 @@ export function AddStation(props) {
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Expected End Date</label>
                 <DatePicker
-                className={styles.input_s}
+                  minDate={state.contract_start_date?new Date(state.contract_start_date): new Date()}
+                  // maxDate={}
+                  className={styles.input_s}
                   peekNextMonth showMonthDropdown showYearDropdown
                   dropdownMode="select"
                   selected={new Date()}
@@ -826,7 +857,9 @@ const mapStateToProps = (state) => {
     isEdit: state.Stations.isEdit,
     stationData: state.Stations.stationData,
     contractorsList: state.Stations.contractorsList,
-    isSubmitted: state.Stations.isSubmitted
+    isSubmitted: state.Stations.isSubmitted,
+    isLoading: state.Stations.isLoading,
+    stationType: state.Stations.stationType
 		// loading: state.auth.loading,
 	};
 };
@@ -843,7 +876,12 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch(actions.stationActions(details)),
     GetContractors: () => {
       dispatch(actions.GetContractors())
-    }
+    },
+    getStationData: () => {
+      dispatch(actions.getStationData())
+    },
+    setIsLoading: (value) =>
+      dispatch(actions.setIsLoading(value)),
 		// onAuth: (username, password) =>
 		// 	dispatch(actions.auth(username, password)),
 		// 	updateSignup:()=>

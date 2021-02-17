@@ -7,7 +7,7 @@ import { compose } from 'redux';
 import * as actions from "../../../redux/actions/userActions";
 import * as API from "../../../constants/APIs";
 import axios from 'axios';
-import { getStationData, setIsSubmitted } from "../../../redux/actions/stationActions";
+import { getStationData, setIsSubmitted, setIsLoading } from "../../../redux/actions/stationActions";
 import {
 	Modal,
 	ModalHeader,
@@ -35,6 +35,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import IconButton from "@material-ui/core/IconButton";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import { toast } from 'react-toastify';
 
 const GreenCheckbox = withStyles({
   root: {
@@ -235,6 +236,7 @@ export function AddUser(props) {
     }, [props.userDetails])
 
     useEffect(() => {
+      props.setIsLoading(true)
       axios({
         url: API.GetRoleAPI,
         headers: {
@@ -244,9 +246,11 @@ export function AddUser(props) {
         }
       }).then((response)=> {
         setRole(response.data.role)
+        props.setIsLoading(false)
       })
 
       if(props.isEdit || user_id != 'add'){
+        props.setIsLoading(true)
         axios({
           url: `${API.GetUserAPI}/${user_id}`,
           headers: { 
@@ -271,7 +275,11 @@ export function AddUser(props) {
           } else {
             setState([]);
           }
+        }).catch(err => {
+          toast.error(err.response.data.message)
+          props.setIsLoading(false)
         })
+        props.setIsLoading(false)
         // setState(props.stationData)
         // setDetails(props.stationData)
       }
@@ -513,6 +521,8 @@ const mapDispatchToProps = (dispatch) => {
     setIsSubmitted: flag => {
       dispatch(setIsSubmitted(flag))
     },
+    setIsLoading: (value) =>
+      dispatch(setIsLoading(value)),
 		addUserDetails: (user) =>
 			dispatch(actions.userActions(user)),
     getUserData: () => {

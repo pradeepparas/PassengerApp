@@ -4,7 +4,7 @@ import { compose } from 'redux';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import axios from 'axios'
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import {
 	Modal,
 	ModalHeader,
@@ -56,6 +56,7 @@ import * as constantValue from '../constants/constants';
 import * as actions from "../../redux/actions/stationActions";
 import * as API from "../../constants/APIs";
 import { toast } from 'react-toastify';
+import Loading from '../../components/Loading/LoadingComponent';
 
 const Container = styled.div`
   display: flex;
@@ -246,30 +247,31 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(station_name, station_code, station_type, managed_by, 
-  no_of_platform, contact_name, contact_mobile, contract_start_date, exp_end_date,
-  station__gps_ltd, station__gps_lng, contract_giver, contractWinner, contract_tenure, contract_email,
-  adminName, adminNumber, adminEmail ) {
-  return { station_name, station_code, station_type, managed_by, 
-    no_of_platform, contact_name, contact_mobile, contract_start_date, exp_end_date,
-    station__gps_ltd, station__gps_lng, contract_giver, contractWinner, contract_tenure, contract_email,
-    adminName, adminNumber, adminEmail };
-}
+// function createData(station_name, station_code, station_type, managed_by, 
+//   no_of_platform, contact_name, contact_mobile, contract_start_date, exp_end_date,
+//   station__gps_ltd, station__gps_lng, contract_giver, contractWinner, contract_tenure, contract_email,
+//   adminName, adminNumber, adminEmail ) {
+//   return { station_name, station_code, station_type, managed_by, 
+//     no_of_platform, contact_name, contact_mobile, contract_start_date, exp_end_date,
+//     station__gps_ltd, station__gps_lng, contract_giver, contractWinner, contract_tenure, contract_email,
+//     adminName, adminNumber, adminEmail };
+// }
 
-const rows = [
-  createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
-  "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
-  createData('Bhopal', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
-  "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
-  createData('Habib Ganj', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
-  "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
-  createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
-  "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
-  createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
-  "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
-];
+// const rows = [
+//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+//   "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
+//   createData('Bhopal', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+//   "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
+//   createData('Habib Ganj', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+//   "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
+//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+//   "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
+//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+//   "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
+// ];
 
 export function StationManagement(props) {
+  const history = useHistory()
   const [pageNo, setPageNo] = useState();
   const [search, setSearch] = useState({
     station_name: "",
@@ -277,13 +279,14 @@ export function StationManagement(props) {
     station_code: "",
     station_type: "",
     managed_by: "",
-    start_date: new Date().toISOString().slice(0, 10),
-    end_date: new Date().toISOString().slice(0, 10),
+    start_date: "",
+    end_date: "",
   })
   const [managedByList, setManagedByList] = useState([])
 	const [showModal, setShowModal] = useState(false);
 	const [rows, setRows] = useState([]);
   const [dropDownDetails, setDropDownDetails] = useState([]);
+  const [stationType, setStationType] = useState([])
   const [modal, setModal] = useState({
     deleteModal: false,
     details: false,
@@ -310,17 +313,20 @@ export function StationManagement(props) {
       console.log(props.stationDetails)
       // debugger
     }
+    if(props.stationType){
+      setStationType(props.stationType)
+    }
     if(props.stationDocs){
       console.log("props.stateionDocs",props.stationDocs)
       setRows(props.stationDocs)
       debugger
     }
-  }, [props.stationDetails, props.stationDocs])
+  }, [props.stationDetails, props.stationDocs, props.stationType])
 
   // Handling Pagination
   const handleChangePage = (event, page) => {
     setPageNo(page)
-    props.getStationDataByParams(page, props.limit, search.name)
+    props.getStationDataByParams(page, props.limit)
 	}
 
   // Used for Pagination
@@ -341,6 +347,7 @@ export function StationManagement(props) {
 // Handle Delete function
 	const handleDeleteSubmit = (e, id) => {
     console.log(id)
+    props.setIsLoading(true)
     debugger
     axios({
       url: `${API.DeleteStationAPI}/${id}`,
@@ -359,6 +366,7 @@ export function StationManagement(props) {
         })
         props.getStationDataByParams(pageNo, props.limit)
       }
+      props.setIsLoading(false)
     })
     // props.deleteStation(arrayDetails.id)
 		// set delete modal false
@@ -366,8 +374,14 @@ export function StationManagement(props) {
 
   // GET Station Lists
   useEffect(() => {
-    props.getStationDataByParams(1, 10);
-    props.getStationData()
+    let token = localStorage.getItem('token')
+    if(token == null){
+      history.push('/');
+    } else {
+      props.getStationDataByParams(1, 10);
+      props.getStationData()  
+    }
+  
     // debugger
   }, [])
 
@@ -456,21 +470,20 @@ export function StationManagement(props) {
     const searchStations = () => {
       console.log(search)
       debugger
-      props.getStationDataByParams(1, 10, search.name)
+      props.getStationDataByParams(1, 10, search)
     }
 
     const handleInputs = (event) => {
-      setSearch({
-        ...search,
-        [event.target.name]: [event.target.value]
-      })
+      if(event.target.value != '0' || event.target.name == 'name'){
+        setSearch({
+          ...search,
+          [event.target.name]: [event.target.value]
+        })
+      }
     }
 
   return(
     <div className={styles.main}>
-		{/*Modal for view details*/}
-		<Modal1 showModal={showModal} setShowModal={setShowModal} />
-		 <GlobalStyle />
       <div className={styles.header}>
         <div className={styles.title}>Station Management</div>
         <Link to="/station-management/add">
@@ -508,35 +521,35 @@ export function StationManagement(props) {
 
          {/*Select*/}
          <div className={styles.selectDiv1}>
-           <select className={styles.select1} name="station_name" /*value={this.state.courseId}*/ onChange={handleInputs}>
-             <option selected disabled>Station Name</option>
+           <select disabled={search.station_code} className={styles.select1} name="station_name" value={search.station_name} onChange={handleInputs}>
+             <option value={'0'}>Station Name</option>
              {dropDownDetails.length > 0 && dropDownDetails.map(data => 
-               <option key={data._id} value={data.station_name}>{data.station_name}</option>
+               <option key={data._id} value={data._id}>{data.station_name}</option>
              )}
          </select>
          </div>
 
           <div className={styles.selectDiv1}>
-            <select className={styles.select1} name="station_code" /*value={this.state.courseId}*/ onChange={handleInputs}>
-              <option selected disabled>Station Code</option>
+            <select disabled={search.station_name} className={styles.select1} name="station_code" value={search.station_code} onChange={handleInputs}>
+              <option value={'0'}>Station Code</option>
               {dropDownDetails.length > 0 && dropDownDetails.map(data => 
-                <option key={data._id} value={data.station_code}>{data.station_code}</option>  
+                <option key={data._id} value={data._id}>{data.station_code}</option>  
               )}
           </select>
           </div>
 
             <div className={styles.selectDiv1}>
-              <select className={styles.select1} name="station_type" /*value={this.state.courseId}*/ onChange={handleInputs}>
-                <option selected disabled>Station Type</option>
-                <option value="RURAL">Rural</option>
-                <option value="URBAN">Urban</option>
-                <option value="SEMI RURAL">Semi Rural</option>
+              <select className={styles.select1} name="station_type" value={search.station_type} onChange={handleInputs}>
+                <option value={'0'}>Station Type</option>
+                {stationType.length > 0 && stationType.map(data => 
+                <option key={data._id} value={data.station_type}>{data.station_type}</option>  
+              )}
             </select>
             </div>
 
           <div className={styles.selectDiv1}>
-            <select className={styles.select1} name="managed_by" /*value={this.state.courseId}*/ onChange={handleInputs}>
-              <option selected disabled>Managed By</option>
+            <select className={styles.select1} name="managed_by" value={search.managed_by} onChange={handleInputs}>
+              <option value={'0'}>Managed By</option>
               {managedByList.length && managedByList.map(data => 
                 <option key={data._id} value={data._id}>{data.name}</option>  
               )}
@@ -795,7 +808,9 @@ const mapStateToProps = (state) => {
     stationDetails: state.Stations.stationDetails,
     stationDocs: state.Stations.docs,
     total: state.Stations.total,
-    limit: state.Stations.limit
+    limit: state.Stations.limit,
+    isLoading: state.Stations.isLoading,
+    stationType: state.Stations.stationType
 		// loading: state.auth.loading,
 		// error: state.auth.error,
 		// isAuthenticated: state.auth.token !== null,
@@ -805,6 +820,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
+    setIsLoading: (value) =>
+      dispatch(actions.setIsLoading(value)),
     getStationData: () => {
       dispatch(actions.getStationData())
     },

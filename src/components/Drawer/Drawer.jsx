@@ -49,6 +49,7 @@ import users_cog from './images/users_cog.svg';
 // components
 import * as actions from "../../redux/actions/auth";
 import styles from "./Drawer.module.css";
+import LoadingComponent from '../Loading/LoadingComponent';
 
 const drawerWidth = 240;
 
@@ -213,18 +214,20 @@ export function MiniDrawer(props) {
     setOpenProfile(false);
     if(type == 'logout'){
       // await props.logOut();
-      history.push("/")
       localStorage.removeItem('token');
       localStorage.removeItem('username');
       localStorage.removeItem('userId');
       localStorage.removeItem('userDataLS');
-      
-      
+      history.push("/")
     }
   };
 
   React.useEffect(() => {
     // debugger
+    let token = localStorage.getItem('token')
+    if(token == null){
+      history.push('/')
+    } else {
     if(props.authData){
       // debugger
       props.authData.role.access_module.map((data) => {
@@ -236,6 +239,7 @@ export function MiniDrawer(props) {
         }
       })
     }
+  }
     
   }, [props.authenData])
 
@@ -264,10 +268,15 @@ export function MiniDrawer(props) {
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = React.useRef(open_Profile);
   React.useEffect(() => {
+    let token = localStorage.getItem('token')
+    if(token != null){
     if (prevOpen.current === true && open_Profile === false) {
       anchorRef.current.focus();
     }
     prevOpen.current = open_Profile;
+  } else {
+    // history.push()
+  }
   }, [open_Profile]);
   // Profile
 
@@ -308,6 +317,7 @@ export function MiniDrawer(props) {
 
   return (
     <div style={{color: 'white'}} className={classes.root}>
+      {props.isLoading && <LoadingComponent />}
       <CssBaseline style={{color: 'white'}}/>
       <AppBar
         position="fixed"
@@ -322,7 +332,7 @@ export function MiniDrawer(props) {
             borderColor: '#f2f2f3',
             borderWidth: '4px'}}>MASTER ADMIN</div>
           <IconButton
-            color="black"
+            // color="black"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
@@ -450,6 +460,7 @@ export function MiniDrawer(props) {
 const mapStateToProps = (state) => {
 
 	return {
+    isLoading: state.Stations.isLoading,
     loginMessage: state.Auth.loginMessage,
     token: state.Auth.tokenId,
     authData: state.Auth.authData,

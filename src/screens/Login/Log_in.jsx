@@ -18,6 +18,7 @@ import button1 from "./images/button1.png";
 // Components
 import styles from "./Log_in.module.css";
 import * as actions from "../../redux/actions/auth";
+// import { setIsLoading } from "../../redux/actions/stationActions";
 
 // Material UI
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
@@ -119,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
 export const Log_in = (props) => {
   // const [t, i18n] = useTranslation('common');
 	const history = useHistory();
-
+  var token = localStorage.getItem('token')
 	const classes = useStyles();
 	const [checked, setChecked] = useState(false);
 	const [username, setUsername] = useState("");
@@ -128,7 +129,7 @@ export const Log_in = (props) => {
 	const [password_ErMsg, setpassword_ErMsg] = useState("");
 	const [displaytext, setdisplaytext] = useState("hideBlock");
 	// const [isSignUp, setIsSignUp] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
+	// const [isLoading, setIsLoading] = useState(false);
 	const [collapseLng, setLngCollapse] = useState(false);
 
   const handleUsernameChange = (event) => {
@@ -189,7 +190,7 @@ export const Log_in = (props) => {
 			Cookies.set('checked', true, { expires: 7 });
 		}
 
-		setIsLoading(true);
+		// setIsLoading(true);
 		await props.onAuth(username, password)
     localStorage.setItem('rememberMe', checked);
     localStorage.setItem('userName', checked ? username : '');
@@ -199,10 +200,13 @@ export const Log_in = (props) => {
   
 
   useEffect(() => {
-    if(props.token){
+    // let token = localStorage.getItem('token')
+    if(token == null){
+      history.push('/')
+    } else {
       history.push('/dashboard')
     }
-  }, [props.token])
+  }, [token])
 
   return(
     <div>
@@ -356,7 +360,8 @@ const mapStateToProps = (state) => {
 
 	return {
     loginMessage: state.Auth.loginMessage,
-    token: state.Auth.tokenId
+    token: state.Auth.tokenId,
+    isLoading: state.Stations.isLoading
 		// loading: state.auth.loading,
 		// error: state.auth.error,
 		// isAuthenticated: state.auth.token !== null,
@@ -368,6 +373,8 @@ const mapDispatchToProps = (dispatch) => {
 	return {
 		onAuth: (username, password) =>
 			dispatch(actions.auth(username, password)),
+    // setIsLoading: (value) => 
+    //   dispatch(setIsLoading(value)),
 		// 	updateSignup:()=>
 		// 	  dispatch(actions.updateSingupFlag()),
 		// onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),

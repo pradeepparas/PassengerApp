@@ -3,6 +3,7 @@ import * as API from '../../constants/APIs';
 import axios from 'axios';
 import moment from 'moment';
 import { toast } from 'react-toastify';
+import { mapProps } from 'recompose';
 
 export function setIsSubmitted(success) {
   return {
@@ -46,7 +47,7 @@ export function EditStationDetails(details) {
 
     if(details.email)data.email = details.email;
     if(details.contact_email)data.contact_email = details.contact_email;
-
+    dispatch(setIsLoading(true))
     axios({
       url: API.AddStationAPI,
       method: "PUT",
@@ -65,9 +66,11 @@ export function EditStationDetails(details) {
   // "message": "Station updated succesfully",
   // "success": true,
   // "status": 200
+    dispatch(setIsLoading(false))
     }).catch(err => {
         toast.error(err.response.data.message)
         dispatch(setIsSubmitted(false))
+        dispatch(setIsLoading(false))
       })
   }
 }
@@ -92,6 +95,7 @@ export function stationActions(details) {
   delete details[key];
   console.log('details action', details) 
   return dispatch => {
+    dispatch(setIsLoading(true))
     debugger
     const data = details
     axios({
@@ -113,6 +117,7 @@ export function stationActions(details) {
       } else {
         debugger
       }
+      dispatch(setIsLoading(false))
     }).catch((response) => {
       debugger
       // console.log(response.data)
@@ -121,6 +126,7 @@ export function stationActions(details) {
       toast.error(response.response.data.message)
       console.log(response.response.data.message)
       dispatch(setIsSubmitted(false))
+      dispatch(setIsLoading(false))
     })
   }
 }
@@ -155,6 +161,7 @@ export function deleteStation(id) {
 
 export function GetContractors() {
   return dispatch => {
+    dispatch(setIsLoading(true))
     axios({
       url: API.GetContractorsAPI,
       headers: {
@@ -169,9 +176,11 @@ export function GetContractors() {
       } else {
 
       }
+      dispatch(setIsLoading(false))
     }).catch(err => {
       toast.error(err.response.data.message)
       // dispatch(setIsSubmitted(false))
+      dispatch(setIsLoading(false))
     })
   }
 }
@@ -180,10 +189,13 @@ export function GetContractors() {
 export function getStationDataByParams(page, limit, values) {
   debugger
   return (dispatch) => {
-    let link = `${API.GetStationAPI}/${page}/${limit}`;
-    console.log(link)
+    dispatch(setIsLoading(true))
+    
+    let url = values ? `${API.GetStationAPI}/${page}/${limit}?search=${values.name}&station_name=${values.station_name}&station_type=${values.station_type}&managed_by=${values.managed_by}&start_date=${values.start_date}&end_date=${values.end_date}`: `${API.GetStationAPI}/${page}/${limit}` 
+    
+    console.log(url)
     debugger
-    let url = values ? `${API.GetStationAPI}/${page}/${limit}?search=${values}`: `${API.GetStationAPI}/${page}/${limit}` 
+    // return
     axios({
       url: url,
       headers: {
@@ -201,16 +213,22 @@ export function getStationDataByParams(page, limit, values) {
       } else {
         dispatch(fetchStationDataByParams(response.data.station.docs ))
       }
+      
     }).catch(err => {
-      toast.error(err.response.data.message)
+      // toast.error(err.response.data.message)
+      if(err.response.data.message == 'No Record Found'){
+        dispatch(fetchStationDataByParams([]))
+      }
       // dispatch(setIsSubmitted(false))
-    })
+      dispatch(setIsLoading(false))
+    }).then(() => dispatch(setIsLoading(false)))
   }
 }
 
 //  GET Stations Details for Dropdown
 export function getStationData() {
   return dispatch => {
+    dispatch(setIsLoading(true))
     axios({
       url: API.GetStationAPI,
       headers: {
@@ -221,21 +239,24 @@ export function getStationData() {
     }).then(response => {
       console.log(response)
       if(response.data.success){
-        dispatch(fetchStationData(response.data.station))
+        dispatch(fetchStationData(response.data.station, response.data.station_type))
       } else {
 
       }
+      dispatch(setIsLoading(false))
     }).catch(err => {
       toast.error(err.response.data.message)
+      dispatch(setIsLoading(false))
       // dispatch(setIsSubmitted(false))
-    })
+    }).then(() => dispatch(setIsLoading(false)))
   }
 }
 
-export function fetchStationData(stationData) {
+export function fetchStationData(stationData, stationType) {
   return {
     type: actionTypes.FETCH_STATIONS,
-    stationData: stationData
+    stationData: stationData,
+    stationType: stationType
   }
 }
 
@@ -251,5 +272,12 @@ export function fetchStationDataByParams(docs, total, limit) {
 export function DeleteStationByID (stationId) {
   return dispatch => {
 
+  }
+}
+
+export function setIsLoading(loading) {
+  return {
+    type: actionTypes.SET_ISLOADING,
+    isLoading: loading
   }
 }

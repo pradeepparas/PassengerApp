@@ -3,7 +3,7 @@ import * as API from '../../constants/APIs';
 import axios from 'axios';
 // import moment from 'moment';
 import { toast } from 'react-toastify';
-import { setIsSubmitted } from './stationActions';
+import { setIsSubmitted, setIsLoading } from './stationActions';
 import { mapProps } from 'recompose';
 // export function userActions(user) {
 //   return {
@@ -14,6 +14,7 @@ import { mapProps } from 'recompose';
 
 export function userActions(details) {
   return dispatch => {
+    dispatch(setIsLoading(true))
     debugger
     console.log(details)
     debugger
@@ -48,12 +49,15 @@ export function userActions(details) {
       // debugger
       toast.error(response.response.data.message)
       dispatch(setIsSubmitted(false))
+      dispatch(setIsLoading(false))
     })
+    dispatch(setIsLoading(false))
   }
 }
 
 export function EditUserDetails(details) {
   return dispatch => {
+    dispatch(setIsLoading(true))
     console.log(details)
     debugger
     // return
@@ -86,10 +90,13 @@ export function EditUserDetails(details) {
   // "message": "Station updated succesfully",
   // "success": true,
   // "status": 200
+  
     }).catch(err => {
       toast.error(err.response.data.message)
       dispatch(setIsSubmitted(false))
+      dispatch(setIsLoading(false))
     })
+    dispatch(setIsLoading(false))
   }
 }
 
@@ -102,14 +109,18 @@ export function setUserData(user) {
 
 export function getUserDataByParams(page, limit, values) {
   debugger
-  return (dispatch) => {
-    let link = `${API.GetUserAPI}/${page}/${limit}`;
-    console.log(link)
+  return async (dispatch) => {
+    let a = await dispatch(setIsLoading(true))
+    console.log(a)
     debugger
 
-    let url = values ? `${API.GetUserAPI}/${page}/${limit}?search=${values.name}&station_id=${values.station_id}&start_date=${values.start_date}&end_date=${values.end_date}`
-        : `${API.GetUserAPI}/${page}/${limit}`; 
+    let link = `${API.GetUserAPI}/${page}/${limit}`;
+    console.log(link)
     
+    debugger
+    let url = values ? `${API.GetUserAPI}/${page}/${limit}?search=${values.name}&station_id=${values.station_name}&role_id=${values.role}&start_date=${values.start_date}&end_date=${values.end_date}`
+        : `${API.GetUserAPI}/${page}/${limit}`; 
+    debugger
     axios({
       url: url,
       headers: {
@@ -123,9 +134,17 @@ export function getUserDataByParams(page, limit, values) {
         debugger
         dispatch(fetchUserDataByParams(response.data.user.docs, response.data.user.total, response.data.user.limit))
       } else {
-        dispatch(fetchUserDataByParams(response.data.user.docs))
+        dispatch(fetchUserDataByParams([]))
       }
-    }).catch(err => console.log(err))
+      dispatch(setIsLoading(false))
+    }).catch(err => {
+      console.log(err.response.data.message)
+      debugger
+      if(err.response.data.message == 'No Record Found'){
+        dispatch(fetchUserDataByParams([]))
+      }
+      dispatch(setIsLoading(false))
+    })
   }
 }
 
@@ -155,6 +174,7 @@ export function deleteUser(userId) {
 // For Getting Roles Like Admin, Super Admin
 export function getRole(){
   return dispatch => {
+    dispatch(setIsLoading(true))
     axios({
       url: API.GetRoleAPI,
       headers: {
@@ -166,6 +186,7 @@ export function getRole(){
       dispatch(setRole(response.data.role))
       // setRole(response.data.role)
     })
+    dispatch(setIsLoading(true))
 }
 }
 

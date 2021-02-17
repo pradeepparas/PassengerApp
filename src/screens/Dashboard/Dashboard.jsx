@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useHistory } from 'react-router-dom';
 import styles from "./Dashboard.module.css";
 // import { withTranslation,useTranslation } from 'react-i18next';
 
@@ -17,10 +18,18 @@ import Card from "../../components/Card/Card";
 // import { compose } from 'redux'
 // import { connect } from 'react-redux'
 export default function DashBoard(props) {
+	const history = useHistory();
 	// const [t, i18n] = useTranslation('common');
 	// useEffect(()=>{
 	// 	props.getDashboardCount()
 	// },[])
+
+	useEffect(() => {
+		let token = localStorage.getItem('token')
+		if(token == null){
+			history.push('/')
+		}
+	}, [])
 
 	return (
 		<>

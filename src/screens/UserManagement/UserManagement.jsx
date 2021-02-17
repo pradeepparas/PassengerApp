@@ -51,7 +51,7 @@ import Pagination from '@material-ui/lab/Pagination';
 import styles from './UserManagement.module.css';
 // import styled from 'styled-components';
 import * as actions from "../../redux/actions/userActions";
-import { getStationData } from "../../redux/actions/stationActions";
+import { getStationData, setIsLoading } from "../../redux/actions/stationActions";
 import { toast } from 'react-toastify';
 
 // import { Modal1 } from './Modal';
@@ -261,8 +261,8 @@ export function UserManagement(props) {
     station_name: "",
     name: "",
     role: "",
-    start_date: new Date().toISOString().slice(0, 10),
-    end_date: new Date().toISOString().slice(0, 10),
+    start_date: "",
+    end_date: "",
   })
   const [dropDownDetails, setDropDownDetails] = useState([]);
   const [values, setValues] = React.useState({
@@ -287,6 +287,7 @@ export function UserManagement(props) {
       "block_status": userData.is_blocked,
       "user_id": userData._id
     }
+    props.setIsLoading(true)
     
     axios({
       url: `${API.BlockUserAPI}/${userData._id}`,
@@ -311,7 +312,9 @@ export function UserManagement(props) {
       }
     }).catch(err => {
       toast.error(err.response.data.message)
+      props.setIsLoading(false)
     })
+    props.setIsLoading(false)
 
     props.deleteUser(arrayDetails.id)
 		setModal({
@@ -666,7 +669,7 @@ export function UserManagement(props) {
 					 onClick={toggleModalClose}
 				 />
 				 <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-				 <Link to={`user-management/1`}><button className={styles.modalButton}>
+				 <Link to={`user-management/${arrayDetails._id}`}><button onClick={(e) =>editUser(e, arrayDetails._id, arrayDetails)} className={styles.modalButton}>
 				 <img className={styles.modalImage} style={{width: 21,height: 21, marginTop: 10, marginLeft: 10, marginRight: 10}} src={edit} />
 				 <small style={{display: 'flex', alignItems: 'center'}}>Edit Details</small>
 				 </button></Link>
@@ -734,6 +737,8 @@ const mapDispatchToProps = (dispatch) => {
     getUserDataByParams: (pageNo, size, params) => {
       dispatch(actions.getUserDataByParams(pageNo, size, params))
     },
+    setIsLoading: (value) =>
+      dispatch(setIsLoading(value)),
     getRole: () => {
       dispatch(actions.getRole())
     },

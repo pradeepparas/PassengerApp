@@ -485,6 +485,7 @@ export function Vendors(props) {
         </TableBody>
       </Table>
     </TableContainer>
+    {rows.length == 0 && <div className={styles.emptyTable} style={{ display: 'flex', justifyContent: 'center'}}>No Data Found</div>}
       </div>
 
 			{/* After Delete Modal */}

@@ -173,7 +173,7 @@ border-color: #cac7c7;
   display: block;
 }
 
-.dropdown_content a:hover {  }
+/* .dropdown_content a:hover {  } */
 
 .dropdown_content div:hover { cursor: pointer; }
 
@@ -372,6 +372,16 @@ border-color: #cac7c7;
     z-index: 9999;
     max-width: fit-content;
   }
+}
+
+.emptyTable {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  text-align: center;
+  font: normal normal bold 18px/18px Montserrat;
+  letter-spacing: 0px;
+  color: #715555;
+  opacity: 1;
 }
 
 /* modalContainer  footer modalOuterDiv*/

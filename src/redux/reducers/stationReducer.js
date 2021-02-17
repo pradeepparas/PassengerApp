@@ -5,6 +5,7 @@
 import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
+  isLoading: false,
   stationDetails: [],
   details: [],
   stationData: {},
@@ -13,7 +14,8 @@ const initialState = {
   isSubmitted: false,
   docs: [],
   total: '',
-  limit: ''
+  limit: '',
+  stationType: []
 };
 
 const stationReducer = (state = initialState, action) => {
@@ -67,6 +69,7 @@ const stationReducer = (state = initialState, action) => {
     case actionTypes.FETCH_STATIONS:
       return {
         ...state,
+        stationType: action.stationType,
         stationDetails: action.stationData
       }
 
@@ -77,6 +80,12 @@ const stationReducer = (state = initialState, action) => {
         total: action.total,
         limit: action.limit
       }
+    
+      case actionTypes.SET_ISLOADING:
+        return {
+          ...state,
+          isLoading: action.isLoading
+        }
     default:
       return state;
   }

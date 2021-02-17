@@ -3,6 +3,7 @@ import * as API from '../../constants/APIs';
 import * as myConstClass from '../../screens/constants/constants';
 import * as actionTypes from './actionTypes';
 import { ToastContainer, toast } from 'react-toastify';
+import { setIsLoading } from "./stationActions";
 // import { useHistory } from "react-router-dom";
 // import jwt_decode from "jwt-decode";
 
@@ -39,6 +40,7 @@ export const logOut = () => {
 export const auth = (username, password) => {
 
     return dispatch => {
+        dispatch(setIsLoading(true))
         var qs = require('qs');
         // dispatch(authStart());
         const authData = {
@@ -77,9 +79,11 @@ export const auth = (username, password) => {
             })
             .catch(err => {
                 toast.error(err.response.data.message)
+                dispatch(setIsLoading(false))
                 // dispatch(authFail({
                 //     error: err.message ? err.message : null
                 // }));
             });
+            dispatch(setIsLoading(false))
     };
 };
