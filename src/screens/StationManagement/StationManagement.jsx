@@ -161,6 +161,14 @@ const useStyles = makeStyles((theme) => ({
     //   borderBottomColor: '#6c757d',
     // },
   },
+  tableContainer: {
+    overflow: 'visible',
+    borderRadius: '0px 0px 20px 20px', 
+    boxShadow: 'none',
+    ["@media (min-width: 180px) and (max-width: 1140px)"]: {
+      overflow: 'auto'
+    },
+  },
   page1: {
     marginTop: 40,
     // color: '#b22222',
@@ -218,6 +226,15 @@ const useStyles = makeStyles((theme) => ({
 			width: '90%'
 		},
     // width: 170,
+	},
+  table: {
+    "&:last-child td": {
+      borderBottom: 0,
+    },
+    "&:last-child th": {
+      borderBottom: 0,
+    },
+		overflowX: 'scroll',
 	},
 	date1: {
     // width: 131,
@@ -595,8 +612,8 @@ export function StationManagement(props) {
     		</div>
       </div>
 
-      <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
+      <TableContainer className={classes.tableContainer} component={Paper}>
+      <Table /*className={classes.table}*/ aria-label="simple table">
         <TableHead style={{backgroundColor: '#e4e4e4'}}>
           <TableRow>
             <TableCell>S.No.</TableCell>
@@ -614,7 +631,7 @@ export function StationManagement(props) {
         </TableHead>
         {rows.length > 0 && <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={row.name}>
+            <TableRow className={classes.table} key={row.name}>
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
@@ -811,10 +828,6 @@ const mapStateToProps = (state) => {
     limit: state.Stations.limit,
     isLoading: state.Stations.isLoading,
     stationType: state.Stations.stationType
-		// loading: state.auth.loading,
-		// error: state.auth.error,
-		// isAuthenticated: state.auth.token !== null,
-		// authRedirectPath: state.auth.authRedirectPath,
 	};
 };
 

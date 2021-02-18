@@ -106,6 +106,14 @@ const useStyles = makeStyles((theme) => ({
       width: '100%'
     }
   },
+  tableContainer: {
+    overflow: 'visible',
+    borderRadius: '0px 0px 20px 20px', 
+    boxShadow: 'none',
+    ["@media (min-width: 180px) and (max-width: 895px)"]: {
+      overflow: 'auto'
+    },
+  },
   textField1:{
     ["@media (min-width: 280px) and (max-width: 1158px)"]: {
       width: '100%',
@@ -172,7 +180,13 @@ const useStyles = makeStyles((theme) => ({
     width: 192,
 	},
 	table: {
-		overflowX: 'scroll'
+		"&:last-child td": {
+      borderBottom: 0,
+    },
+    "&:last-child th": {
+      borderBottom: 0,
+    },
+		overflowX: 'scroll',
 	},
 	date1: {
     // width: 131,
@@ -220,6 +234,7 @@ const rows = [
 
 export default function StationManagement(props) {
   // Dates State
+  const [pageNo, setPageNo] = useState();
   const [date, setDate] = useState({
     start: new Date().toISOString().slice(0, 10),
     end: new Date().toISOString().slice(0, 10),
@@ -300,6 +315,25 @@ export default function StationManagement(props) {
 				deletedModal: false
       })
     }
+
+    //  used for pagination
+    const handleChangePage = (event, page) => {
+      setPageNo(page)
+      // props.getUserDataByParams(page, props.limit)
+	  }
+
+    // Used for Pagination
+    const setPage = () => {
+      let total = Math.ceil(rows.length / 10)
+      return (
+        <Pagination 
+          onChange={handleChangePage}
+          count={total} 
+          shape="rounded" 
+          classes={{ ul: classes.ul1 }} 
+          size='small'/>
+    )
+  }
 
   return(
     <div className={styles.main}>
@@ -421,8 +455,8 @@ export default function StationManagement(props) {
         </div>
       </div>
 
-      <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
+      <TableContainer className={classes.tableContainer} component={Paper}>
+      <Table /*className={classes.table}*/ aria-label="simple table">
         <TableHead style={{backgroundColor: '#e4e4e4'}}>
           <TableRow>
             <TableCell>S.No.</TableCell>
@@ -438,7 +472,7 @@ export default function StationManagement(props) {
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={row.name}>
+            <TableRow className={classes.table} key={row.name}>
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
@@ -598,7 +632,7 @@ export default function StationManagement(props) {
 
       {rows.length > 0 &&<div className={styles.pageDiv}>
       <div style={{marginTop: 40}}>
-      <Pagination count={10} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
+      {rows.length > 0 && setPage()}
       </div>
       </div>}
     </div>

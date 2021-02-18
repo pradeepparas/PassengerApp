@@ -230,7 +230,7 @@ export function MiniDrawer(props) {
     } else {
     if(props.authData){
       // debugger
-      props.authData.role.access_module.map((data) => {
+      props.authData.role_id.access_module.map((data) => {
         if(data.status){
           setModules({
             ...modules,
@@ -296,7 +296,7 @@ export function MiniDrawer(props) {
   // debugger
   // debugger
   if(userDataLS) {
-    const module = userDataLS.role.access_module;
+    const module = userDataLS.role_id.access_module;
     let auth= module.find(x=>x.status==true && x.module==name)
     // debugger
     if(auth){

@@ -107,19 +107,16 @@ export function setUserData(user) {
   };
 }
 
-export function getUserDataByParams(page, limit, values) {
+export function getUserDataByParams(page, limit, values, type) {
   debugger
   return async (dispatch) => {
     let a = await dispatch(setIsLoading(true))
     console.log(a)
     debugger
-
-    let link = `${API.GetUserAPI}/${page}/${limit}`;
-    console.log(link)
     
     debugger
-    let url = values ? `${API.GetUserAPI}/${page}/${limit}?search=${values.name}&station_id=${values.station_name}&role_id=${values.role}&start_date=${values.start_date}&end_date=${values.end_date}`
-        : `${API.GetUserAPI}/${page}/${limit}`; 
+    let url = values ? `${API.GetUserAPI}/${page}/${limit}?search=${values.name}&station_id=${values.station_name}&type=${type}&role_id=${values.role}&start_date=${values.start_date}&end_date=${values.end_date}`
+        : `${API.GetUserAPI}/${page}/${limit}?type=${type}`; 
     debugger
     axios({
       url: url,

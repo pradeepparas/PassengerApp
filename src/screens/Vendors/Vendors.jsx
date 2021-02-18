@@ -108,6 +108,14 @@ const useStyles = makeStyles((theme) => ({
       width: '100%'
     }
   },
+  tableContainer: {
+    overflow: 'visible',
+    borderRadius: '0px 0px 20px 20px', 
+    boxShadow: 'none',
+    ["@media (min-width: 180px) and (max-width: 1010px)"]: {
+      overflow: 'auto'
+    },
+  },
   textField1:{
     ["@media (min-width: 280px) and (max-width: 1158px)"]: {
       width: '100%',
@@ -174,7 +182,13 @@ const useStyles = makeStyles((theme) => ({
     width: 192,
 	},
 	table: {
-		overflowX: 'scroll'
+    "&:last-child td": {
+      borderBottom: 0,
+    },
+    "&:last-child th": {
+      borderBottom: 0,
+    },
+		overflowX: 'scroll',
 	},
 	date1: {
     // width: 131,
@@ -208,24 +222,25 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-// function createData(userName, userNumber, userEmail, service, stationName, hours, date) {
-//   return { userName, userNumber, userEmail, service, stationName, hours, date };
-// }
+function createData(userName, userNumber, userEmail, service, stationName, hours, date) {
+  return { userName, userNumber, userEmail, service, stationName, hours, date };
+}
 
-// const rows = [
-//   createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-//   createData("John Doe", 8854875896, "john@gmail.com", "Food and Beverages", "Bhopal","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-//   createData("Mark", 8854875896, "john@gmail.com", "Medicines", "Indore","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-//   createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-//   createData("Jack", 8854875896, "john@gmail.com", "Food and Beverages", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-// ];
+const rows = [
+  createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+  createData("John Doe", 8854875896, "john@gmail.com", "Food and Beverages", "Bhopal","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+  createData("Mark", 8854875896, "john@gmail.com", "Medicines", "Indore","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+  createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+  createData("Jack", 8854875896, "john@gmail.com", "Food and Beverages", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+];
 
 export function Vendors(props) {
+  const [pageNo, setPageNo] = useState();
   const [date, setDate] = useState({
     start: new Date().toISOString().slice(0, 10),
     end: new Date().toISOString().slice(0, 10),
   })
-  const [rows, setRows] = useState([]);
+  // const [rows, setRows] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [arrayDetails, setArrayDetails] = useState([]);
   const [modal, setModal] = useState({
@@ -265,7 +280,7 @@ export function Vendors(props) {
 
     if(props.vendorDocs){
       // console.log("",props.vendorDocs)
-      setRows(props.vendorDocs)
+      // setRows(props.vendorDocs)
       debugger
     }
   }, [props.vendorDocs])
@@ -332,10 +347,29 @@ export function Vendors(props) {
       })
     }
 
+    //  used for pagination
+    const handleChangePage = (event, page) => {
+      setPageNo(page)
+      // props.getUserDataByParams(page, props.limit)
+	  }
+
+    // Used for Pagination
+    const setPage = () => {
+      let total = Math.ceil(rows.length / 10)
+      return (
+        <Pagination 
+          onChange={handleChangePage}
+          count={total} 
+          shape="rounded" 
+          classes={{ ul: classes.ul1 }} 
+          size='small'/>
+    )
+  }
+
   return(
     <div className={styles.main}>
       <div className={styles.header}>
-        <div className={styles.title}>Vendors</div>
+        <div className={styles.title}>Vendor Service Report</div>
       </div>
       <div className={styles.table}>
       <div className={styles.filterContent}>
@@ -448,30 +482,35 @@ export function Vendors(props) {
         </div>
       </div>
 
-      <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
+      <TableContainer className={classes.tableContainer} component={Paper}>
+      <Table aria-label="simple table">
         <TableHead style={{backgroundColor: '#e4e4e4'}}>
           <TableRow>
             <TableCell>S.No.</TableCell>
-            <TableCell align="center">Vendor Name</TableCell>
+            <TableCell align="center">Name</TableCell>
             <TableCell align="center">Phone Number</TableCell>
             <TableCell align="center">Email</TableCell>
+            <TableCell align="center">Service Offered</TableCell>
+            <TableCell align="center">Delivery Station</TableCell>
+            <TableCell align="center">Operational Hours</TableCell>
             <TableCell align="center">Registration Date</TableCell>
-            <TableCell align="center">Status</TableCell>
+            {/* <TableCell align="center">Status</TableCell> */}
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={row.name}>
+            <TableRow className={classes.table} key={row.name}>
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
-              <TableCell align="center">{row.name}</TableCell>
-              <TableCell align="center">{row.mobile}</TableCell>
-              <TableCell align="center">{row.email}</TableCell>
-              <TableCell align="center">{moment(row.createdAt).format("DD-MM-YYYY")}</TableCell>
-              <TableCell align="center">{row.status}</TableCell>
+              <TableCell align="center">{row.userName}</TableCell>
+              <TableCell align="center">{row.userNumber}</TableCell>
+              <TableCell align="center">{row.userEmail}</TableCell>
+              <TableCell align="center">{row.service}</TableCell>
+              <TableCell align="center">{row.stationName}</TableCell>
+              <TableCell align="center">{row.hours}</TableCell>
+              <TableCell align="center">{row.date}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
@@ -557,15 +596,15 @@ export function Vendors(props) {
 						<div className={styles.box1}>
 								<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 60,marginRight: 25}}> - </span>{arrayDetails.name}
+								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 60,marginRight: 25}}> - </span>{arrayDetails.userName}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Mobile Number</span><span style={{marginLeft: 49,marginRight: 25}}> - </span>{arrayDetails.mobile}
+								<span className={styles.textModal}>Mobile Number</span><span style={{marginLeft: 49,marginRight: 25}}> - </span>{arrayDetails.userNumber}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Email</span><span style={{marginLeft: 112,marginRight: 25}}> - </span>{arrayDetails.email}
+								<span className={styles.textModal}>Email</span><span style={{marginLeft: 112,marginRight: 25}}> - </span>{arrayDetails.userEmail}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Warehouse Address</span><span style={{marginLeft: 22,marginRight: 25}}> - </span>{arrayDetails.warehouse_address}
+								<span className={styles.textModal}>Warehouse Address</span><span style={{marginLeft: 22,marginRight: 25}}> - </span>107 Abc street no. 7 Bhopal {/*arrayDetails.warehouse_address*/}
 								</div>
                 {/* Empty Div */}
                 <div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
@@ -577,11 +616,11 @@ export function Vendors(props) {
 						<div className={styles.box1}>
 							<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 							<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Service Offered</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>-
+							<span className={styles.textModal}>Service Offered</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>{arrayDetails.service}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Delivery Station</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>-
+							<span className={styles.textModal}>Delivery Station</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>{arrayDetails.stationName}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Operational Hours</span><span style={{marginLeft: 75,marginRight: 25}}> - </span>-
+							<span className={styles.textModal}>Operational Hours</span><span style={{marginLeft: 75,marginRight: 25}}> - </span>{arrayDetails.hours}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 							<span className={styles.textModal}>Delivery Preparation Duration</span><span style={{marginLeft: 2,marginRight: 25}}> - </span>45 mins
 							</div>
@@ -608,7 +647,7 @@ export function Vendors(props) {
 
       {rows.length > 0 &&<div className={styles.pageDiv}>
       <div style={{marginTop: 40}}>
-      <Pagination count={10} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
+      {rows.length > 0 && setPage()}
       </div>
       </div>}
     </div>
@@ -616,7 +655,7 @@ export function Vendors(props) {
 }
 
 const mapStateToProps = (state) => {
-	debugger
+	// debugger
 	return {
 	  vendorDocs: state.Vendors.docs,
     total: state.Vendors.total,

@@ -12,14 +12,20 @@ import {
 	Form,
 	FormGroup,
 } from "reactstrap";
+import { connect } from "react-redux";
+import { compose } from 'redux';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 // Material UI
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 
-// components saveButton
+// components
 import styles from './ProfileSettings.module.css';
+import { setIsLoading } from '../../redux/actions/stationActions';
+import * as API from '../../constants/APIs';
 
 // import logo from './logo.png';
 import flag from '../StationManagement/flag.svg';
@@ -31,10 +37,10 @@ import {
   Checkbox,
   Button
   } from '@material-ui/core';
-import InputBase from '@material-ui/core/InputBase';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+// import InputBase from '@material-ui/core/InputBase';
+// import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+// import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+// import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import IconButton from "@material-ui/core/IconButton";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
@@ -167,7 +173,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function AddUser(props) {
+export function ProfileSettings(props) {
 
 // All States
   const [isAdd, setIsAdd] = useState(true);
@@ -219,6 +225,42 @@ export default function AddUser(props) {
      setState({...state,[e.target.name]:e.target.value.trim()})
 		 setErros({errors, [e.target.name]:""})
 	}
+
+  // Getting User Details by Id
+  useEffect(() => {
+    props.setIsLoading(true);
+
+        let user_id = localStorage.getItem('userId');
+        axios({
+          url: `${API.GetUserAPI}/${user_id}`,
+          headers: { 
+            //    'Accept-Language': 'hi', 
+            "accept": "application/json",
+            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+             },
+        }).then(response => {
+          if(response.data.success){
+            console.log(response.data.user)
+            debugger  
+              // setState(data)
+              setState({
+                ...state,
+                firstName: response.data.user.name,
+                lastName:"",
+                emailAddress: response.data.user.email?response.data.user.email:'',
+                phoneNumber: response.data.user.mobile,
+                _id: response.data.user._id,
+                userName: response.data.user.name,
+              })
+          } else {
+            setState([]);
+          }
+        }).catch(err => {
+          toast.error(err.response.data.message)
+          props.setIsLoading(false)
+        })
+        props.setIsLoading(false)
+  }, [])
 
   // Handle Submit Station
   const handleSubmit = (e) => {
@@ -692,3 +734,18 @@ export default function AddUser(props) {
     </div>
   );
 }
+
+const mapStateToProps = state => {
+  return {
+    
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setIsLoading: (flag) => 
+      dispatch(setIsLoading(flag))
+  }
+}
+
+export default compose(connect(mapStateToProps, mapDispatchToProps))(ProfileSettings);

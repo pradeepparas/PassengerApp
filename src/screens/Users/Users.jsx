@@ -1,29 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import { Link, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
+import { compose } from 'redux';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+// import { Link, Redirect } from "react-router-dom";
+
 import {
 	Modal,
-	ModalHeader,
+	// ModalHeader,
 	ModalBody,
 	ModalFooter,
-	Input,
-	Label,
-	Form,
-	FormGroup,
+	// Input,
+	// Label,
+	// Form,
+	// FormGroup,
 } from "reactstrap";
 
 // Images
 import downArrow from '../StationManagement/downArrow.png';
 import delete_logo from '../StationManagement/delete.svg';
-import edit from '../StationManagement/edit.png';
+// import edit from '../StationManagement/edit.png';
 import flag from '../StationManagement/flag.svg';
 
 // Material UI
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import CancelIcon from "@material-ui/icons/Cancel";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -36,22 +41,25 @@ import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
+// import InputLabel from '@material-ui/core/InputLabel';
+// import InputAdornment from '@material-ui/core/InputAdornment';
+// import Select from '@material-ui/core/Select';
+// import NativeSelect from '@material-ui/core/NativeSelect';
 import InputBase from '@material-ui/core/InputBase';
 import Pagination from '@material-ui/lab/Pagination';
 
 // components
 import styles from './Users.module.css';
-// import styled from 'styled-components';
+import * as actions from '../../redux/actions/userActions';
+import { setIsLoading } from '../../redux/actions/stationActions';
+import * as API from '../../constants/APIs';
 
 const BootstrapInput = withStyles((theme) => ({
   root: {
     'label + &': {
       marginTop: theme.spacing(3),
     },
+    
   },
   input: {
     borderRadius: 4,
@@ -87,6 +95,18 @@ const useStyles = makeStyles((theme) => ({
     "& MuiButton-contained:hover": {
       backgroundColor: '#b22222',
     },
+    ".MuiPaper-elevation1": {
+      boxShadow: 'none'
+    },
+    "& .MuiTableCell-root": {
+      root: {
+        borderBottom: 'none'
+      }
+    }
+    // "& .MuiTableContainer-root": {
+    //   overflow: 'visible',
+    //   borderRadius: 20
+    // }
   },
   ul1: {
     "& .Mui-selected:hover": {
@@ -128,6 +148,14 @@ const useStyles = makeStyles((theme) => ({
     // '& .MuiInput-underline:after': {
     //   borderBottomColor: '#6c757d',
     // },
+  },
+  tableContainer: {
+    overflow: 'visible',
+    borderRadius: '0px 0px 20px 20px', 
+    boxShadow: 'none',
+    ["@media (min-width: 180px) and (max-width: 800px)"]: {
+      overflow: 'auto'
+    },
   },
   page1: {
     marginTop: 40,
@@ -172,7 +200,21 @@ const useStyles = makeStyles((theme) => ({
     width: 192,
 	},
 	table: {
-		overflowX: 'scroll'
+    "&:last-child td": {
+      borderBottom: 0,
+    },
+    "&:last-child th": {
+      borderBottom: 0,
+    },
+		overflowX: 'scroll',
+    // "& .MuiTableCell-root": {
+    //   // "tr:last-child": {
+    //   //   borderBottom: 0,
+    //   // },
+    //   "&:last-child .td": {
+    //     borderBottom: 0,
+    //   }
+    // }
 	},
 	date1: {
     // width: 131,
@@ -206,25 +248,33 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(name, number, email, date) {
-  return { name, number, email, date };
-}
+// function createData(name, number, email, date) {
+//   return { name, number, email, date };
+// }
 
-const rows = [
-  createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
-  createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
-  createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
-  createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
-  createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
-];
+// const rows = [
+//   createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "01/01/21"),
+// ];
 
-export default function StationManagement(props) {
+export function StationManagement(props) {
 // name, calories, fat, carbs, protein
+  const [pageNo, setPageNo] = useState();
   const [date, setDate] = useState({
     start: new Date().toISOString().slice(0, 10),
     end: new Date().toISOString().slice(0, 10),
   })
-
+  const [search, setSearch] = useState({
+    name: "",
+    station_name: "",
+    role: "",
+    start_date: "",
+    end_date: "",
+  })
+  const [rows, setRows] = useState([]);
 	const [arrayDetails, setArrayDetails] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	// const [index, setIndex] = useState("")
@@ -246,28 +296,90 @@ export default function StationManagement(props) {
 	const openModal = () => {
     setShowModal(prev => !prev);
   };
+
 // Handle Delete function
-	const handleDeleteSubmit = () => {
+	const handleDeleteSubmit = (e, userData) => {
 		// set delete modal false
+    console.log(userData)
+    debugger
+    let data = {
+      "block_status": !userData.is_blocked,
+      "user_id": userData._id
+    }
+    props.setIsLoading(true)
+
+    axios({
+      url: `${API.BlockUserAPI}/block`,
+      method: "PUT",
+      headers: {
+        //    'Accept-Language': 'hi', 
+        "accept": "application/json",
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      },
+      data: data
+    }).then((response) => {
+      if(response.data.success){
+        debugger
+        // toast.success(response.data.message)
+        setModal({
+          deleteModal: false,
+          deletedModal: true
+        })
+        props.getUserDataByParams(pageNo, props.limit, null, 2)
+      } else {
+        debugger
+        toast.error(response.data.message)
+      }
+    }).catch(err => {
+      toast.error(err.response.data.message)
+      debugger
+      props.setIsLoading(false)
+    })
+    props.setIsLoading(false)
+
 		setModal({
 			deleteModal: false,
 			deletedModal: true
 		})
 	}
 
+  //  used for pagination
+  const handleChangePage = (event, page) => {
+    setPageNo(page)
+    props.getUserDataByParams(page, props.limit, null, 2)
+	}
+
+    // Used for Pagination
+  const setPage = () => {
+    let total = Math.ceil(props.total / props.limit)
+    return (
+        <Pagination 
+          onChange={handleChangePage}
+          count={total} 
+          shape="rounded" 
+          classes={{ ul: classes.ul1 }} 
+          size='small'/>
+    )
+  }
+
+  // Calling function for fetching users List
+  useEffect(() => {
+    props.getUserDataByParams(1, 10, null, 2);
+  },[])
+
   // Changing Date fields
   const handleDateChange = (data, type) => {
     console.log(data)
     // debugger
     if(type == 'start') {
-      setDate({
-        ...date,
-        start: data.target.value
+      setSearch({
+        ...search,
+        start_date: data.target.value
       })
     } else {
-      setDate({
-        ...date,
-        end: data.target.value
+      setSearch({
+        ...search,
+        end_date: data.target.value
       })
     }
   }
@@ -280,14 +392,23 @@ export default function StationManagement(props) {
     setAge(event.target.value);
   };
 
+  // user Details are filled from Redux store
+  useEffect(() => {
+    if(props.userDocs){
+      setRows(props.userDocs)
+    }
+    debugger
+  },[props.userDocs])
+
   const toggleModal =(e,data, i)=>{
   	setModal(true);
+    setArrayDetails(rows[i]);
     if(data == 'delete'){
       setModal({
         deleteModal: true
       })
     } else {
-			setArrayDetails(rows[i]);
+			
       setModal({
         details: true
       })
@@ -304,21 +425,37 @@ export default function StationManagement(props) {
       })
     }
 
+    // Get Users List By Params
+    const searchUsers = () => {
+      console.log(search)
+      debugger
+      props.getUserDataByParams(1, 10, search, 2)
+    }
+
+    // Handling Inputs
+    const handleInputs = (event) => {
+      setSearch({
+        ...search,
+        [event.target.name]: [event.target.value]
+      })
+    }
+
   return(
     <div className={styles.main}>
       <div className={styles.header}>
         <div className={styles.title}>Users</div>
       </div>
-      <div className={styles.table}>
+      <div style={{overflow: 'visible'}} className={styles.table}>
       <div className={styles.filterContent}>
         <div className={styles.searchBarDiv}>
         <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
           <OutlinedInput
             // label="Search"
+            name='name'
             className={classes.textField1}
             id="outlined-adornment-weight"
-            value={values.weight}
-            onChange={handleChange('weight')}
+            value={search.name}
+            onChange={handleInputs}
             startAdornment={<SearchOutlinedIcon />}
             aria-describedby="outlined-weight-helper-text"
             inputProps={{
@@ -332,7 +469,7 @@ export default function StationManagement(props) {
         </FormControl>
 
         {/*Search Button*/}
-        <Button className={classes.button1} variant="contained">
+        <Button className={classes.button1} onClick={searchUsers} variant="contained">
           Search
         </Button>
 
@@ -348,8 +485,8 @@ export default function StationManagement(props) {
     				type="date"
     				size="small"
             placeholder="From Date"
-            name="start"
-            value={date.start}
+            name="start_date"
+            value={search.start_date}
             onChange={(e) => handleDateChange(e, 'start')}
     				className={classes.date1}
             InputProps={{
@@ -367,8 +504,8 @@ export default function StationManagement(props) {
     				variant="outlined"
     				type="date"
     				size="small"
-            name="end"
-            value={date.end}
+            name="end_date"
+            value={search.end_date}
             onChange={(e) => handleDateChange(e, 'end')}
     				className={classes.date1}
             InputProps={{
@@ -382,8 +519,8 @@ export default function StationManagement(props) {
         </div>
       </div>
 
-      <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
+      <TableContainer className={classes.tableContainer} component={Paper}>
+      <Table aria-label="simple table">
         <TableHead style={{backgroundColor: '#e4e4e4'}}>
           <TableRow>
             <TableCell>S.No.</TableCell>
@@ -392,26 +529,30 @@ export default function StationManagement(props) {
             <TableCell align="center">Email</TableCell>
 
             <TableCell align="center">Registration Date</TableCell>
+            <TableCell align="center">Status</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={row.name}>
+            <TableRow className={classes.table} key={row.name}>
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
               <TableCell align="center">{row.name}</TableCell>
-              <TableCell align="center">{row.number}</TableCell>
-              <TableCell align="center">{row.email}</TableCell>
+              <TableCell align="center">{row.mobile}</TableCell>
+              <TableCell align="center">{row.email? row.email: '-'}</TableCell>
 
-              <TableCell align="center">{row.date}</TableCell>
+              <TableCell align="center">{moment(row.created_at).format("DD-MM-YYYY")}</TableCell>
+              <TableCell align="center">{row.is_blocked?"In-active": "Active"}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
+                <div>
                 <div className={styles.dropdown_content}>
                   <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
-                  <a><div onClick={(e) => toggleModal(e, 'delete', index)}>Block</div></a>
+                  <a><div onClick={(e) => toggleModal(e, 'delete', index)}>{row.is_blocked?"Unblock": "Block"}</div></a>
+                </div>
                 </div>
                 </div></TableCell>
             </TableRow>
@@ -419,6 +560,7 @@ export default function StationManagement(props) {
         </TableBody>
       </Table>
     </TableContainer>
+      {rows.length == 0 && <div className={styles.emptyTable} style={{ display: 'flex', justifyContent: 'center'}}>No Data Found</div>}
       </div>
 
 			{/* After Delete Modal */}
@@ -444,7 +586,7 @@ export default function StationManagement(props) {
       {<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deleteModal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={delete_logo} />
-				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to Block John User?</strong>  </p>
+				<p style={{marginTop: 20}}><strong style={{fontSize: 18}}>Are you sure you want to {arrayDetails.is_blocked?"un-block": "block"} '{arrayDetails.name}' ?</strong>  </p>
 
 					</ModalBody>
 					<ModalFooter className={styles.deleteFooter}>
@@ -461,7 +603,7 @@ export default function StationManagement(props) {
               style={{width: 100}}
 							variant="contained"
 							className={classes.button1}
-							onClick={(e) => { handleDeleteSubmit(e) }}
+							onClick={(e) => { handleDeleteSubmit(e, arrayDetails) }}
 						>
 							YES
 						</Button>
@@ -493,12 +635,12 @@ export default function StationManagement(props) {
 								<span className={styles.textModal}>User Name</span><span style={{marginLeft: 86,marginRight: 25}}> - </span>{arrayDetails.name}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>User Phone Number</span><span style={{marginLeft: 27,marginRight: 25}}> - </span>{arrayDetails.number}
+								<span className={styles.textModal}>User Phone Number</span><span style={{marginLeft: 27,marginRight: 25}}> - </span>{arrayDetails.mobile}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>User Email</span><span style={{marginLeft: 88,marginRight: 25}}> - </span>{arrayDetails.email}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 45,marginRight: 25}}> - </span>{arrayDetails.date}
+								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 45,marginRight: 25}}> - </span>{moment(arrayDetails.created_at).format("DD-MM-YYYY")}
 								</div>
 
                 {/* Empty Div */}
@@ -525,9 +667,30 @@ export default function StationManagement(props) {
 
       {rows.length > 0 &&<div className={styles.pageDiv}>
       <div style={{marginTop: 40}}>
-      <Pagination count={10} shape="rounded" classes={{ ul: classes.ul1 }} size='small'/>
+      {rows.length > 0 && setPage()}
       </div>
       </div>}
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    userDocs: state.Users.docs,
+    limit: state.Users.limit,
+    total: state.Users.total
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getUserDataByParams: (pageNo, size, params, type) => 
+      dispatch(actions.getUserDataByParams(pageNo, size, params, type)),
+    setIsLoading: (loading) => 
+      dispatch(setIsLoading)
+    // blockUserById: (userId) => 
+    //   dispatch(actions.blockUserById(userId))
+  }
+}
+
+export default compose(connect(mapStateToProps, mapDispatchToProps))(StationManagement)

@@ -22,13 +22,14 @@
 }
 
 .table {
+  padding-top: 1px;
   background-color: white;
   margin-top: 50px;
   box-shadow: 0px 4px 8px 0px #08080833;
   /* margin-left: 20px; */
   /* margin-right: 20px; */
   width: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
   border-radius: 20px;
 }
 
@@ -173,8 +174,6 @@ border-color: #cac7c7;
   display: block;
 }
 
-.dropdown_content a:hover {  }
-
 .dropdown_content div:hover { cursor: pointer; }
 
 .dropdown:hover .dropdown_content {display: block;}
@@ -278,9 +277,9 @@ border-color: #cac7c7;
   font: normal normal bold 10px Montserrat;
 }
 
-.modalImage {
+/* .modalImage {
 
-}
+} */
 
 .customDeleteClass {
   margin-top: 100px;
@@ -390,4 +389,13 @@ border-color: #cac7c7;
   }
 }
 
+.emptyTable {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  text-align: center;
+  font: normal normal bold 18px/18px Montserrat;
+  letter-spacing: 0px;
+  color: #715555;
+  opacity: 1;
+  }
 /* modalButton modalButton */

@@ -267,7 +267,7 @@ export function AddUser(props) {
                 _id: response.data.user._id,
                 userName: response.data.user.name,
                 userNumber: response.data.user.mobile,
-                role: response.data.user.role,
+                role: response.data.user.role_id,
                 stationName: response.data.user.station_id,
                 userEmail: response.data.user.email?response.data.user.email:'',
                 // date: response.data.user,

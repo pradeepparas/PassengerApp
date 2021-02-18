@@ -6,6 +6,7 @@ import { compose } from 'redux';
 import { Link, Redirect } from "react-router-dom";
 import axios from 'axios';
 import * as API from '../../constants/APIs';
+import { toast } from 'react-toastify';
 import {
 	Modal,
 	// ModalHeader,
@@ -52,7 +53,7 @@ import styles from './UserManagement.module.css';
 // import styled from 'styled-components';
 import * as actions from "../../redux/actions/userActions";
 import { getStationData, setIsLoading } from "../../redux/actions/stationActions";
-import { toast } from 'react-toastify';
+
 
 // import { Modal1 } from './Modal';
 // import { GlobalStyle } from './globalStyles';
@@ -114,6 +115,14 @@ const useStyles = makeStyles((theme) => ({
   root: {
     "& MuiButton-contained:hover": {
       backgroundColor: '#b22222',
+    },
+  },
+  tableContainer: {
+    overflow: 'visible',
+    borderRadius: '0px 0px 20px 20px', 
+    boxShadow: 'none',
+    ["@media (min-width: 180px) and (max-width: 910px)"]: {
+      overflow: 'auto'
     },
   },
   ul1: {
@@ -199,7 +208,13 @@ const useStyles = makeStyles((theme) => ({
     width: 192,
 	},
 	table: {
-		overflowX: 'scroll'
+    "&:last-child td": {
+      borderBottom: 0,
+    },
+    "&:last-child th": {
+      borderBottom: 0,
+    },
+		overflowX: 'scroll',
 	},
 	date1: {
     // width: 131,
@@ -561,8 +576,12 @@ export function UserManagement(props) {
         </div>
       </div>
 
-      <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
+      <TableContainer 
+      className={classes.tableContainer}
+      style={{
+        
+        }} component={Paper}>
+      <Table aria-label="simple table">
         <TableHead style={{backgroundColor: '#e4e4e4'}}>
           <TableRow>
             <TableCell>S.No.</TableCell>
@@ -577,14 +596,14 @@ export function UserManagement(props) {
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={row.name}>
+            <TableRow className={classes.table} key={row.name}>
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
               <TableCell align="center">{row.name}</TableCell>
               <TableCell align="center">{row.mobile}</TableCell>
               <TableCell align="center">{row.email? row.email:'-'}</TableCell>
-              <TableCell align="center">{row.role?row.role.role.replace('_', ' '): '-'}</TableCell>
+              <TableCell align="center">{row.role_id?row.role_id.role/*.replace('_', ' ')*/: '-'}</TableCell>
               <TableCell align="center">{row.station_id?row.station_id.station_name: '-'}</TableCell>
               <TableCell align="center">{moment(row.created_at).format("DD-MM-YYYY")}</TableCell>
               <TableCell align="center">
@@ -680,7 +699,7 @@ export function UserManagement(props) {
 							{/*<div style={{fontSize: 14, marginLeft: 12}} className={styles.title}>Station Details</div>*/}
 								<div className={styles.modalBox}>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Role</span><span style={{marginLeft: 130,marginRight: 25}}> - </span>{arrayDetails.role?arrayDetails.role.role.replace('_', ' '): '-'}
+								<span className={styles.textModal}>Role</span><span style={{marginLeft: 130,marginRight: 25}}> - </span>{arrayDetails.role_id?arrayDetails.role_id.role/*.role.replace('_', ' ')*/: '-'}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>Name</span><span style={{marginLeft:  121,marginRight: 25}}> - </span>{arrayDetails.name}
@@ -721,7 +740,7 @@ export function UserManagement(props) {
 }
 
 const mapStateToProps = (state) => {
-	debugger
+	// debugger
 	return {
 		// user: state.Users.usersList,
     userDocs: state.Users.docs,
