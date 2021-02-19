@@ -9,7 +9,7 @@ const initialState = {
   limit: '',
   role: []
 };
-
+// FETCH_USER_BYPARAMS
 const userReducer = (state = initialState, action) => {
   // debugger
   
@@ -18,7 +18,7 @@ const userReducer = (state = initialState, action) => {
       var value = action.user;
       return {
         ...state,
-        usersList: state.usersList.concat(value)
+        // usersList: state.usersList.concat(value)
       }
       case actionTypes.EDIT_USER:
         var value = action.data;

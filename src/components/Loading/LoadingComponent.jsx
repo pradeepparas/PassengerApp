@@ -19,7 +19,7 @@ export default function LoadingComponent() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: '#ffffff0d',
+            backgroundColor: '#9c9898ad',
             position: 'fixed',
             zIndex: 1300,
             // color: '#a62e2e'

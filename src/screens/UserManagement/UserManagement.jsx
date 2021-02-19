@@ -183,7 +183,8 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       backgroundColor: '#b22222',
       color: '#FFF'
-    }
+    },
+    width: 106
   },
   button2: {
     width: 100,
@@ -248,17 +249,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(userName, userNumber, userEmail, role, stationName, date) {
-  return { userName, userNumber, userEmail, role, stationName, date };
-}
+// function createData(userName, userNumber, userEmail, role, stationName, date) {
+//   return { userName, userNumber, userEmail, role, stationName, date };
+// }
 
-const rows = [
-  createData("Jack", 8854875896, "john@gmail.com", "Station Admin", "Habib Ganj", "01/01/21"),
-  createData("John Doe", 8854875896, "john@gmail.com", "Station Master", "Bhopal", "01/01/21"),
-  createData("John Doe", 8854875896, "john@gmail.com", "Station Admin", "Indore", "01/01/21"),
-  createData("Jack", 8854875896, "john@gmail.com", "Station Admin", "Indore", "01/01/21"),
-  createData("Mark", 8854875896, "john@gmail.com", "Station Master", "Indore", "01/01/21"),
-];
+// const rows = [
+//   createData("Jack", 8854875896, "john@gmail.com", "Station Admin", "Habib Ganj", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "Station Master", "Bhopal", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "Station Admin", "Indore", "01/01/21"),
+//   createData("Jack", 8854875896, "john@gmail.com", "Station Admin", "Indore", "01/01/21"),
+//   createData("Mark", 8854875896, "john@gmail.com", "Station Master", "Indore", "01/01/21"),
+// ];
 
 export function UserManagement(props) {
 	const [rows, setRows] = useState([]);
@@ -487,11 +488,6 @@ export function UserManagement(props) {
           />
         </FormControl>
 
-        {/*Search Button*/}
-        <Button onClick={searchUsers} className={classes.button1} variant="contained">
-          Search
-        </Button>
-
          {/*Select*/}
          <div className={styles.selectDiv1}>
            <select className={styles.select1} name="station_name" /*value={this.state.courseId}*/ onChange={handleInputs}>
@@ -510,9 +506,8 @@ export function UserManagement(props) {
                   )}
           </select>
           </div>
-          </div>
 
-        <div className={styles.dateDiv}>
+        {/* <div className={styles.dateDiv}> */}
         <div className={classes.container1}>
         <label style={{width: 70}} className={styles.dateLabel}>From Date</label>
     			<TextField
@@ -573,8 +568,15 @@ export function UserManagement(props) {
             }}
     			/>
     		</div>
-        </div>
+        {/* </div> */}
       </div>
+      <div style={{marginRight: 10}}>
+          {/*Search Button*/}
+          <Button onClick={searchUsers} className={classes.button1} variant="contained">
+            Search
+          </Button>
+        </div>
+    </div>
 
       <TableContainer 
       className={classes.tableContainer}

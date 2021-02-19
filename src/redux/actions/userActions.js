@@ -13,8 +13,8 @@ import { mapProps } from 'recompose';
 // }
 
 export function userActions(details) {
-  return dispatch => {
-    dispatch(setIsLoading(true))
+  return async dispatch => {
+    let a = await dispatch(setIsLoading(true))
     debugger
     console.log(details)
     debugger
@@ -45,19 +45,20 @@ export function userActions(details) {
       } else {
         debugger
       }
+      dispatch(setIsLoading(false))
     }).catch((response) => {
       // debugger
       toast.error(response.response.data.message)
       dispatch(setIsSubmitted(false))
       dispatch(setIsLoading(false))
     })
-    dispatch(setIsLoading(false))
+    
   }
 }
 
 export function EditUserDetails(details) {
-  return dispatch => {
-    dispatch(setIsLoading(true))
+  return async dispatch => {
+    let a = await dispatch(setIsLoading(true))
     console.log(details)
     debugger
     // return
@@ -87,16 +88,13 @@ export function EditUserDetails(details) {
       } else {
         dispatch(setIsSubmitted(false))
       }
-  // "message": "Station updated succesfully",
-  // "success": true,
-  // "status": 200
-  
+      dispatch(setIsLoading(false))
     }).catch(err => {
       toast.error(err.response.data.message)
       dispatch(setIsSubmitted(false))
       dispatch(setIsLoading(false))
     })
-    dispatch(setIsLoading(false))
+    
   }
 }
 
@@ -113,10 +111,11 @@ export function getUserDataByParams(page, limit, values, type) {
     let a = await dispatch(setIsLoading(true))
     console.log(a)
     debugger
-    
+    let type1 = type ? type: '';
+
     debugger
-    let url = values ? `${API.GetUserAPI}/${page}/${limit}?search=${values.name}&station_id=${values.station_name}&type=${type}&role_id=${values.role}&start_date=${values.start_date}&end_date=${values.end_date}`
-        : `${API.GetUserAPI}/${page}/${limit}?type=${type}`; 
+    let url = values ? `${API.GetUserAPI}/${page}/${limit}?search=${values.name}&station_id=${values.station_name}&type=${type1}&role_id=${values.role}&start_date=${values.start_date}&end_date=${values.end_date}`
+        : `${API.GetUserAPI}/${page}/${limit}?type=${type1}`; 
     debugger
     axios({
       url: url,
@@ -170,8 +169,8 @@ export function deleteUser(userId) {
 
 // For Getting Roles Like Admin, Super Admin
 export function getRole(){
-  return dispatch => {
-    dispatch(setIsLoading(true))
+  return async dispatch => {
+    let a = await dispatch(setIsLoading(true))
     axios({
       url: API.GetRoleAPI,
       headers: {
@@ -182,8 +181,9 @@ export function getRole(){
     }).then((response)=> {
       dispatch(setRole(response.data.role))
       // setRole(response.data.role)
+      dispatch(setIsLoading(false))
     })
-    dispatch(setIsLoading(true))
+    
 }
 }
 

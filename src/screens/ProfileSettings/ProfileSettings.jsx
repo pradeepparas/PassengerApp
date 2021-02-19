@@ -26,6 +26,8 @@ import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import styles from './ProfileSettings.module.css';
 import { setIsLoading } from '../../redux/actions/stationActions';
 import * as API from '../../constants/APIs';
+import * as actions from '../../redux/actions/auth';
+import { setIsSubmitted } from "../../redux/actions/stationActions";
 
 // import logo from './logo.png';
 import flag from '../StationManagement/flag.svg';
@@ -217,7 +219,9 @@ export function ProfileSettings(props) {
 
   // close modal
   const toggleModalClose =()=>{
+    props.setIsSubmitted(false)
     setModal(false)
+    history.push("/dashboard")
   }
 
 // Password Fields changing
@@ -269,11 +273,16 @@ export function ProfileSettings(props) {
       if (!validateForm()) {
           return
       }
+      props.changePassword(state)
+  }
+
+  // Open Modal for successfully Changed Details
+  useEffect(() => {
+    if(props.isSubmitted){
       setModal(true);
       setIsAdd(true);
-      // state.orgId=localStorage.getItem('orgId')
-      // props.addPackage(state)
-  }
+    }
+  }, [props.isSubmitted]) 
 
   // validate form
   const validateForm =()=>{
@@ -737,14 +746,19 @@ export function ProfileSettings(props) {
 
 const mapStateToProps = state => {
   return {
-    
+    isSubmitted: state.Stations.isSubmitted,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     setIsLoading: (flag) => 
-      dispatch(setIsLoading(flag))
+      dispatch(setIsLoading(flag)),
+    changePassword: (details) =>
+      dispatch(actions.changePassword(details)),
+    setIsSubmitted: flag => {
+      dispatch(setIsSubmitted(flag))
+    },
   }
 }
 

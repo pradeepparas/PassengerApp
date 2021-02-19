@@ -17,3 +17,6 @@ export const BlockUserAPI = `${url}/users`;
 // Vendors
 // http://13.235.102.214:8000/vendors/1/10
 export const GetVendorAPI = `${url}/vendors`
+
+// Profile Setting
+export const ChangePasswordAPI = `${url}/users/change_password`

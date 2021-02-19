@@ -3,7 +3,7 @@ import * as API from '../../constants/APIs';
 import * as myConstClass from '../../screens/constants/constants';
 import * as actionTypes from './actionTypes';
 import { ToastContainer, toast } from 'react-toastify';
-import { setIsLoading } from "./stationActions";
+import { setIsLoading, setIsSubmitted } from "./stationActions"; 
 // import { useHistory } from "react-router-dom";
 // import jwt_decode from "jwt-decode";
 
@@ -39,9 +39,10 @@ export const logOut = () => {
 
 export const auth = (username, password) => {
 
-    return dispatch => {
-        dispatch(setIsLoading(true))
+    return async dispatch => {
+        let a = await dispatch(setIsLoading(true))
         var qs = require('qs');
+        debugger
         // dispatch(authStart());
         const authData = {
             username: username,
@@ -68,6 +69,8 @@ export const auth = (username, password) => {
                     localStorage.setItem('username', response.data.user_data.name)
                     localStorage.setItem('userId', response.data.user_data._id);
                     localStorage.setItem('userDataLS', JSON.stringify(response.data.user_data))
+                    console.log(response.data.user_data)
+                    debugger
                     // localStorage.setItem('user', user));
                     dispatch(authSuccess(response.data.token, response.data.user_data, response.data.message));
                     toast.success(response.data.message)
@@ -75,7 +78,7 @@ export const auth = (username, password) => {
 
                 }
             }).then(() => {
-
+                dispatch(setIsLoading(false))
             })
             .catch(err => {
                 toast.error(err.response.data.message)
@@ -84,6 +87,40 @@ export const auth = (username, password) => {
                 //     error: err.message ? err.message : null
                 // }));
             });
-            dispatch(setIsLoading(false))
+            
     };
 };
+
+export const changePassword = (password) => {
+    return async dispatch => {
+        let a = await dispatch(setIsLoading(true))
+        let data = {
+            current_password: password.currentPassword,
+            new_password: password.newPassword,
+            confirm_password: password.confirmPassword
+        }
+        axios({
+            method: "PUT",
+            url: API.ChangePasswordAPI,
+            data: data,
+            headers: {
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+              }
+        }).then(response => {
+            if(response.data.success){
+                // toast.success(response.data.message)
+                dispatch(setIsLoading(false))
+                dispatch(setIsSubmitted(true))
+                localStorage.setItem('token', response.data.token)
+            } else {
+
+            }
+        }).catch(err => {
+            toast.error(err.response.data.message)
+            dispatch(setIsLoading(false))
+            dispatch(setIsSubmitted(false))
+        })
+    }
+}

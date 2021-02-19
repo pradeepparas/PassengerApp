@@ -374,4 +374,21 @@ border-color: #cac7c7;
   opacity: 1;
 }
 
+/* #test{
+  z-index: 9999999;
+  background:#3F3;
+  position: absolute;
+  top:50px;
+  bottom:50px;
+  width:5px;
+  height: 20px;
+  -webkit-transition-property: top, bottom;
+  -webkit-transition-duration: 0.5s;
+}
+#test:hover {
+  top:20px;
+  color: #715555;
+  bottom:20px;
+} */
+
 /* modalContainer  footer modalOuterDiv table*/

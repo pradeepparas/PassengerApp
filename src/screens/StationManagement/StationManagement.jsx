@@ -55,8 +55,9 @@ import { GlobalStyle } from './globalStyles';
 import * as constantValue from '../constants/constants';
 import * as actions from "../../redux/actions/stationActions";
 import * as API from "../../constants/APIs";
-import { toast } from 'react-toastify';
-import Loading from '../../components/Loading/LoadingComponent';
+import { hasAccess } from "../../constants/hasAccess";
+// import { toast } from 'react-toastify';
+// import Loading from '../../components/Loading/LoadingComponent';
 
 const Container = styled.div`
   display: flex;
@@ -186,6 +187,8 @@ const useStyles = makeStyles((theme) => ({
     }
 	},
   button1: {
+    width: 120,
+    marginRight: 10,
 		["@media (min-width: 280px) and (max-width: 1158px)"]: {
       width: '60%',
       marginBottom: 5
@@ -496,6 +499,7 @@ export function StationManagement(props) {
           ...search,
           [event.target.name]: [event.target.value]
         })
+        // props.getStationDataByParams(1, 10, search)
       }
     }
 
@@ -503,11 +507,11 @@ export function StationManagement(props) {
     <div className={styles.main}>
       <div className={styles.header}>
         <div className={styles.title}>Station Management</div>
-        <Link to="/station-management/add">
+        {hasAccess('Station', 'create')&&<Link to="/station-management/add">
         <Button onClick={addStation} className={classes.link1} variant="contained">
           + Add Station
         </Button>
-        </Link>
+        </Link>}
       </div>
       <div className={styles.table}>
       <div className={styles.filterContent}>
@@ -531,17 +535,12 @@ export function StationManagement(props) {
           />
         </FormControl>
 
-        {/*Search Button*/}
-        <Button className={classes.button1} onClick={searchStations} variant="contained">
-          Search
-        </Button>
-
          {/*Select*/}
          <div className={styles.selectDiv1}>
            <select disabled={search.station_code} className={styles.select1} name="station_name" value={search.station_name} onChange={handleInputs}>
              <option value={'0'}>Station Name</option>
              {dropDownDetails.length > 0 && dropDownDetails.map(data => 
-               <option key={data._id} value={data._id}>{data.station_name}</option>
+               <option key={data._id} value={data.station_name}>{data.station_name}</option>
              )}
          </select>
          </div>
@@ -550,7 +549,7 @@ export function StationManagement(props) {
             <select disabled={search.station_name} className={styles.select1} name="station_code" value={search.station_code} onChange={handleInputs}>
               <option value={'0'}>Station Code</option>
               {dropDownDetails.length > 0 && dropDownDetails.map(data => 
-                <option key={data._id} value={data._id}>{data.station_code}</option>  
+                <option key={data._id} value={data.station_code}>{data.station_code}</option>  
               )}
           </select>
           </div>
@@ -610,6 +609,11 @@ export function StationManagement(props) {
 					}}
 				/>
     		</div>
+
+        {/*Search Button*/}
+        <Button className={classes.button1} onClick={searchStations} variant="contained">
+          Search
+        </Button>
       </div>
 
       <TableContainer className={classes.tableContainer} component={Paper}>
@@ -648,9 +652,9 @@ export function StationManagement(props) {
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
-                  <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
-                  <Link to={`station-management/${row._id}`}><div onClick={(e) => editStation(e, row, index)}>Edit Details</div></Link>
-                  <a><div onClick={(e) => toggleModal(e, 'delete', index)}>Delete Station</div></a>
+                  {hasAccess('Station', 'view') &&<a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>}
+                  {hasAccess('Station', 'update') &&<Link to={`station-management/${row._id}`}><div onClick={(e) => editStation(e, row, index)}>Edit Details</div></Link>}
+                  {hasAccess('Station', 'delete') &&<a><div onClick={(e) => toggleModal(e, 'delete', index)}>Delete Station</div></a>}
                 </div>
                 </div></TableCell>
             </TableRow>
@@ -726,10 +730,10 @@ export function StationManagement(props) {
 					 onClick={toggleModalClose}
 				 />
 				 <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-				 <Link to={`station-management/${arrayDetails._id}`}><button className={styles.modalButton}/*style={{display: 'contents'}}*/ onClick={(e) => editStation(e, arrayDetails)}>
+				 {hasAccess('Station', 'update') &&<Link to={`station-management/${arrayDetails._id}`}><button className={styles.modalButton}/*style={{display: 'contents'}}*/ onClick={(e) => editStation(e, arrayDetails)}>
 				 <img className={styles.modalImage} style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={edit} />
 				 <small style={{display: 'flex', alignItems: 'center'}}>Edit Details</small>
-				 </button></Link>
+				 </button></Link>}
 				 <button className={styles.modalButton} /*style={{display: 'contents'}}*/ /*onClick={passwordGenerate}*/>
 				 <img className={styles.modalImage} style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={printer} />
 				 <small style={{display: 'flex', alignItems: 'center'}}>Download Details</small>

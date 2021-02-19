@@ -393,11 +393,6 @@ export function Vendors(props) {
           />
         </FormControl>
 
-        {/*Search Button*/}
-        <Button className={classes.button1} variant="contained">
-          Search
-        </Button>
-
          {/*Select*/}
          <div className={styles.selectDiv1}>
            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
@@ -424,9 +419,9 @@ export function Vendors(props) {
               <option value="2">Habib Ganj</option>
           </select>
           </div>
-          </div>
+          
 
-        <div className={styles.dateDiv}>
+        {/* <div className={styles.dateDiv}> */}
         <div className={classes.container1}>
         <label style={{width: 70}} className={styles.dateLabel}>From Date</label>
     			<TextField
@@ -480,6 +475,14 @@ export function Vendors(props) {
     			/>
     		</div>
         </div>
+        <div>
+          {/*Search Button*/}
+          <Button className={classes.button1} variant="contained">
+            Search
+          </Button>
+        </div>
+        
+        {/* </div> */}
       </div>
 
       <TableContainer className={classes.tableContainer} component={Paper}>

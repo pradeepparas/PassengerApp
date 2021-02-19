@@ -374,8 +374,8 @@ export function AddStation(props) {
           errors.station__gps_lng="Longitude is required or invalid value";
           isValid =false;
       }
-      else if(state.no_of_platform.toString().trim()=='' || isNaN(state.no_of_platform)){
-          errors.no_of_platform="mobile of platforms is required or invalid mobile";
+      else if(state.no_of_platform.toString().trim()=='' || isNaN(state.no_of_platform) || !state.no_of_platform.toString().match(/^(0[1-9]|[1-9]\d*)$/g)){
+          errors.no_of_platform="number of platforms is required or invalid number";
           isValid =false;
       }
 

@@ -20,7 +20,7 @@ export function setIsSubmitted(success) {
 // }
 
 export function EditStationDetails(details) {
-  return dispatch => {
+  return async dispatch => {
     let data = {
       "_id": details._id,
       "station_name": details.station_name,
@@ -47,7 +47,7 @@ export function EditStationDetails(details) {
 
     if(details.email)data.email = details.email;
     if(details.contact_email)data.contact_email = details.contact_email;
-    dispatch(setIsLoading(true))
+    let a = await dispatch(setIsLoading(true))
     axios({
       url: API.AddStationAPI,
       method: "PUT",
@@ -94,8 +94,8 @@ export function stationActions(details) {
 
   delete details[key];
   console.log('details action', details) 
-  return dispatch => {
-    dispatch(setIsLoading(true))
+  return async dispatch => {
+    let a = await dispatch(setIsLoading(true))
     debugger
     const data = details
     axios({
@@ -160,8 +160,8 @@ export function deleteStation(id) {
 }
 
 export function GetContractors() {
-  return dispatch => {
-    dispatch(setIsLoading(true))
+  return async dispatch => {
+    let a = await dispatch(setIsLoading(true))
     axios({
       url: API.GetContractorsAPI,
       headers: {
@@ -188,8 +188,8 @@ export function GetContractors() {
 // GET Stations Details by Parameters
 export function getStationDataByParams(page, limit, values) {
   debugger
-  return (dispatch) => {
-    dispatch(setIsLoading(true))
+  return async(dispatch) => {
+    let a = await dispatch(setIsLoading(true))
     
     let url = values ? `${API.GetStationAPI}/${page}/${limit}?search=${values.name}&station_name=${values.station_name}&station_type=${values.station_type}&managed_by=${values.managed_by}&start_date=${values.start_date}&end_date=${values.end_date}`: `${API.GetStationAPI}/${page}/${limit}` 
     
@@ -227,8 +227,8 @@ export function getStationDataByParams(page, limit, values) {
 
 //  GET Stations Details for Dropdown
 export function getStationData() {
-  return dispatch => {
-    dispatch(setIsLoading(true))
+  return async dispatch => {
+    let a = await dispatch(setIsLoading(true))
     axios({
       url: API.GetStationAPI,
       headers: {

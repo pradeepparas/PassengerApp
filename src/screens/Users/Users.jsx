@@ -325,7 +325,7 @@ export function StationManagement(props) {
           deleteModal: false,
           deletedModal: true
         })
-        props.getUserDataByParams(pageNo, props.limit, null, 2)
+        props.getUserDataByParams(pageNo, props.limit, search, 2)
       } else {
         debugger
         toast.error(response.data.message)
@@ -346,7 +346,7 @@ export function StationManagement(props) {
   //  used for pagination
   const handleChangePage = (event, page) => {
     setPageNo(page)
-    props.getUserDataByParams(page, props.limit, null, 2)
+    props.getUserDataByParams(page, props.limit, search, 2)
 	}
 
     // Used for Pagination
@@ -365,7 +365,8 @@ export function StationManagement(props) {
   // Calling function for fetching users List
   useEffect(() => {
     props.getUserDataByParams(1, 10, null, 2);
-  },[])
+    debugger
+  },[props.getUserDataByParams])
 
   // Changing Date fields
   const handleDateChange = (data, type) => {
@@ -396,8 +397,9 @@ export function StationManagement(props) {
   useEffect(() => {
     if(props.userDocs){
       setRows(props.userDocs)
+      debugger
     }
-    debugger
+    // debugger
   },[props.userDocs])
 
   const toggleModal =(e,data, i)=>{
@@ -527,14 +529,15 @@ export function StationManagement(props) {
             <TableCell align="center">Name</TableCell>
             <TableCell align="center">Phone Number</TableCell>
             <TableCell align="center">Email</TableCell>
-
             <TableCell align="center">Registration Date</TableCell>
             <TableCell align="center">Status</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
+          {rows.map((row, index) => {
+            debugger
+            return(
             <TableRow className={classes.table} key={row.name}>
               <TableCell component="th" scope="row">
                 {index+1}
@@ -556,10 +559,11 @@ export function StationManagement(props) {
                 </div>
                 </div></TableCell>
             </TableRow>
-          ))}
+          )})}
         </TableBody>
       </Table>
     </TableContainer>
+    
       {rows.length == 0 && <div className={styles.emptyTable} style={{ display: 'flex', justifyContent: 'center'}}>No Data Found</div>}
       </div>
 
@@ -681,13 +685,13 @@ const mapStateToProps = (state) => {
     total: state.Users.total
   }
 }
-
+// concat ...
 const mapDispatchToProps = (dispatch) => {
   return {
     getUserDataByParams: (pageNo, size, params, type) => 
       dispatch(actions.getUserDataByParams(pageNo, size, params, type)),
     setIsLoading: (loading) => 
-      dispatch(setIsLoading)
+      dispatch(setIsLoading(loading))
     // blockUserById: (userId) => 
     //   dispatch(actions.blockUserById(userId))
   }

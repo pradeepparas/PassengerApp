@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import { useHistory } from 'react-router-dom';
 import styles from "./Dashboard.module.css";
+import jwt_decode from "jwt-decode";
+// import { compose } from 'redux'
+// import { connect } from 'react-redux'
 // import { withTranslation,useTranslation } from 'react-i18next';
 
 // Material UI
@@ -15,8 +18,7 @@ import rupee from '../../components/Drawer/images/rupee.svg';
 
 import Card from "../../components/Card/Card";
 // import * as acitons from '../../../store/actions/index'
-// import { compose } from 'redux'
-// import { connect } from 'react-redux'
+
 export default function DashBoard(props) {
 	const history = useHistory();
 	// const [t, i18n] = useTranslation('common');
@@ -29,6 +31,8 @@ export default function DashBoard(props) {
 		if(token == null){
 			history.push('/')
 		}
+		console.log(jwt_decode(localStorage.getItem('token')).exp < Date.now() / 1000)
+		debugger
 	}, [])
 
 	return (

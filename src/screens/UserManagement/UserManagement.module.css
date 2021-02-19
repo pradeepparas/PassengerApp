@@ -7,7 +7,7 @@
 .header {
   margin-top: 20px;
   padding-left: 20px;
-  padding-right: 20px;
+  padding-right: 10px;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -282,7 +282,7 @@ border-color: #cac7c7;
 
 .searchBarDiv {
   display: flex;
-  width: 500px;
+  width: 800px;
   justify-content: space-between;
 }
 
@@ -360,4 +360,4 @@ border-color: #cac7c7;
     opacity: 1;
 }
 
-/* modalContainer table*/
+/* modalContainer searchBarDiv header table*/

@@ -18,6 +18,7 @@ import button1 from "./images/button1.png";
 // Components
 import styles from "./Log_in.module.css";
 import * as actions from "../../redux/actions/auth";
+import LoadingComponent from '../../components/Loading/LoadingComponent';
 // import { setIsLoading } from "../../redux/actions/stationActions";
 
 // Material UI
@@ -211,7 +212,7 @@ export const Log_in = (props) => {
   return(
     <div>
 
-      
+      {props.isLoading && <LoadingComponent />}  
       <Container fluid={true}>
       <Row>
         <Col md="6" className={styles.left}>
