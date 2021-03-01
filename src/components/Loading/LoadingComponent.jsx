@@ -3,10 +3,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles({
-	root: {	
+	root: {
 	},
     loading: {
-        color: '#b22222'
+        color: '#213D77'
     }
 });
 

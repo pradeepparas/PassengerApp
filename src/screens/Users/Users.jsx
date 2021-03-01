@@ -59,7 +59,7 @@ const BootstrapInput = withStyles((theme) => ({
     'label + &': {
       marginTop: theme.spacing(3),
     },
-    
+
   },
   input: {
     borderRadius: 4,
@@ -93,7 +93,7 @@ const BootstrapInput = withStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
   root: {
     "& MuiButton-contained:hover": {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
     },
     ".MuiPaper-elevation1": {
       boxShadow: 'none'
@@ -112,12 +112,12 @@ const useStyles = makeStyles((theme) => ({
     "& .Mui-selected:hover": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     },
     "& .Mui-selected": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     }
   },
   textField: {
@@ -151,7 +151,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableContainer: {
     overflow: 'visible',
-    borderRadius: '0px 0px 20px 20px', 
+    borderRadius: '0px 0px 20px 20px',
     boxShadow: 'none',
     ["@media (min-width: 180px) and (max-width: 800px)"]: {
       overflow: 'auto'
@@ -159,10 +159,22 @@ const useStyles = makeStyles((theme) => ({
   },
   page1: {
     marginTop: 40,
-    // color: '#b22222',
+    // color: '#213D77',
     // borderRadius: 8
   },
+	div1: {
+		marginRight: 10,
+		["@media (min-width: 681px) and (max-width: 842px)"]: {
+			marginRight: 0,
+			width: 500,
+		},
+		["@media (min-width: 280px) and (max-width: 680px)"]: {
+			marginRight: 0,
+			width: '91%',
+		}
+	},
   button1: {
+		width: 100,
     ["@media (min-width: 280px) and (max-width: 842px)"]: {
       width: '100%',
       marginBottom: 5
@@ -170,10 +182,10 @@ const useStyles = makeStyles((theme) => ({
     width: 120,
     borderRadius: 80,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     }
   },
@@ -312,7 +324,7 @@ export function StationManagement(props) {
       url: `${API.BlockUserAPI}/block`,
       method: "PUT",
       headers: {
-        //    'Accept-Language': 'hi', 
+        //    'Accept-Language': 'hi',
         "accept": "application/json",
         'Authorization': 'Bearer ' + localStorage.getItem('token'),
       },
@@ -336,11 +348,6 @@ export function StationManagement(props) {
       props.setIsLoading(false)
     })
     props.setIsLoading(false)
-
-		setModal({
-			deleteModal: false,
-			deletedModal: true
-		})
 	}
 
   //  used for pagination
@@ -353,11 +360,11 @@ export function StationManagement(props) {
   const setPage = () => {
     let total = Math.ceil(props.total / props.limit)
     return (
-        <Pagination 
+        <Pagination
           onChange={handleChangePage}
-          count={total} 
-          shape="rounded" 
-          classes={{ ul: classes.ul1 }} 
+          count={total}
+          shape="rounded"
+          classes={{ ul: classes.ul1 }}
           size='small'/>
     )
   }
@@ -410,7 +417,7 @@ export function StationManagement(props) {
         deleteModal: true
       })
     } else {
-			
+
       setModal({
         details: true
       })
@@ -470,15 +477,9 @@ export function StationManagement(props) {
           />
         </FormControl>
 
-        {/*Search Button*/}
-        <Button className={classes.button1} onClick={searchUsers} variant="contained">
-          Search
-        </Button>
-
-          </div>
-
+          {/*</div>*/}
           {/* Dates fields */}
-        <div className={styles.dateDiv}>
+        {/*<div className={styles.dateDiv}>*/}
         <div className={classes.container1}>
         <label style={{width: 70}} className={styles.dateLabel}>From Date</label>
     			<TextField
@@ -519,6 +520,13 @@ export function StationManagement(props) {
     			/>
     		</div>
         </div>
+
+				<div className={classes.div1}>
+				{/*Search Button*/}
+        <Button className={classes.button1} onClick={searchUsers} variant="contained">
+          Search
+        </Button>
+				</div>
       </div>
 
       <TableContainer className={classes.tableContainer} component={Paper}>
@@ -536,7 +544,7 @@ export function StationManagement(props) {
         </TableHead>
         <TableBody>
           {rows.map((row, index) => {
-            debugger
+            // debugger
             return(
             <TableRow className={classes.table} key={row.name}>
               <TableCell component="th" scope="row">
@@ -563,7 +571,7 @@ export function StationManagement(props) {
         </TableBody>
       </Table>
     </TableContainer>
-    
+
       {rows.length == 0 && <div className={styles.emptyTable} style={{ display: 'flex', justifyContent: 'center'}}>No Data Found</div>}
       </div>
 
@@ -622,7 +630,7 @@ export function StationManagement(props) {
 						 width: 40,
 						 height: 40,
 						 backgroundColor: 'white',
-						 color: "#b22222",
+						 color: "#213D77",
 						 borderRadius: 55,
 						 position: "absolute",
 						 top: "-14",
@@ -688,11 +696,11 @@ const mapStateToProps = (state) => {
 // concat ...
 const mapDispatchToProps = (dispatch) => {
   return {
-    getUserDataByParams: (pageNo, size, params, type) => 
+    getUserDataByParams: (pageNo, size, params, type) =>
       dispatch(actions.getUserDataByParams(pageNo, size, params, type)),
-    setIsLoading: (loading) => 
+    setIsLoading: (loading) =>
       dispatch(setIsLoading(loading))
-    // blockUserById: (userId) => 
+    // blockUserById: (userId) =>
     //   dispatch(actions.blockUserById(userId))
   }
 }

@@ -1,9 +1,12 @@
 import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
+  docs: [],
   vendorsList: [],
   total: '',
-  limit: ''
+  limit: '',
+  vendorDetails: [],
+  categoryData: []
 };
 
 const vendorReducer = (state = initialState, action) => {
@@ -17,9 +20,16 @@ const vendorReducer = (state = initialState, action) => {
         case actionTypes.FETCH_VENDOR_BYPARAMS:
             return {
                 ...state,
-                vendorsList: action.docs,
+                docs: action.docs,
                 total: action.total,
-                limit: action.limit   
+                limit: action.limit
+            }
+
+        case actionTypes.FETCH_VENDORS:
+            return {
+              ...state,
+              categoryData: action.categoryData,
+              vendorDetails: action.vendorData,
             }
         default:
             return state;

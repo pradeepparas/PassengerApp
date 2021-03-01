@@ -39,9 +39,9 @@ import { toast } from 'react-toastify';
 
 const GreenCheckbox = withStyles({
   root: {
-    color: '#B22222',
+    color: '#213D77',
     '&$checked': {
-      color: '#B22222',
+      color: '#213D77',
     },
   },
   checked: {},
@@ -85,19 +85,19 @@ const GreenCheckbox = withStyles({
 const useStyles = makeStyles((theme) => ({
   root: {
     "& MuiButton-contained:hover": {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
     },
   },
   ul1: {
     "& .Mui-selected:hover": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     },
     "& .Mui-selected": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     }
   },
   label: {
@@ -121,16 +121,16 @@ const useStyles = makeStyles((theme) => ({
   },
   page1: {
     marginTop: 40,
-    // color: '#b22222',
+    // color: '#213D77',
     // borderRadius: 8
   },
   button1: {
     borderRadius: 16,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     }
   },
@@ -139,10 +139,10 @@ const useStyles = makeStyles((theme) => ({
 		marginRight: 20,
 		borderRadius: 16,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     },
 		["@media (max-width:428px)"]: {
@@ -214,7 +214,7 @@ export function AddUser(props) {
     history.push('/user-management')
   }
 
-    // 
+    //
 		useEffect(()=>{
 		if(props.isEdit){
 			console.log(props.user)
@@ -226,7 +226,7 @@ export function AddUser(props) {
 		}
 		},[])
 
-    //  Getting dropdown details  
+    //  Getting dropdown details
     useEffect(() => {
       if(props.userDetails){
         setDropDownDetails(props.userDetails)
@@ -253,15 +253,15 @@ export function AddUser(props) {
         props.setIsLoading(true)
         axios({
           url: `${API.GetUserAPI}/${user_id}`,
-          headers: { 
-            //    'Accept-Language': 'hi', 
+          headers: {
+            //    'Accept-Language': 'hi',
             "accept": "application/json",
             'Authorization': 'Bearer ' + localStorage.getItem('token'),
              },
         }).then(response => {
           if(response.data.success){
             console.log(response.data.user)
-            debugger  
+            debugger
               // setState(data)
               setState({
                 _id: response.data.user._id,
@@ -293,7 +293,7 @@ export function AddUser(props) {
       if (!validateForm()) {
           return
       }
-      
+
       // Add and Update User
       if(user_id === 'add') {
         debugger
@@ -316,15 +316,15 @@ export function AddUser(props) {
         setIsAdd(true);
       } else {
         setIsAdd(false);
-      } 
+      }
     } else {
-         
+
     }
   }, [props.isSubmitted])
 
 	// useEffect
 	useEffect(() => {
-		props.getUserData()	
+		props.getUserData()
 	}, [])
 
   // validate form
@@ -355,7 +355,7 @@ export function AddUser(props) {
           errors.role="role field is required";
           isValid =false;
       }
-      else if((user_id == 'add') && (state.userPassword.toString().trim()==''|| 
+      else if((user_id == 'add') && (state.userPassword.toString().trim()==''||
                 !(state.userPassword.length >= 3 && state.userPassword.length <= 10))){
           errors.userPassword="password is in between 3 to 10 characters";
           isValid =false;
@@ -368,11 +368,11 @@ export function AddUser(props) {
   const handleInputs = (event) => {
 		console.log(event.target.name, event.target.value)
 		// debugger
-      
+
     setState({
       ...state,
-      [event.target.name]: (event.target.name == 'userPassword' 
-                          || event.target.name == 'userNumber')?  
+      [event.target.name]: (event.target.name == 'userPassword'
+                          || event.target.name == 'userNumber')?
                           event.target.value.trim() : event.target.value
     })
     // debugger
@@ -423,7 +423,7 @@ export function AddUser(props) {
               <label style={{color: 'black'}}>Station Name</label>
               <select className={styles.select1} name="stationName" value={state.stationName} onChange={handleInputs}>
                 <option value={'0'}>Station Name</option>
-                {dropDownDetails.length > 0 && dropDownDetails.map(data => 
+                {dropDownDetails.length > 0 && dropDownDetails.map(data =>
                   <option key={data._id} value={data._id}>{data.station_name}</option>
                 )}
             </select>
@@ -434,7 +434,7 @@ export function AddUser(props) {
 							<label style={{color: 'black'}}>Role</label>
 							<select className={styles.select1} name="role" value={state.role} onChange={handleInputs}>
 								<option value={'0'}>Role</option>
-								{role.length > 0 && role.map(data => 
+								{role.length > 0 && role.map(data =>
                   <option key={data._id} value={data._id}>{data.role.replace('_', ' ')}</option>
                   )}
 						</select>
@@ -528,7 +528,7 @@ const mapDispatchToProps = (dispatch) => {
     getUserData: () => {
       dispatch(getStationData())
     },
-    EditUserDetails: (details) => 
+    EditUserDetails: (details) =>
       dispatch(actions.EditUserDetails(details))
 	}
 }

@@ -18,7 +18,7 @@ import {
 	FormGroup,
 } from "reactstrap";
 
-// components
+// components #213D77
 import styles from './AddStation.module.css';
 import logo from './logo.png';
 import flag from '../flag.svg';
@@ -41,9 +41,9 @@ import { toast } from 'react-toastify';
 
 const GreenCheckbox = withStyles({
   root: {
-    color: '#B22222',
+    color: '#213D77',
     '&$checked': {
-      color: '#B22222',
+      color: '#213D77',
     },
   },
   checked: {},
@@ -88,19 +88,19 @@ const GreenCheckbox = withStyles({
 const useStyles = makeStyles((theme) => ({
   root: {
     "& MuiButton-contained:hover": {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
     },
   },
   ul1: {
     "& .Mui-selected:hover": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     },
     "& .Mui-selected": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     }
   },
   label: {
@@ -124,16 +124,16 @@ const useStyles = makeStyles((theme) => ({
   },
   page1: {
     marginTop: 40,
-    // color: '#b22222',
+    // color: '#213D77',
     // borderRadius: 8
   },
   button1: {
     borderRadius: 16,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     }
   },
@@ -159,10 +159,10 @@ const useStyles = makeStyles((theme) => ({
 		marginRight: 20,
 		borderRadius: 16,
 		color: 'white',
-		backgroundColor: '#b22222',
+		backgroundColor: '#213D77',
 		textTransform: 'capitalize',
 		'&:hover': {
-			backgroundColor: '#b22222',
+			backgroundColor: '#213D77',
 			color: '#FFF'
 		},
 		["@media (max-width:368px)"]: {
@@ -323,9 +323,9 @@ export function AddStation(props) {
         setIsAdd(true);
       } else {
         setIsAdd(false);
-      } 
+      }
     } else {
-         
+
     }
   }, [props.isSubmitted])
 
@@ -347,7 +347,7 @@ export function AddStation(props) {
        var mobileValid = state.mobile.toString().match(/^[0]?[6789]\d{9}$/);
        var usernameRegex = state.station_name.toString().match(/^[a-zA-Z ]+$/);
        var code = state.station_code.match(/^[a-zA-Z]+$/);
-       
+
        var isValid= true;
        if(state.station_name.trim()==''|| !usernameRegex){
            errors.station_name="station name is required or invalid name";
@@ -435,9 +435,9 @@ export function AddStation(props) {
           errors.email="invalid email address";
           isValid =false;
       }
-      else if((station_id == 'add') && (state.adminPassword.trim()=='' || 
+      else if((station_id == 'add') && (state.adminPassword.trim()=='' ||
       !(state.adminPassword.length >= 3 && state.adminPassword.length <= 10))){
-        errors.adminPassword="password is in between 3 to 10 characters"  
+        errors.adminPassword="password is in between 3 to 10 characters"
         isValid =false;
       }
       setErros({...errors, errors:errors})
@@ -469,7 +469,7 @@ export function AddStation(props) {
 
       console.log(months, years)
       // debugger
-      
+
       let tenure = '';
 
       if( years > 0){
@@ -498,8 +498,8 @@ export function AddStation(props) {
       props.setIsLoading(true)
       axios({
         url: `${API.GetStationAPI}/${station_id}`,
-        headers: { 
-          //    'Accept-Language': 'hi', 
+        headers: {
+          //    'Accept-Language': 'hi',
           "accept": "application/json",
           'Authorization': 'Bearer ' + localStorage.getItem('token'),
            },
@@ -516,7 +516,7 @@ export function AddStation(props) {
               data.email =response.data.staion.station_admin.email;
               data.station_admin_id = response.data.staion.station_admin._id;
             }
-            
+
             data.managed_by = data.managed_by?response.data.staion.managed_by._id: "";
             if(data.is_assign_as_admin){
               data.mobile = response.data.staion.contact_mobile
@@ -574,6 +574,30 @@ export function AddStation(props) {
         contract_winner: value.name
       })
     }
+
+		//  This Code is Worked When Assign as Admin is True.
+		if(pchecked){
+			if(event.target.name == 'contact_name'){
+				setState({
+	        ...state,
+	        [event.target.name]: event.target.value,
+	        name: event.target.value
+	      })
+			} else if(event.target.name == 'contact_mobile') {
+				setState({
+	        ...state,
+	        [event.target.name]: event.target.value,
+	        mobile: event.target.value
+	      })
+			} else if(event.target.name == 'contact_email') {
+				setState({
+	        ...state,
+	        [event.target.name]: event.target.value,
+	        email: event.target.value
+	      })
+			}
+		}
+
     // debugger
     setErros({errors, [event.target.name]:""})
   }
@@ -687,7 +711,7 @@ export function AddStation(props) {
               <div className={styles.textfield}>
                 <label style={{color: 'black'}}>Contract Start Date</label>
                 <DatePicker
-                  minDate={new Date()}
+                  // minDate={new Date()}
                   maxDate={state.exp_end_date?new Date(state.exp_end_date): ''}
                   className={styles.input_s}
                   peekNextMonth showMonthDropdown showYearDropdown

@@ -15,8 +15,14 @@ export const GetRoleAPI = `${url}/roles`;
 export const BlockUserAPI = `${url}/users`;
 
 // Vendors
-// http://13.235.102.214:8000/vendors/1/10
-export const GetVendorAPI = `${url}/vendors`
+export const GetVendorAPI = `${url}/services/vendor_report`
+export const VendorBlockAPI = `${url}/services/change_status`
 
 // Profile Setting
 export const ChangePasswordAPI = `${url}/users/change_password`
+
+// DashBoard
+export const DashBoardAPI = `${url}/reports/count`
+
+// Profile Setting APIs
+export const UpdateProfileAPI = `${url}/users/profile_update`

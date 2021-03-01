@@ -8,7 +8,7 @@ export const LOGIN_SUCCESSFULL = "LOGIN_SUCCESSFULL";
 // Station-Management Actions
 export const ADD_STATION = 'ADD_STATION';
 export const EDIT_STATION = "EDIT_STATION";
-export const DELETE_STATION = "DELETE_STATION"; 
+export const DELETE_STATION = "DELETE_STATION";
 export const SET_ISADD = "SET_ISADD";
 export const FETCH_CONTRACTORS = "FETCH_CONTRACTORS";
 export const STATION_ERROR = "STATION_ERROR";
@@ -28,3 +28,7 @@ export const SET_ROLES = "SET_ROLES"
 
 // Vendors
 export const FETCH_VENDOR_BYPARAMS = "FETCH_VENDOR_BYPARAMS";
+export const FETCH_VENDORS = "FETCH_VENDORS";
+
+// DashBoard
+export const SET_DASHBOARD_COUNT = "SET_DASHBOARD_COUNT";

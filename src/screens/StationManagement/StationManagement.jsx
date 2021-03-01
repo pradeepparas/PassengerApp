@@ -115,23 +115,23 @@ const BootstrapInput = withStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
   root: {
     "& MuiButton-contained:hover": {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
     },
   },
   ul1: {
     "& .Mui-selected:hover": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     },
     "& .Mui-selected": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     }
   },
 	textField: {
-		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+		["@media (min-width: 280px) and (max-width: 1200px)"]: {
 			width: '60%'
 		},
 		["@media (min-width: 280px) and (max-width: 750px)"]: {
@@ -139,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
 		},
 	},
   textField1:{
-		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+		["@media (min-width: 280px) and (max-width: 1200px)"]: {
       width: '100%',
       marginBottom: 5
     },
@@ -164,7 +164,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableContainer: {
     overflow: 'visible',
-    borderRadius: '0px 0px 20px 20px', 
+    borderRadius: '0px 0px 20px 20px',
     boxShadow: 'none',
     ["@media (min-width: 180px) and (max-width: 1140px)"]: {
       overflow: 'auto'
@@ -172,36 +172,38 @@ const useStyles = makeStyles((theme) => ({
   },
   page1: {
     marginTop: 40,
-    // color: '#b22222',
+    // color: '#213D77',
     // borderRadius: 8
   },
 	link1: {
 		width: '100%',
 		borderRadius: 16,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     }
 	},
   button1: {
     width: 120,
     marginRight: 10,
-		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+		["@media (min-width: 280px) and (max-width: 1200px)"]: {
       width: '60%',
+			marginRight: 0,
       marginBottom: 5
     },
 		["@media (min-width: 280px) and (max-width: 750px)"]: {
-			width: '90%'
+			width: '90%',
+			marginRight: 0,
 		},
     borderRadius: 16,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     }
   },
@@ -219,7 +221,7 @@ const useStyles = makeStyles((theme) => ({
   container1: {
 		display: "flex",
 		flexWrap: "wrap",
-		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+		["@media (min-width: 280px) and (max-width: 1200px)"]: {
       width: '60%',
 			display: 'flex',
 			flexDirection: 'column',
@@ -267,26 +269,26 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-// function createData(station_name, station_code, station_type, managed_by, 
+// function createData(station_name, station_code, station_type, managed_by,
 //   no_of_platform, contact_name, contact_mobile, contract_start_date, exp_end_date,
 //   station__gps_ltd, station__gps_lng, contract_giver, contractWinner, contract_tenure, contract_email,
 //   adminName, adminNumber, adminEmail ) {
-//   return { station_name, station_code, station_type, managed_by, 
+//   return { station_name, station_code, station_type, managed_by,
 //     no_of_platform, contact_name, contact_mobile, contract_start_date, exp_end_date,
 //     station__gps_ltd, station__gps_lng, contract_giver, contractWinner, contract_tenure, contract_email,
 //     adminName, adminNumber, adminEmail };
 // }
 
 // const rows = [
-//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26",
 //   "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
-//   createData('Bhopal', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+//   createData('Bhopal', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26",
 //   "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
-//   createData('Habib Ganj', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+//   createData('Habib Ganj', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26",
 //   "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
-//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26",
 //   "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
-//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26", 
+//   createData('Indore', "INDB", "Urban", "Indian Railways", "06", "ABC", 8874589687, "02/01/21", "01/01/26",
 //   "23.2218", "77.4392", "Indian Railways", "Basnsal Constructions", "05 Years", "abc@gmail.com", "ABC", 8854785689, "abc@gmail.com"),
 // ];
 
@@ -354,11 +356,11 @@ export function StationManagement(props) {
 		let total = Math.ceil(props.total / props.limit)
 		return (
 
-        <Pagination 
+        <Pagination
           onChange={handleChangePage}
-    			count={total} 
-          shape="rounded" 
-          classes={{ ul: classes.ul1 }} 
+    			count={total}
+          shape="rounded"
+          classes={{ ul: classes.ul1 }}
           size='small'/>
 		)
 
@@ -372,8 +374,8 @@ export function StationManagement(props) {
     axios({
       url: `${API.DeleteStationAPI}/${id}`,
       method: "DELETE",
-      headers: { 
-        //    'Accept-Language': 'hi', 
+      headers: {
+        //    'Accept-Language': 'hi',
         "accept": "application/json",
         'Authorization': 'Bearer ' + localStorage.getItem('token'),
          },
@@ -399,9 +401,9 @@ export function StationManagement(props) {
       history.push('/');
     } else {
       props.getStationDataByParams(1, 10);
-      props.getStationData()  
+      props.getStationData()
     }
-  
+
     // debugger
   }, [])
 
@@ -436,7 +438,7 @@ export function StationManagement(props) {
   };
 
   const toggleModal =(e,data, i)=>{
-    
+
   	setArrayDetails(rows[i]);
     setModal(true);
     console.log(arrayDetails)
@@ -503,6 +505,10 @@ export function StationManagement(props) {
       }
     }
 
+	const downloadStationByID = (e, id) => {
+		props.downloadStationDetails(id)
+	}
+
   return(
     <div className={styles.main}>
       <div className={styles.header}>
@@ -539,26 +545,26 @@ export function StationManagement(props) {
          <div className={styles.selectDiv1}>
            <select disabled={search.station_code} className={styles.select1} name="station_name" value={search.station_name} onChange={handleInputs}>
              <option value={'0'}>Station Name</option>
-             {dropDownDetails.length > 0 && dropDownDetails.map(data => 
+             {dropDownDetails.length > 0 && dropDownDetails.map(data =>
                <option key={data._id} value={data.station_name}>{data.station_name}</option>
              )}
          </select>
          </div>
 
-          <div className={styles.selectDiv1}>
+          {/*<div className={styles.selectDiv1}>
             <select disabled={search.station_name} className={styles.select1} name="station_code" value={search.station_code} onChange={handleInputs}>
               <option value={'0'}>Station Code</option>
-              {dropDownDetails.length > 0 && dropDownDetails.map(data => 
-                <option key={data._id} value={data.station_code}>{data.station_code}</option>  
+              {dropDownDetails.length > 0 && dropDownDetails.map(data =>
+                <option key={data._id} value={data.station_code}>{data.station_code}</option>
               )}
           </select>
-          </div>
+          </div>*/}
 
             <div className={styles.selectDiv1}>
               <select className={styles.select1} name="station_type" value={search.station_type} onChange={handleInputs}>
                 <option value={'0'}>Station Type</option>
-                {stationType.length > 0 && stationType.map(data => 
-                <option key={data._id} value={data.station_type}>{data.station_type}</option>  
+                {stationType.length > 0 && stationType.map(data =>
+                <option key={data._id} value={data.station_type}>{data.station_type}</option>
               )}
             </select>
             </div>
@@ -566,8 +572,8 @@ export function StationManagement(props) {
           <div className={styles.selectDiv1}>
             <select className={styles.select1} name="managed_by" value={search.managed_by} onChange={handleInputs}>
               <option value={'0'}>Managed By</option>
-              {managedByList.length && managedByList.map(data => 
-                <option key={data._id} value={data._id}>{data.name}</option>  
+              {managedByList.length && managedByList.map(data =>
+                <option key={data._id} value={data._id}>{data.name}</option>
               )}
           </select>
           </div>
@@ -720,7 +726,7 @@ export function StationManagement(props) {
 						 width: 40,
 						 height: 40,
 						 backgroundColor: 'white',
-						 color: "#b22222",
+						 color: "#213D77",
 						 borderRadius: 55,
 						 position: "absolute",
 						 top: "-14",
@@ -734,7 +740,7 @@ export function StationManagement(props) {
 				 <img className={styles.modalImage} style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={edit} />
 				 <small style={{display: 'flex', alignItems: 'center'}}>Edit Details</small>
 				 </button></Link>}
-				 <button className={styles.modalButton} /*style={{display: 'contents'}}*/ /*onClick={passwordGenerate}*/>
+				 <button className={styles.modalButton} /*style={{display: 'contents'}}*/ onClick={(e) => downloadStationByID(e, arrayDetails._id)}>
 				 <img className={styles.modalImage} style={{width: 30,height: 30, marginTop: 10, marginLeft: 10, marginRight: 10}} src={printer} />
 				 <small style={{display: 'flex', alignItems: 'center'}}>Download Details</small>
 				 </button>
@@ -842,10 +848,10 @@ const mapDispatchToProps = (dispatch) => {
     getStationData: () => {
       dispatch(actions.getStationData())
     },
-    getStationDataByParams: (pageNo, limit, value) => 
+    getStationDataByParams: (pageNo, limit, value) =>
       dispatch(actions.getStationDataByParams(pageNo, limit, value)),
     setStationData: (data) => {
-      dispatch(actions.setStationDate(data)) 
+      dispatch(actions.setStationDate(data))
     },
     setIsEditFalse: (value) => {
       dispatch(actions.setIsEditFalse(value))
@@ -855,7 +861,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     GetContractors: () => {
       dispatch(actions.GetContractors())
-    }
+    },
+		downloadStationDetails: (id) =>
+			dispatch(actions.downloadStationDetails(id))
 	};
 };
 

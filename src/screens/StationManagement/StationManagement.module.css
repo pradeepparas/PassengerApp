@@ -279,7 +279,7 @@ border-color: #cac7c7;
 }
 
 /* modalContainer */
-@media (min-width: 280px) and (max-width: 1158px) {
+@media (min-width: 280px) and (max-width: 1200px) {
   .filterContent {
     display: flex;
     flex-direction: column;

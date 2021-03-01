@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom';
 import styles from "./Dashboard.module.css";
 import jwt_decode from "jwt-decode";
-// import { compose } from 'redux'
-// import { connect } from 'react-redux'
+import { compose } from 'redux'
+import { connect } from 'react-redux'
+import axios from 'axios';
+import { toast } from 'react-toastify';
 // import { withTranslation,useTranslation } from 'react-i18next';
 
 // Material UI
@@ -17,14 +19,59 @@ import user_check from '../../components/Drawer/images/user_check.svg';
 import rupee from '../../components/Drawer/images/rupee.svg';
 
 import Card from "../../components/Card/Card";
-// import * as acitons from '../../../store/actions/index'
+import * as actions from '../../redux/actions/stationActions';
 
-export default function DashBoard(props) {
+export function DashBoard(props) {
 	const history = useHistory();
+	const [counts, setCounts] = useState({
+		station: "",
+		user: "",
+		total_service: "",
+		vendor_service: ""
+	})
 	// const [t, i18n] = useTranslation('common');
 	// useEffect(()=>{
 	// 	props.getDashboardCount()
 	// },[])
+
+	useEffect(() => {
+		// fetch('http://13.235.102.214:8000/reports/count?type=1',{
+        //        method:"GET",
+        //        headers:{
+        //            'Accept':"Application/json",
+        //            "Contect-Type":"Apllication/json",
+        //            "Authorization":"Bearer" + localStorage.getItem('token'),
+        //        }
+        //      })
+        //      .then(result=>result.json())
+        //      .then(result=>{
+        //         debugger
+		// 						console.log(result)
+		// 						setCounts({
+		// 							station: result.counts.station,
+		// 							user: result.counts.user,
+		// 							total_service: result.counts.total_service,
+		// 							vendor_service: result.counts.vendor_service
+		// 						})
+		// 						debugger
+		// 					}).catch(err => {
+		// 						setCounts({
+		// 							station: "",
+		// 							user: "",
+		// 							total_service: "",
+		// 							vendor_service: ""
+		// 						})
+		// 						toast.error(err.message)
+		// 					})
+		props.getDashboardCount(1)
+	}, [])
+
+	useEffect(() => {
+		if(props.dashboadCount){
+			setCounts(props.dashboadCount)
+			debugger
+		}
+	}, [props.dashboadCount])
 
 	useEffect(() => {
 		let token = localStorage.getItem('token')
@@ -39,12 +86,11 @@ export default function DashBoard(props) {
 		<>
 			<div className={styles.title}>Dashboard</div>
 			{/* <button onClick={() => i18n.changeLanguage('hi')}>Hindi</button> */}
-
 			<div className={styles.grid}>
-			{<Card title={'Total Stations'} number="20" icon={train1} link="/station-management" arrow={<CallMadeSharpIcon />} color="#2d62ed" />}
-			{<Card title={'Total Users'} arrow={<CallMadeSharpIcon />} link="/users" number="20K" icon={servicestack} color="#7d00b5" />}
-			{<Card title={'Total Vendors'} arrow={<CallMadeSharpIcon />} link="/vendors" number="146" icon={user_friends} color="#ff007c" />}
-			{<Card title={'Total Services'} number="180" icon={user_check} color="#0a4491" />}
+			{<Card title={'Total Stations'} number={counts.station?counts.station: "0"} icon={train1} link="/station-management" arrow={<CallMadeSharpIcon />} color="#2d62ed" />}
+			{<Card title={'Total Users'} number={counts.user? counts.user: "0"} arrow={<CallMadeSharpIcon />} link="/users" /**/ icon={servicestack} color="#7d00b5" />}
+			{<Card title={'Total Vendors'} number={counts.vendor_service? counts.vendor_service: "0"} arrow={<CallMadeSharpIcon />} link="/vendors" icon={user_friends} color="#ff007c" />}
+			{<Card title={'Total Services'} number={counts.total_service? counts.total_service: "0"} icon={user_check} color="#0a4491" />}
 		  	{<Card title={'Total Revenue'} arrow={<CallMadeSharpIcon />} number="256K" link="/revenue" icon={rupee} color="#025e87" />}
 		  	{<Card title={"Today's Revenue"} arrow={<CallMadeSharpIcon />} number="2500" icon={rupee} color="#02873d" />}
 			</div>
@@ -52,22 +98,16 @@ export default function DashBoard(props) {
 	);
 }
 
-// const mapStateToProps =(state)=>{
-//
-// 	return{
-//
-// 		dashboadCount: state.Users.dashboardCount,
-//
-// 	}
-//
-// }
-//
-// const mapDispatchToProps =(dispatch)=>{
-//
-// 	return {
-// 		getDashboardCount: (type) =>
-// 			dispatch(acitons.getDashboardCount(type)),
-//
-// 	}
-// }
-// export default compose(withTranslation('common'), connect(mapStateToProps, mapDispatchToProps))(Dashboard)
+const mapStateToProps =(state)=>{
+	return{
+		dashboadCount: state.Stations.dashboardCount,
+	}
+}
+
+const mapDispatchToProps =(dispatch)=>{
+	return {
+		getDashboardCount: (type) =>
+			dispatch(actions.getDashboardCount(type)),
+	}
+}
+export default compose(connect(mapStateToProps, mapDispatchToProps))(DashBoard)

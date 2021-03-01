@@ -86,36 +86,36 @@ const BootstrapInput = withStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
   root: {
     "& MuiButton-contained:hover": {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
     },
   },
   ul1: {
     "& .Mui-selected:hover": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     },
     "& .Mui-selected": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     }
   },
   textField: {
-    ["@media (min-width: 280px) and (max-width: 1158px)"]: {
+    ["@media (min-width: 280px) and (max-width: 1185px)"]: {
       width: '100%'
     }
   },
   tableContainer: {
     overflow: 'visible',
-    borderRadius: '0px 0px 20px 20px', 
+    borderRadius: '0px 0px 20px 20px',
     boxShadow: 'none',
     ["@media (min-width: 180px) and (max-width: 895px)"]: {
       overflow: 'auto'
     },
   },
   textField1:{
-    ["@media (min-width: 280px) and (max-width: 1158px)"]: {
+    ["@media (min-width: 280px) and (max-width: 1185px)"]: {
       width: '100%',
       marginBottom: 5
     },
@@ -140,23 +140,35 @@ const useStyles = makeStyles((theme) => ({
   },
   page1: {
     marginTop: 40,
-    // color: '#b22222',
+    // color: '#213D77',
     // borderRadius: 8
   },
   button1: {
-    ["@media (min-width: 280px) and (max-width: 1158px)"]: {
+		width: 100,
+    ["@media (min-width: 280px) and (max-width: 1185px)"]: {
       width: '100%',
       marginBottom: 5
     },
     borderRadius: 80,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     }
   },
+	div1: {
+		marginRight: 10,
+		["@media (min-width: 681px) and (max-width: 1185px)"]: {
+			marginRight: 0,
+			width: 500,
+		},
+		["@media (min-width: 280px) and (max-width: 680px)"]: {
+			marginRight: 0,
+			width: '91%',
+		}
+	},
   button2: {
     width: 100,
     borderRadius: 16,
@@ -169,7 +181,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   container1: {
-		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+		["@media (min-width: 280px) and (max-width: 1185px)"]: {
       width: '100%',
 			display: 'flex',
 			flexDirection: 'column',
@@ -326,11 +338,11 @@ export default function StationManagement(props) {
     const setPage = () => {
       let total = Math.ceil(rows.length / 10)
       return (
-        <Pagination 
+        <Pagination
           onChange={handleChangePage}
-          count={total} 
-          shape="rounded" 
-          classes={{ ul: classes.ul1 }} 
+          count={total}
+          shape="rounded"
+          classes={{ ul: classes.ul1 }}
           size='small'/>
     )
   }
@@ -366,11 +378,6 @@ export default function StationManagement(props) {
           />
         </FormControl>
 
-        {/*Search Button*/}
-        <Button className={classes.button1} variant="contained">
-          Search
-        </Button>
-
          {/*Select*/}
          <div className={styles.selectDiv1}>
            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
@@ -397,9 +404,9 @@ export default function StationManagement(props) {
               <option value="2">Porter</option>
           </select>
           </div>
-          </div>
+          {/*</div>*/}
 
-        <div className={styles.dateDiv}>
+        {/*<div className={styles.dateDiv}>*/}
         <div className={classes.container1}>
         <label style={{width: 70}} className={styles.dateLabel}>From Date</label>
     			<TextField
@@ -453,6 +460,13 @@ export default function StationManagement(props) {
     			/>
     		</div>
         </div>
+
+				<div className={classes.div1}>
+				{/*Search Button*/}
+        <Button className={classes.button1} variant="contained">
+          Search
+        </Button>
+				</div>
       </div>
 
       <TableContainer className={classes.tableContainer} component={Paper}>
@@ -552,7 +566,7 @@ export default function StationManagement(props) {
 						 width: 40,
 						 height: 40,
 						 backgroundColor: 'white',
-						 color: "#b22222",
+						 color: "#213D77",
 						 borderRadius: 55,
 						 position: "absolute",
 						 top: "-14",

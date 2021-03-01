@@ -302,7 +302,7 @@ border-color: #cac7c7;
 }
 /* modalContainer select1 */
 
-@media (min-width: 280px) and (max-width: 1032px) {
+@media (min-width: 280px) and (max-width: 1040px) {
   .filterContent {
     display: flex;
     flex-direction: column;
@@ -310,6 +310,7 @@ border-color: #cac7c7;
     justify-content: center;
   }
   .searchBarDiv {
+    width: 91%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -332,9 +333,9 @@ border-color: #cac7c7;
 }
 
 @media (min-width: 280px) and (max-width: 680px) {
-  .searchBarDiv {
+  /* .searchBarDiv {
     width: 91%;
-  }
+  } */
   .dateDiv {
     width: 91%;
   }

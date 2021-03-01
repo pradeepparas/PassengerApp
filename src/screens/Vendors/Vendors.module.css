@@ -296,7 +296,7 @@ border-color: #cac7c7;
 
 .searchBarDiv {
   display: flex;
-  width: 630px;
+  width: 955px;
   justify-content: space-between;
 }
 
@@ -316,7 +316,7 @@ border-color: #cac7c7;
 }
 /* modalContainer select1 */
 
-@media (min-width: 280px) and (max-width: 1158px) {
+@media (min-width: 280px) and (max-width: 1192px) {
   .filterContent {
     display: flex;
     flex-direction: column;

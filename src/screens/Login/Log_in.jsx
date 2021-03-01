@@ -5,13 +5,13 @@ import { connect } from "react-redux";
 import { compose } from 'redux';
 import Cookies from 'js-cookie';
 import { Link, Redirect, useHistory } from "react-router-dom";
-import { toast,ToastContainer } from 'react-toastify'; 
+import { toast,ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Images
 import background1 from "./images/background1.png";
-import left_image1 from "./images/left_image1.png";
-import header from "./images/header.png";
+import left_image1 from "./images/left_image1.svg";
+import header from "./images/header.svg";
 import next_header from "./images/next_header1.png"
 import button1 from "./images/button1.png";
 
@@ -41,9 +41,9 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
 const GreenCheckbox = withStyles({
   root: {
-    color: '#B22222',
+    color: '#213D77',
     '&$checked': {
-      color: '#B22222',
+      color: '#213D77',
     },
   },
   checked: {},
@@ -198,7 +198,7 @@ export const Log_in = (props) => {
     debugger
 	};
 
-  
+
 
   useEffect(() => {
     // let token = localStorage.getItem('token')
@@ -212,12 +212,12 @@ export const Log_in = (props) => {
   return(
     <div>
 
-      {props.isLoading && <LoadingComponent />}  
+      {props.isLoading && <LoadingComponent />}
       <Container fluid={true}>
       <Row>
         <Col md="6" className={styles.left}>
           <div className={styles.image1}>
-            <img src={background1} className={styles.background}/>
+            <img /*src={background1}*/ className={styles.background}/>
             <div style={{height: "100%",display: 'flex', justifyContent: 'center',alignItems: 'center'}}>
             <img src={left_image1} style={{zIndex: 1}} className={styles.image} />
             </div>
@@ -228,8 +228,8 @@ export const Log_in = (props) => {
             <div className={styles.header}>
               <img src={header} className={styles.passenger}/>
               <div className={styles.next_header}>
-                <img src={next_header}  />
-                <h2 style={{color: '#B22222'}} className={styles.master_header}>MASTER ADMIN LOGIN</h2>
+                <img /*src={next_header}*/  />
+                <h2 style={{color: '#213D77'}} className={styles.master_header}>MASTER ADMIN LOGIN</h2>
               </div>
               <form
 								className={classes.root}
@@ -374,7 +374,7 @@ const mapDispatchToProps = (dispatch) => {
 	return {
 		onAuth: (username, password) =>
 			dispatch(actions.auth(username, password)),
-    // setIsLoading: (value) => 
+    // setIsLoading: (value) =>
     //   dispatch(setIsLoading(value)),
 		// 	updateSignup:()=>
 		// 	  dispatch(actions.updateSingupFlag()),

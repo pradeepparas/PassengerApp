@@ -18,7 +18,7 @@ import {
 	// FormGroup,
 } from "reactstrap";
 
-// Images
+// Images #B222
 import downArrow from '../StationManagement/downArrow.png';
 import delete_logo from '../StationManagement/delete.svg';
 import edit from '../StationManagement/edit.png';
@@ -114,12 +114,12 @@ const BootstrapInput = withStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
   root: {
     "& MuiButton-contained:hover": {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
     },
   },
   tableContainer: {
     overflow: 'visible',
-    borderRadius: '0px 0px 20px 20px', 
+    borderRadius: '0px 0px 20px 20px',
     boxShadow: 'none',
     ["@media (min-width: 180px) and (max-width: 910px)"]: {
       overflow: 'auto'
@@ -129,21 +129,21 @@ const useStyles = makeStyles((theme) => ({
     "& .Mui-selected:hover": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     },
     "& .Mui-selected": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     }
   },
   textField: {
-    ["@media (min-width: 280px) and (max-width: 1032px)"]: {
+    ["@media (min-width: 280px) and (max-width: 1040px)"]: {
       width: '100%'
     }
   },
   textField1:{
-    ["@media (min-width: 280px) and (max-width: 1032px)"]: {
+    ["@media (min-width: 280px) and (max-width: 1040px)"]: {
       width: '100%',
       marginBottom: 5
     },
@@ -168,24 +168,31 @@ const useStyles = makeStyles((theme) => ({
   },
   page1: {
     marginTop: 40,
-    // color: '#b22222',
+    // color: '#213D77',
     // borderRadius: 8
   },
   button1: {
-    ["@media (min-width: 280px) and (max-width: 1032px)"]: {
+    ["@media (min-width: 280px) and (max-width: 1040px)"]: {
       width: '100%',
       marginBottom: 5
     },
     borderRadius: 80,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     },
     width: 106
   },
+	div1: {
+		marginRight: 10,
+		["@media (min-width: 280px) and (max-width: 1040px)"]:{
+			width: '91%',
+			marginRight: 0,
+		}
+	},
   button2: {
     width: 100,
     borderRadius: 16,
@@ -198,7 +205,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   container1: {
-		["@media (min-width: 280px) and (max-width: 1032px)"]: {
+		["@media (min-width: 280px) and (max-width: 1040px)"]: {
       width: '100%',
 			display: 'flex',
 			flexDirection: 'column',
@@ -304,12 +311,12 @@ export function UserManagement(props) {
       "user_id": userData._id
     }
     props.setIsLoading(true)
-    
+
     axios({
       url: `${API.BlockUserAPI}/${userData._id}`,
       method: "DELETE",
       headers: {
-        //    'Accept-Language': 'hi', 
+        //    'Accept-Language': 'hi',
         "accept": "application/json",
         'Authorization': 'Bearer ' + localStorage.getItem('token'),
       }
@@ -389,11 +396,11 @@ export function UserManagement(props) {
 		let total = Math.ceil(props.total / props.limit)
 		return (
 
-        <Pagination 
+        <Pagination
           onChange={handleChangePage}
-    			count={total} 
-          shape="rounded" 
-          classes={{ ul: classes.ul1 }} 
+    			count={total}
+          shape="rounded"
+          classes={{ ul: classes.ul1 }}
           size='small'/>
 		)
 
@@ -417,7 +424,7 @@ export function UserManagement(props) {
         deleteModal: true
       })
     } else {
-			
+
       setModal({
         details: true
       })
@@ -492,7 +499,7 @@ export function UserManagement(props) {
          <div className={styles.selectDiv1}>
            <select className={styles.select1} name="station_name" /*value={this.state.courseId}*/ onChange={handleInputs}>
              <option selected disabled>Station Name</option>
-             {dropDownDetails.length > 0 && dropDownDetails.map(data => 
+             {dropDownDetails.length > 0 && dropDownDetails.map(data =>
                <option key={data._id} value={data._id}>{data.station_name}</option>
              )}
          </select>
@@ -501,7 +508,7 @@ export function UserManagement(props) {
           <div className={styles.selectDiv1}>
             <select className={styles.select1} name="role" /*value={this.state.courseId}*/ onChange={handleInputs}>
               <option selected disabled>Role</option>
-              {role.length > 0 && role.map(data => 
+              {role.length > 0 && role.map(data =>
                   <option key={data._id} value={data._id}>{data.role.replace('_', ' ')}</option>
                   )}
           </select>
@@ -554,7 +561,7 @@ export function UserManagement(props) {
             value={search.end_date}
             onChange={(e) => handleDateChange(e, 'end')}
     				className={classes.date1}
-    				// InputLabelProps={{
+    				// InputLabelProps={{ created_at
             //   label: 'To Date',
     				// 	shrink: true,
             //   classes: { input: classes.input1 },
@@ -570,7 +577,7 @@ export function UserManagement(props) {
     		</div>
         {/* </div> */}
       </div>
-      <div style={{marginRight: 10}}>
+      <div className={classes.div1}>
           {/*Search Button*/}
           <Button onClick={searchUsers} className={classes.button1} variant="contained">
             Search
@@ -578,10 +585,10 @@ export function UserManagement(props) {
         </div>
     </div>
 
-      <TableContainer 
+      <TableContainer
       className={classes.tableContainer}
       style={{
-        
+
         }} component={Paper}>
       <Table aria-label="simple table">
         <TableHead style={{backgroundColor: '#e4e4e4'}}>
@@ -592,7 +599,7 @@ export function UserManagement(props) {
             <TableCell align="center">Email</TableCell>
             <TableCell align="center">Role</TableCell>
             <TableCell align="center">Station Name</TableCell>
-            <TableCell align="center">Registration Date</TableCell>
+            <TableCell align="center">Registration Date (DD-MM-YYYY)</TableCell>
             <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -607,7 +614,7 @@ export function UserManagement(props) {
               <TableCell align="center">{row.email? row.email:'-'}</TableCell>
               <TableCell align="center">{row.role_id?row.role_id.role/*.replace('_', ' ')*/: '-'}</TableCell>
               <TableCell align="center">{row.station_id?row.station_id.station_name: '-'}</TableCell>
-              <TableCell align="center">{moment(row.created_at).format("DD-MM-YYYY")}</TableCell>
+              <TableCell align="center">{moment(row.createdAt).format("DD-MM-YYYY")}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
@@ -680,7 +687,7 @@ export function UserManagement(props) {
 						 width: 40,
 						 height: 40,
 						 backgroundColor: 'white',
-						 color: "#b22222",
+						 color: "#213D77",
 						 borderRadius: 55,
 						 position: "absolute",
 						 top: "-14",
@@ -713,7 +720,7 @@ export function UserManagement(props) {
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
 								<span className={styles.textModal}>Station Name</span><span style={{marginLeft: 75,marginRight: 25}}> - </span>{arrayDetails.station_id?arrayDetails.station_id.station_name: '-'}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>{moment(arrayDetails.created_at).format("DD-MM-YYYY")}
+								<span className={styles.textModal}>Registration Date</span><span style={{marginLeft: 50,marginRight: 25}}> - </span>{moment(arrayDetails.createdAt).format("DD-MM-YYYY")}
 								</div>
 								</div>
 						</div>
@@ -766,13 +773,13 @@ const mapDispatchToProps = (dispatch) => {
     getUserData: () => {
       dispatch(getStationData())
     },
-    setIsEditFalse: (value) => 
+    setIsEditFalse: (value) =>
       dispatch(actions.setIsEditFalse(value)),
 		// add_user: (user) =>
 		// 	dispatch(actions.userActions(user))
 	  setUserData	: (data) =>
 			dispatch(actions.setUserData(data)),
-    deleteUser: (id) => 
+    deleteUser: (id) =>
       dispatch(actions.deleteUser(id))
 	}
 }

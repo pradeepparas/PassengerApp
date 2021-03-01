@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { compose } from 'redux';
 import { Link, useHistory, useRouteMatch, Redirect } from 'react-router-dom';
 
-// Material UI
+// Material UI #df9b91
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -51,7 +51,7 @@ import * as actions from "../../redux/actions/auth";
 import styles from "./Drawer.module.css";
 import LoadingComponent from '../Loading/LoadingComponent';
 
-const drawerWidth = 240;
+const drawerWidth = 220;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,8 +66,8 @@ const useStyles = makeStyles((theme) => ({
     //   fontSize: 12
     // },
     '& .MuiListItem-root:hover': {
-      color: '#b22222',
-      backgroundColor: '#b22222'
+      color: '#213D77',
+      backgroundColor: '#213D77'
     }
   },
   paper1: {
@@ -110,11 +110,11 @@ const useStyles = makeStyles((theme) => ({
   },
   button1: {
     "&:hover":{
-      color: "#b22222",
+      color: "#213D77",
       backgroundColor: 'white',
     },
     "&:active": {
-      color: "#b22222",
+      color: "#213D77",
       backgroundColor: 'white',
     }
   },
@@ -134,13 +134,14 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: 'nowrap',
   },
   drawerOpen: {
+    // width: 220,
     zIndex: 500,
-    ["@media (min-width: 280px) and (max-width: 1318px)"]: {
+    ["@media (min-width: 280px) and (max-width: 1353px)"]: {
 			position: 'fixed',
 			zIndex: 500,
-			width: '260px'
+			width: '220px'
 		},
-    backgroundColor: '#B22222',
+    backgroundColor: '#213D77',
     width: drawerWidth,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -149,7 +150,7 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerClose: {
     zIndex: 500,
-    backgroundColor: '#B22222',
+    backgroundColor: '#213D77',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -177,6 +178,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function MiniDrawer(props) {
+  const username = localStorage.getItem('username');
   var userDataLS = JSON.parse(localStorage.getItem('userDataLS'));
   const url = useRouteMatch()
 	const path = url.path.split('/')[1]
@@ -212,6 +214,10 @@ export function MiniDrawer(props) {
       return;
     }
     setOpenProfile(false);
+    if(type == 'profile'){
+      history.push('/profile')
+    }
+
     if(type == 'logout'){
       // await props.logOut();
       localStorage.removeItem('token');
@@ -240,7 +246,7 @@ export function MiniDrawer(props) {
       })
     }
   }
-    
+
   }, [props.authenData])
 
   // function hasAccess(arr){
@@ -257,7 +263,7 @@ export function MiniDrawer(props) {
   //     })
   //     setModules(item)
   // }
-  
+
   function handleListKeyDown(event) {
     if (event.key === 'Tab') {
       event.preventDefault();
@@ -305,14 +311,14 @@ export function MiniDrawer(props) {
     }
       else{
       auth=module.find(x=>x.submodule.find(o=>o.name==type&&o.status==true))
-      if(auth){ 
+      if(auth){
         return true
        }
       else{
         return false
         }
       }
-    } 
+    }
   }
 
   return (
@@ -327,28 +333,37 @@ export function MiniDrawer(props) {
         }*/)}
       >
         <Toolbar style={{backgroundColor: 'white',minHeight: 57}}>
-        <div className={styles.header} 
+        <div className={styles.header}
         style={{ borderRightStyle: 'solid',
             borderColor: '#f2f2f3',
             borderWidth: '4px'}}>MASTER ADMIN</div>
-          <IconButton
+
+            <div onClick={handleDrawerOpen} className={styles.div1}>
+                  <span className={styles.spanClass} style={{}} />
+                  <span className={styles.spanClass1} style={{}} />
+                  <span className={styles.spanClass2} style={{}} />
+                  <span className={styles.spanClass3} style={{}} />
+                  <span className={styles.spanClass4} style={{}} />
+                </div>
+
+          {/*<IconButton
             // color="black"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
             className={clsx(classes.menuButton, /*{
               [classes.hide]: open,
-            }*/)}
+            }*//*)}
           >
             <MenuIcon />
-          </IconButton>
+          </IconButton>*/}
           <Typography style={{color: 'white'}} variant="h6" noWrap>
 
           </Typography>
-          <div style={{ width: '77%'}}>
+          <div style={{ width: '-webkit-fill-available'}}>
           <div style={{float: 'right'}} className={styles.profileDiv}>
             <Button
-              style={{color: open_Profile? '#b22222': ''}}
+              style={{color: open_Profile? '#213D77': ''}}
               disableRipple={true}
               className={classes.button1}
               ref={anchorRef}
@@ -356,7 +371,7 @@ export function MiniDrawer(props) {
               aria-haspopup="true"
               onClick={handleToggle}
             >
-              John Doe <img className={!open_Profile?styles.profileImg: ''} style={{width: 15, height: 15, marginLeft: 10}} src={dropdown_circle} />
+              {username ? username : "John Doe"} <img className={!open_Profile?styles.profileImg: ''} style={{width: 15, height: 15, marginLeft: 10}} src={dropdown_circle} />
             </Button>
             <Popper  open={open_Profile} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
           {({ TransitionProps, placement }) => (
@@ -368,7 +383,7 @@ export function MiniDrawer(props) {
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList className={classes.menuList1} autoFocusItem={open_Profile} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                    <MenuItem onClick={handleClose}>Profile <img className={styles.imageColor} style={{width: 15, height: 15, marginLeft: 25}} src={user_alt1} /></MenuItem>
+                    <MenuItem onClick={(e) => handleClose(e, 'profile')}>Profile <img className={styles.imageColor} style={{width: 15, height: 15, marginLeft: 25}} src={user_alt1} /></MenuItem>
                     <MenuItem onClick={(e) => handleClose(e, 'logout')}>Logout <img className={styles.imageColor} style={{width: 15, marginLeft: 25,height: 15}} src={account_logout} /></MenuItem>
                   </MenuList>
                 </ClickAwayListener>

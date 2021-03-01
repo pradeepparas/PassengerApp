@@ -17,7 +17,7 @@
     height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-top: 10px solid  #b22222;
+    border-top: 10px solid  #213D77;
     /* margin-left: 15px; */
     display: block;
 }
@@ -46,7 +46,7 @@
   font-size: 12px;
   width: 135px;
   outline: none;
-  background-color: #b22222;
+  background-color: #213D77;
   border: none;
 }
 

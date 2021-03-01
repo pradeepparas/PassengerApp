@@ -15,45 +15,52 @@ const initialState = {
   docs: [],
   total: '',
   limit: '',
-  stationType: []
+  stationType: [],
+  dashboardCount: {}
 };
 
 const stationReducer = (state = initialState, action) => {
   // debugger
   switch (action.type) {
+    // Add stations
     case actionTypes.ADD_STATION:
       var value = action.details;
       return {
         ...state,
         details: state.details.concat(value)
       }
-
-    case actionTypes.EDIT_STATION: 
+    
+    // Edit Station details
+    case actionTypes.EDIT_STATION:
       return {
         ...state,
         isEdit: true,
         stationData: action.data
       }
-
+    
+    // Set station details are added or updated 
     case actionTypes.SET_ISADD:
       return {
         ...state,
         isEdit: action.value
       }
-
-    case actionTypes.DELETE_STATION: 
+    
+    // delete Station details or this Delete Station case is Empty
+    case actionTypes.DELETE_STATION:
       let stations = state.details.filter((item, index) => index !== action.deleteId)
       return {
         ...state,
-        details: stations       
+        details: stations
       }
-
+    
+    // Get Contractors details
     case actionTypes.FETCH_CONTRACTORS:
       return {
         ...state,
         contractorsList: action.data
       }
-
+    
+    // Station Error or use can comment this Case
     case actionTypes.STATION_ERROR:
       return {
         ...state,
@@ -64,7 +71,7 @@ const stationReducer = (state = initialState, action) => {
       return {
         ...state,
         isSubmitted: action.isSubmitted
-      }  
+      }
 
     case actionTypes.FETCH_STATIONS:
       return {
@@ -80,12 +87,20 @@ const stationReducer = (state = initialState, action) => {
         total: action.total,
         limit: action.limit
       }
-    
+
+    // Dashboard count
+    case actionTypes.SET_DASHBOARD_COUNT: {
+      return {
+        ...state,
+        dashboardCount: action.counts
+      }
+    }
       case actionTypes.SET_ISLOADING:
         return {
           ...state,
           isLoading: action.isLoading
         }
+
     default:
       return state;
   }

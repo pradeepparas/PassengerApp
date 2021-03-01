@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import {Link, useHistory}  from  'react-router-dom';
 import moment from 'moment';
+
 import {
 	Modal,
 	ModalHeader,
@@ -49,9 +50,9 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
 const GreenCheckbox = withStyles({
   root: {
-    color: '#B22222',
+    color: '#213D77',
     '&$checked': {
-      color: '#B22222',
+      color: '#213D77',
     },
   },
   checked: {},
@@ -60,7 +61,7 @@ const GreenCheckbox = withStyles({
 const useStyles = makeStyles((theme) => ({
   root: {
     "& MuiButton-contained:hover": {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
     },
 		'& label.Mui-focused': {
 			// fontSize: '14px',
@@ -90,12 +91,12 @@ const useStyles = makeStyles((theme) => ({
     "& .Mui-selected:hover": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     },
     "& .Mui-selected": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     }
   },
   label: {
@@ -119,16 +120,16 @@ const useStyles = makeStyles((theme) => ({
   },
   page1: {
     marginTop: 40,
-    // color: '#b22222',
+    // color: '#213D77',
     // borderRadius: 8
   },
   button1: {
     borderRadius: 16,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     }
   },
@@ -137,10 +138,10 @@ const useStyles = makeStyles((theme) => ({
 		marginRight: 20,
 		borderRadius: 16,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     },
 		["@media (max-width:428px)"]: {
@@ -237,20 +238,24 @@ export function ProfileSettings(props) {
         let user_id = localStorage.getItem('userId');
         axios({
           url: `${API.GetUserAPI}/${user_id}`,
-          headers: { 
-            //    'Accept-Language': 'hi', 
+          headers: {
+            //    'Accept-Language': 'hi',
             "accept": "application/json",
             'Authorization': 'Bearer ' + localStorage.getItem('token'),
              },
         }).then(response => {
           if(response.data.success){
             console.log(response.data.user)
-            debugger  
+            debugger
               // setState(data)
+							const fullName = response.data.user.name.split(' ')
+							const lastName = fullName.pop()
+							const firstName = fullName.join(' ')
+
               setState({
                 ...state,
-                firstName: response.data.user.name,
-                lastName:"",
+                firstName: firstName,
+                lastName: lastName,
                 emailAddress: response.data.user.email?response.data.user.email:'',
                 phoneNumber: response.data.user.mobile,
                 _id: response.data.user._id,
@@ -273,7 +278,13 @@ export function ProfileSettings(props) {
       if (!validateForm()) {
           return
       }
-      props.changePassword(state)
+
+			if(tab.infoTab){
+				props.changeProfileOrPassword(state, 1)
+			} else {
+				props.changeProfileOrPassword(state, 2)
+			}
+
   }
 
   // Open Modal for successfully Changed Details
@@ -282,14 +293,14 @@ export function ProfileSettings(props) {
       setModal(true);
       setIsAdd(true);
     }
-  }, [props.isSubmitted]) 
+  }, [props.isSubmitted])
 
   // validate form
   const validateForm =()=>{
     // All regex for validation
        var emailValid = state.emailAddress.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
        var mobileValid = state.phoneNumber.toString().match(/^[0]?[6789]\d{9}$/);
-       var usernameRegex = state.firstName.toString().match(/^[a-zA-Z]+$/);
+       var usernameRegex = state.firstName.toString().match(/^[a-zA-Z ]+$/);
 
        var isValid= true;
 			 if(tab.infoTab){
@@ -710,7 +721,9 @@ export function ProfileSettings(props) {
 
             {/* Save and cancel Button */}
 						<div className={styles.saveButton}>
-			      <Button style={{}} onClick={() => history.push('/dashboard')}  className={classes.button2} variant="contained">
+			      <Button style={{}} onClick={() => {
+							history.push('/dashboard')
+						}}  className={classes.button2} variant="contained">
 			        Cancel
 			      </Button>
 			      <Button style={{}} onClick={handleSubmit} className={classes.saveButton1} variant="contained">
@@ -752,10 +765,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setIsLoading: (flag) => 
+    setIsLoading: (flag) =>
       dispatch(setIsLoading(flag)),
-    changePassword: (details) =>
-      dispatch(actions.changePassword(details)),
+    changeProfileOrPassword: (details, type) =>
+      dispatch(actions.changeProfileOrPassword(details, type)),
     setIsSubmitted: flag => {
       dispatch(setIsSubmitted(flag))
     },

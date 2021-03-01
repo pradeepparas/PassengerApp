@@ -4,6 +4,8 @@ import moment from 'moment';
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { compose } from 'redux';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import {
 	Modal,
 	ModalHeader,
@@ -46,8 +48,11 @@ import InputBase from '@material-ui/core/InputBase';
 import Pagination from '@material-ui/lab/Pagination';
 
 // components
+import { getStationData } from "../../redux/actions/stationActions";
 import styles from './Vendors.module.css';
 import * as actions from "../../redux/actions/vendorActions";
+import { setIsLoading } from '../../redux/actions/stationActions';
+import * as API from '../../constants/APIs';
 // import styled from 'styled-components';
 
 const BootstrapInput = withStyles((theme) => ({
@@ -88,36 +93,36 @@ const BootstrapInput = withStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
   root: {
     "& MuiButton-contained:hover": {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
     },
   },
   ul1: {
     "& .Mui-selected:hover": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     },
     "& .Mui-selected": {
       borderRadius: 8,
       color: "white",
-      backgroundColor: '#b22222'
+      backgroundColor: '#213D77'
     }
   },
   textField: {
-    ["@media (min-width: 280px) and (max-width: 1158px)"]: {
+    ["@media (min-width: 280px) and (max-width: 1192px)"]: {
       width: '100%'
     }
   },
   tableContainer: {
     overflow: 'visible',
-    borderRadius: '0px 0px 20px 20px', 
+    borderRadius: '0px 0px 20px 20px',
     boxShadow: 'none',
     ["@media (min-width: 180px) and (max-width: 1010px)"]: {
       overflow: 'auto'
     },
   },
   textField1:{
-    ["@media (min-width: 280px) and (max-width: 1158px)"]: {
+    ["@media (min-width: 280px) and (max-width: 1192px)"]: {
       width: '100%',
       marginBottom: 5
     },
@@ -142,20 +147,32 @@ const useStyles = makeStyles((theme) => ({
   },
   page1: {
     marginTop: 40,
-    // color: '#b22222',
+    // color: '#213D77',
     // borderRadius: 8
   },
+	div1: {
+		marginRight: 10,
+		["@media (min-width: 681px) and (max-width: 1192px)"]:{
+			width: 500,
+			marginRight: 0,
+		},
+		["@media (min-width: 280px) and (max-width:680px)"]:{
+			width: '91%',
+			marginRight: 0,
+		}
+	},
   button1: {
-    ["@media (min-width: 280px) and (max-width: 1158px)"]: {
+		width: 100,
+    ["@media (min-width: 280px) and (max-width: 1192px)"]: {
       width: '100%',
       marginBottom: 5
     },
     borderRadius: 80,
     color: 'white',
-    backgroundColor: '#b22222',
+    backgroundColor: '#213D77',
     textTransform: 'capitalize',
     '&:hover': {
-      backgroundColor: '#b22222',
+      backgroundColor: '#213D77',
       color: '#FFF'
     }
   },
@@ -171,7 +188,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   container1: {
-		["@media (min-width: 280px) and (max-width: 1158px)"]: {
+		["@media (min-width: 280px) and (max-width: 1192px)"]: {
       width: '100%',
 			display: 'flex',
 			flexDirection: 'column',
@@ -222,17 +239,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(userName, userNumber, userEmail, service, stationName, hours, date) {
-  return { userName, userNumber, userEmail, service, stationName, hours, date };
-}
-
-const rows = [
-  createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-  createData("John Doe", 8854875896, "john@gmail.com", "Food and Beverages", "Bhopal","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-  createData("Mark", 8854875896, "john@gmail.com", "Medicines", "Indore","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-  createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-  createData("Jack", 8854875896, "john@gmail.com", "Food and Beverages", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
-];
+// function createData(userName, userNumber, userEmail, service, stationName, hours, date) {
+//   return { userName, userNumber, userEmail, service, stationName, hours, date };
+// }
+//
+// const rows = [
+//   createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "Food and Beverages", "Bhopal","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+//   createData("Mark", 8854875896, "john@gmail.com", "Medicines", "Indore","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+//   createData("John Doe", 8854875896, "john@gmail.com", "Medicines", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+//   createData("Jack", 8854875896, "john@gmail.com", "Food and Beverages", "Habib Ganj","Mon - Sat (10 AM - 10 PM)", "01/01/21"),
+// ];
 
 export function Vendors(props) {
   const [pageNo, setPageNo] = useState();
@@ -240,7 +257,10 @@ export function Vendors(props) {
     start: new Date().toISOString().slice(0, 10),
     end: new Date().toISOString().slice(0, 10),
   })
-  // const [rows, setRows] = useState([]);
+  const [dropDownDetails, setDropDownDetails] = useState([]);
+	const [vendorDropDown, setVendorDropDown] = useState([]);
+	const [categoryDropDown, setCategoryDropDown] = useState([])
+  const [rows, setRows] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [arrayDetails, setArrayDetails] = useState([]);
   const [modal, setModal] = useState({
@@ -248,67 +268,103 @@ export function Vendors(props) {
     details: false,
 		deletedModal: false
   });
+	const [search, setSearch] = useState({
+		name: "",
+    vendor_id: "",
+    service_name: "",
+    station_id: "",
+    start_date: "",
+    end_date: "",
+  });
   const classes = useStyles();
-  const [values, setValues] = React.useState({
+  const [values, setValues] = useState({
     amount: '',
     password: '',
     weight: '',
     weightRange: '',
     showPassword: false,
   });
-  const [age, setAge] = React.useState('');
+  const [age, setAge] = useState('');
 
 	const openModal = () => {
     setShowModal(prev => !prev);
   };
-// Handle Delete function
-	const handleDeleteSubmit = () => {
+
+// Handle Vendor Active and In-active function
+	const handleVendorStatus = (e, vendor) => {
 		// set delete modal false
-		setModal({
-			deleteModal: false,
-			deletedModal: true
-		})
+		console.log(vendor)
+		debugger
+		// return
+		let data = {
+      "status": !vendor.status,
+      "id": vendor._id
+    }
+    props.setIsLoading(true)
+
+    axios({
+      url: API.VendorBlockAPI,
+      method: "PUT",
+      headers: {
+        //    'Accept-Language': 'hi',
+        "accept": "application/json",
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      },
+      data: data
+    }).then((response) => {
+      if(response.data.success){
+        debugger
+        // toast.success(response.data.message)
+        setModal({
+          deleteModal: false,
+          deletedModal: true
+        })
+        props.getVendorDataByParams(pageNo, props.limit, search)
+      } else {
+        debugger
+        toast.error(response.data.message)
+      }
+    }).catch(err => {
+      toast.error(err.response.data.message)
+      debugger
+      props.setIsLoading(false)
+    })
+
 	}
 
+	// Drop-Down Details for category and Vendor Details
+	useEffect(() => {
+		if(props.categoryData){
+			setCategoryDropDown(props.categoryData)
+		}
+		if(props.vendorDetails){
+			setVendorDropDown(props.vendorDetails)
+		}
+	}, [props.categoryData, props.vendorDetails])
+
+	// Drop-Down Details for Delivery Station
   useEffect(() => {
     // setRoleList(props.role)
-    // if(props.userDetails){
-    //   setDropDownDetails(props.userDetails)
-    //   console.log(props.userDetails)
-    //   // debugger
-    // }
+		if(props.stationDetails){
+      setDropDownDetails(props.stationDetails)
+      // debugger
+    }
 
     if(props.vendorDocs){
       // console.log("",props.vendorDocs)
-      // setRows(props.vendorDocs)
+      setRows(props.vendorDocs)
       debugger
     }
-  }, [props.vendorDocs])
+  }, [props.vendorDocs, props.stationDetails, props.vendorDetails])
 
   // Getting Vendors List
   useEffect(() => {
+		props.getStationData()
     // props.getRole();
     // props.getUserData();
     props.getVendorDataByParams(1, 10);
     // debugger
   }, [])
-
-   // Changing Date fields
-   const handleDateChange = (data, type) => {
-    console.log(data)
-    // debugger
-    if(type == 'start') {
-      setDate({
-        ...date,
-        start: data.target.value
-      })
-    } else {
-      setDate({
-        ...date,
-        end: data.target.value
-      })
-    }
-  }
 
   // Get Vendors Data List
 
@@ -331,7 +387,7 @@ export function Vendors(props) {
         deleteModal: true
       })
     } else {
-			
+
       setModal({
         details: true
       })
@@ -357,14 +413,49 @@ export function Vendors(props) {
     const setPage = () => {
       let total = Math.ceil(rows.length / 10)
       return (
-        <Pagination 
+        <Pagination
           onChange={handleChangePage}
-          count={total} 
-          shape="rounded" 
-          classes={{ ul: classes.ul1 }} 
+          count={total}
+          shape="rounded"
+          classes={{ ul: classes.ul1 }}
           size='small'/>
     )
   }
+
+		// Changing Date fields
+		const handleDateChange = (data, type) => {
+		 console.log(data)
+		 // debugger
+		 if(type == 'start') {
+			 setSearch({
+				 ...search,
+				 start_date: data.target.value
+			 })
+		 } else {
+			 setSearch({
+				 ...search,
+				 end_date: data.target.value
+			 })
+		 }
+	 }
+
+	 // Search filter function
+	 const filterVendors = () => {
+		 console.log(search)
+		 debugger
+		 props.getVendorDataByParams(1, 10, search)
+	 }
+
+	// Handle Inputs for Seaching
+	const handleInputs = (event) => {
+		setSearch({
+			...search,
+			[event.target.name]: [event.target.value]
+		})
+		if(event.target.name == "station_id"){
+			props.getVendorDetails(event.target.value)
+		}
+	}
 
   return(
     <div className={styles.main}>
@@ -378,9 +469,9 @@ export function Vendors(props) {
           <OutlinedInput
             // label="Search"
             className={classes.textField1}
-            id="outlined-adornment-weight"
-            value={values.weight}
-            onChange={handleChange('weight')}
+						name='name'
+            value={search.name}
+            onChange={handleInputs}
             startAdornment={<SearchOutlinedIcon />}
             aria-describedby="outlined-weight-helper-text"
             inputProps={{
@@ -394,32 +485,32 @@ export function Vendors(props) {
         </FormControl>
 
          {/*Select*/}
-         <div className={styles.selectDiv1}>
-           <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
-             <option selected disabled>Vendor Name</option>
-             <option value="1">John Doe</option>
-             <option value="2">Name</option>
-         </select>
-         </div>
+				 <div className={styles.selectDiv1}>
+					 <select className={styles.select1} name="station_id" /*value={search.station_id}*/ onChange={handleInputs}>
+						 <option selected disabled>Delivery Station</option>
+						 {dropDownDetails.length > 0 && dropDownDetails.map(data =>
+							 <option key={data._id} value={data._id}>{data.station_name}</option>
+						 )}
+				 </select>
+				 </div>
 
-         <div className={styles.selectDiv1}>
-           <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
+				 <div className={styles.selectDiv1}>
+           <select className={styles.select1} name="service_name" /*value={search.service_name}*/ onChange={handleInputs}>
              <option selected disabled>Services Offered</option>
-             <option value="1">Medicines</option>
-             <option value="2">Food And Beverages</option>
-             <option value="3">Porter</option>
+						 {categoryDropDown.length > 0 && categoryDropDown.map(data =>
+							 <option key={data._id} value={data._id}>{data.category_name}</option>
+						 )}
          </select>
          </div>
 
-          <div className={styles.selectDiv1}>
-            <select className={styles.select1} name="slct" id="slct" /*value={this.state.courseId} onChange={this.handleInputs}*/>
-              <option selected disabled>Delivery Station</option>
-              <option value="1">Bhopal</option>
-              <option value="2">Indore</option>
-              <option value="2">Habib Ganj</option>
-          </select>
-          </div>
-          
+         <div className={styles.selectDiv1}>
+           <select className={styles.select1} name="vendor_id" /*value={search.vendor_id}*/ onChange={handleInputs}>
+             <option selected disabled>Vendor Name</option>
+						 {vendorDropDown.length > 0 && vendorDropDown.map(data =>
+							 <option key={data.vendor_id} value={data.vendor_id}>{data.name}</option>
+						 )}
+         </select>
+         </div>
 
         {/* <div className={styles.dateDiv}> */}
         <div className={classes.container1}>
@@ -431,8 +522,8 @@ export function Vendors(props) {
     				size="small"
             placeholder="From Date"
     				// defaultValue={new Date()}
-            name="start"
-            value={date.start}
+						name="start_date"
+            value={search.start_date}
             onChange={(e) => handleDateChange(e, 'start')}
     				className={classes.date1}
             InputProps={{
@@ -456,8 +547,8 @@ export function Vendors(props) {
     				type="date"
     				size="small"
     				// defaultValue={new Date()}
-            name="end"
-            value={date.end}
+						name="end_date"
+            value={search.end_date}
             onChange={(e) => handleDateChange(e, 'end')}
     				className={classes.date1}
     				// InputLabelProps={{
@@ -475,13 +566,13 @@ export function Vendors(props) {
     			/>
     		</div>
         </div>
-        <div>
+        <div className={classes.div1}>
           {/*Search Button*/}
-          <Button className={classes.button1} variant="contained">
+          <Button onClick={filterVendors} className={classes.button1} variant="contained">
             Search
           </Button>
         </div>
-        
+
         {/* </div> */}
       </div>
 
@@ -497,6 +588,7 @@ export function Vendors(props) {
             <TableCell align="center">Delivery Station</TableCell>
             <TableCell align="center">Operational Hours</TableCell>
             <TableCell align="center">Registration Date</TableCell>
+						<TableCell align="center">Status</TableCell>
             {/* <TableCell align="center">Status</TableCell> */}
             <TableCell align="center">Actions</TableCell>
           </TableRow>
@@ -507,19 +599,20 @@ export function Vendors(props) {
               <TableCell component="th" scope="row">
                 {index+1}
               </TableCell>
-              <TableCell align="center">{row.userName}</TableCell>
-              <TableCell align="center">{row.userNumber}</TableCell>
-              <TableCell align="center">{row.userEmail}</TableCell>
-              <TableCell align="center">{row.service}</TableCell>
-              <TableCell align="center">{row.stationName}</TableCell>
-              <TableCell align="center">{row.hours}</TableCell>
-              <TableCell align="center">{row.date}</TableCell>
+              <TableCell align="center">{/*row.userName*/row.vendor?row.vendor.vendor_name: '-'}</TableCell>
+              <TableCell align="center">{/*row.userNumber*/row.vendor?row.vendor.mobile: '-'}</TableCell>
+              <TableCell align="center">{/*row.userEmail*/row.vendor?row.vendor.email: '-'}</TableCell>
+              <TableCell align="center">{/*row.service*/row.display_name}</TableCell>
+              <TableCell align="center">{/*row.stationName*/row.station?row.station.name: '-'}</TableCell>
+              <TableCell align="center">{/*row.hours*/row.from_time} - {row.end_time}</TableCell>
+              <TableCell align="center">{/*row.date*/moment(row.createdAt).format("DD-MM-YYYY")}</TableCell>
+							<TableCell align="center">{/*row.service*/row.status?"active": "In-active"}</TableCell>
               <TableCell align="center">
               <div className={styles.dropdown}>
                 <button className={styles.dropbtn}>Action <img src={downArrow} className={styles.arrow}/></button>
                 <div className={styles.dropdown_content}>
                   <a><div onClick={(e) => toggleModal(e, 'details', index)}>View Details</div></a>
-                  <a><div onClick={(e) => toggleModal(e, 'delete', index)}>Block</div></a>
+                  <a><div onClick={(e) => toggleModal(e, 'delete', index)}>{row.status?"In-active": "active"}</div></a>
                 </div>
                 </div></TableCell>
             </TableRow>
@@ -534,7 +627,7 @@ export function Vendors(props) {
 			{<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deletedModal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={flag} />
-					<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Successfully Blocked Vendor</strong>  </p>
+					<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Successfully Changed Vendor Status</strong>  </p>
 					</ModalBody>
 					<ModalFooter className={styles.deleteFooter}>
 						<Button
@@ -553,7 +646,7 @@ export function Vendors(props) {
       {<Modal className={styles.modalContainer1} contentClassName={styles.customDeleteClass} isOpen={modal.deleteModal} toggle={toggleModalClose} centered={true}>
 					<ModalBody modalClassName={styles.modalContainer}>
           <img style={{width: 60}} src={delete_logo} />
-				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to block {arrayDetails.userName} Vendor?</strong>  </p>
+				<p style={{marginTop: 20}}><strong style={{fontSize: 20}}>Are you sure you want to Change status of {arrayDetails.vendor?arrayDetails.vendor.vendor_name: '-'} Vendor?</strong>  </p>
 
 					</ModalBody>
 					<ModalFooter className={styles.deleteFooter}>
@@ -570,7 +663,7 @@ export function Vendors(props) {
               style={{width: 100}}
 							variant="contained"
 							className={classes.button1}
-							onClick={(e) => { handleDeleteSubmit(e) }}
+							onClick={(e) => { handleVendorStatus(e , arrayDetails) }}
 						>
 							YES
 						</Button>
@@ -585,7 +678,7 @@ export function Vendors(props) {
 						 width: 40,
 						 height: 40,
 						 backgroundColor: 'white',
-						 color: "#b22222",
+						 color: "#213D77",
 						 borderRadius: 55,
 						 position: "absolute",
 						 top: "-14",
@@ -599,15 +692,15 @@ export function Vendors(props) {
 						<div className={styles.box1}>
 								<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 								<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 60,marginRight: 25}}> - </span>{arrayDetails.userName}
+								<span className={styles.textModal}>Vendor Name</span><span style={{marginLeft: 60,marginRight: 25}}> - </span>{/*arrayDetails.userName*/arrayDetails.vendor?arrayDetails.vendor.vendor_name: '-'}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Mobile Number</span><span style={{marginLeft: 49,marginRight: 25}}> - </span>{arrayDetails.userNumber}
+								<span className={styles.textModal}>Mobile Number</span><span style={{marginLeft: 49,marginRight: 25}}> - </span>{/*arrayDetails.userNumber*/arrayDetails.vendor?arrayDetails.vendor.mobile: '-'}
 								</div>
 								<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Email</span><span style={{marginLeft: 112,marginRight: 25}}> - </span>{arrayDetails.userEmail}
+								<span className={styles.textModal}>Email</span><span style={{marginLeft: 112,marginRight: 25}}> - </span>{/*arrayDetails.userEmail*/arrayDetails.vendor?arrayDetails.vendor.email: '-'}
 								</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-								<span className={styles.textModal}>Warehouse Address</span><span style={{marginLeft: 22,marginRight: 25}}> - </span>107 Abc street no. 7 Bhopal {/*arrayDetails.warehouse_address*/}
+								<span className={styles.textModal}>Warehouse Address</span><span style={{marginLeft: 22,marginRight: 25}}> - </span>{arrayDetails.vendor?arrayDetails.vendor.warehouse_address: '-'}
 								</div>
                 {/* Empty Div */}
                 <div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
@@ -619,13 +712,13 @@ export function Vendors(props) {
 						<div className={styles.box1}>
 							<div className={styles.modalBox} /*stlye={{width: '100%', height: '100%',display: '' textAlign: 'start'}}*/>
 							<div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Service Offered</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>{arrayDetails.service}
+							<span className={styles.textModal}>Service Offered</span><span style={{marginLeft: 94,marginRight: 25}}> - </span>{/*arrayDetails.service*/arrayDetails.display_name}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Delivery Station</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>{arrayDetails.stationName}
+							<span className={styles.textModal}>Delivery Station</span><span style={{marginLeft: 90,marginRight: 25}}> - </span>{/*arrayDetails.stationName*/arrayDetails.station?arrayDetails.station.name: '-'}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Operational Hours</span><span style={{marginLeft: 75,marginRight: 25}}> - </span>{arrayDetails.hours}
+							<span className={styles.textModal}>Operational Hours</span><span style={{marginLeft: 75,marginRight: 25}}> - </span>{/*arrayDetails.hours*/arrayDetails.from_time} - {arrayDetails.end_time}
 							</div><div  className={styles.modalDiv} style={{flexDirection: 'row'}}>
-							<span className={styles.textModal}>Delivery Preparation Duration</span><span style={{marginLeft: 2,marginRight: 25}}> - </span>45 mins
+							<span className={styles.textModal}>Delivery Preparation Duration</span><span style={{marginLeft: 2,marginRight: 25}}> - </span>{arrayDetails.preparation_duration}
 							</div>
               { /* Extra div */ }
 							<div className={styles.modalDiv}  className={styles.modalDiv} style={{flexDirection: 'row'}}>
@@ -662,29 +755,38 @@ const mapStateToProps = (state) => {
 	return {
 	  vendorDocs: state.Vendors.docs,
     total: state.Vendors.total,
-    limit: state.Vendors.limit
-    
+    limit: state.Vendors.limit,
+    vendorDetails: state.Vendors.vendorDetails,
+		categoryData: state.Vendors.categoryData,
+		stationDetails: state.Stations.stationDetails,
 	}
 }
 
 const mapDispatchToProps = (dispatch) => {
 	return {
+		getStationData: () => {
+      dispatch(getStationData())
+    },
     getVendorDataByParams: (pageNo, size, params) => {
       dispatch(actions.getVendorDataByParams(pageNo, size, params))
     },
+		getVendorDetails: (id) =>
+			dispatch(actions.getVendorDetails(id)),
+		setIsLoading: (loading) =>
+	    dispatch(setIsLoading(loading))
     // getRole: () => {
     //   dispatch(actions.getRole())
     // },
     // getUserData: () => {
     //   dispatch(getStationData())
     // },
-    // setIsEditFalse: (value) => 
+    // setIsEditFalse: (value) =>
     //   dispatch(actions.setIsEditFalse(value)),
 		// // add_user: (user) =>
 		// // 	dispatch(actions.userActions(user))
 	  // setUserData	: (data) =>
 		// 	dispatch(actions.setUserData(data)),
-    // deleteUser: (id) => 
+    // deleteUser: (id) =>
     //   dispatch(actions.deleteUser(id))
 	}
 }

@@ -3,7 +3,7 @@ import * as API from '../../constants/APIs';
 import * as myConstClass from '../../screens/constants/constants';
 import * as actionTypes from './actionTypes';
 import { ToastContainer, toast } from 'react-toastify';
-import { setIsLoading, setIsSubmitted } from "./stationActions"; 
+import { setIsLoading, setIsSubmitted } from "./stationActions";
 // import { useHistory } from "react-router-dom";
 // import jwt_decode from "jwt-decode";
 
@@ -48,13 +48,13 @@ export const auth = (username, password) => {
             username: username,
             password: password
         }
-        
+
         var data = qs.stringify(authData);
            var config = {
              method: 'post',
              url: API.LoginAPI,
-             headers: { 
-            //    'Accept-Language': 'hi', 
+             headers: {
+            //    'Accept-Language': 'hi',
                'Content-Type': 'application/x-www-form-urlencoded'
              },
              data : data
@@ -87,21 +87,32 @@ export const auth = (username, password) => {
                 //     error: err.message ? err.message : null
                 // }));
             });
-            
+
     };
 };
 
-export const changePassword = (password) => {
+// export const changeProfileSetting = (profile) => {
+//   return async dispatch => {
+//     let a = await dispatch(setIsLoading(true))
+//   }
+// }
+
+export const changeProfileOrPassword = (profile, type) => {
     return async dispatch => {
         let a = await dispatch(setIsLoading(true))
-        let data = {
-            current_password: password.currentPassword,
-            new_password: password.newPassword,
-            confirm_password: password.confirmPassword
+        let data = type=='1' ? {
+            name: profile.firstName + " " + profile.lastName,
+            mobile: profile.phoneNumber,
+            email: profile.emailAddress
+        } :
+        {
+            current_password: profile.currentPassword,
+            new_password: profile.newPassword,
+            confirm_password: profile.confirmPassword
         }
         axios({
             method: "PUT",
-            url: API.ChangePasswordAPI,
+            url: type=='1' ? `${API.UpdateProfileAPI}/${profile._id}` : API.ChangePasswordAPI,
             data: data,
             headers: {
                 "accept": "application/json",

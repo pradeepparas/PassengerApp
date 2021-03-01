@@ -6,8 +6,8 @@ import { Link, Redirect } from "react-router-dom";
 
 // Images
 import background1 from "../Login/images/background1.png";
-import left_image1 from "../Login/images/left_image1.png";
-import header from "../Login/images/header.png";
+import left_image1 from "../Login/images/left_image1.svg";
+import header from "../Login/images/header.svg";
 import next_header from "../Login/images/next_header1.png"
 import button1 from "../Login/images/button1.png";
 
@@ -36,9 +36,9 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
 const GreenCheckbox = withStyles({
   root: {
-    color: '#B22222',
+    color: '#213D77',
     '&$checked': {
-      color: '#B22222',
+      color: '#213D77',
     },
   },
   checked: {},
@@ -245,7 +245,7 @@ const OTP1 = (props) => {
       <Row>
         <Col md="6" className={styles.left}>
           <div className={styles.image1}>
-            <img src={background1} className={styles.background}/>
+            <img /*src={background1}*/ className={styles.background}/>
             <div style={{height: "100%",display: 'flex', justifyContent: 'center',alignItems: 'center'}}>
             <img src={left_image1} style={{zIndex: 1}} className={styles.image} />
             </div>
@@ -256,8 +256,8 @@ const OTP1 = (props) => {
             <div className={styles.header}>
               <img src={header} className={styles.passenger}/>
               <div className={styles.next_header}>
-                <img src={next_header}  />
-                <h2 style={{color: '#B22222'}} className={styles.master_header}>OTP VERIFICATION</h2>
+                <img /*src={next_header}*/  />
+                <h2 style={{color: '#213D77'}} className={styles.master_header}>OTP VERIFICATION</h2>
               </div>
               {/*New div was added*/}
               <div className={styles1.textField}>
