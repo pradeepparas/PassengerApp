@@ -7,7 +7,7 @@ import { Link, Redirect, useHistory } from "react-router-dom";
 // Images
 import background1 from "../Login/images/background1.png";
 import left_image1 from "../Login/images/left_image1.svg";
-import header from "../Login/images/header.svg";
+import header from "../Login/images/header.png";
 import next_header from "../Login/images/next_header1.png"
 import button1 from "../Login/images/button1.png";
 

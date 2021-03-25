@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect, Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
 import i18n from 'i18next';
 import { LoadScript } from '@react-google-maps/api';
@@ -67,7 +67,7 @@ const App = () => {
         returnTo={`${window.location.origin}/easydev/online_marketing_dashboard`}
         onRedirectCallback={onRedirectCallbackAuth0}
       >
-        <BrowserRouter basename="/">
+        <HashRouter basename="/">
           <I18nextProvider i18n={i18n}>
             <LoadScript
               googleMapsApiKey="" /* Paste your Google Maps Api Key here */
@@ -79,7 +79,7 @@ const App = () => {
               </ScrollToTop>
             </LoadScript>
           </I18nextProvider>
-        </BrowserRouter>
+        </HashRouter>
       </Auth0Provider>
     </Provider>
   );

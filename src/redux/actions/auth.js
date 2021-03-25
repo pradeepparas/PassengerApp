@@ -125,6 +125,9 @@ export const changeProfileOrPassword = (profile, type) => {
                 dispatch(setIsLoading(false))
                 dispatch(setIsSubmitted(true))
                 localStorage.setItem('token', response.data.token)
+                if(type == '1'){
+                    localStorage.setItem('username', data.name)
+                }
             } else {
 
             }

@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // Images
 import background1 from "./images/background1.png";
 import left_image1 from "./images/left_image1.svg";
-import header from "./images/header.svg";
+import header from "./images/header.png";
 import next_header from "./images/next_header1.png"
 import button1 from "./images/button1.png";
 

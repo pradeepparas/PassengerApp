@@ -46,7 +46,7 @@
 }
 
 .passenger{
-  width: 200px;
+  width: 170px;
 }
 
 .next_header {
@@ -87,6 +87,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-bottom: 60px;
 }
 
 .checkBox{
@@ -136,4 +137,4 @@
   color: #fff;
   /* transform: translateY(-7px); */
 }
-/* #e0a7a7 */
+/* #e0a7a7 passenger header */

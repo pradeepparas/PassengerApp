@@ -107,6 +107,12 @@ border-color: #cac7c7;
   -o-transition: .25s all ease;
   transition: .25s all ease;
 }
+
+.select1:focus {
+  border-color: #5975ae;
+  border-width: 2px;
+}
+
 /* Transition */
 .select1:hover::after {
   color: #f39c12;

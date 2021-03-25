@@ -136,6 +136,11 @@ border-color: #cac7c7;
 }
 /* select css */
 
+.select1:focus {
+  border-color: #5975ae;
+  border-width: 2px;
+}
+
 .dropbtn {
   display: flex;
   background-color: white;

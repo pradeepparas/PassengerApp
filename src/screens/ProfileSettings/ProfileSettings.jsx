@@ -287,6 +287,11 @@ export function ProfileSettings(props) {
 
   }
 
+  const cancelUpdate = (e) => {
+    // history.push('/dashboard')
+    history.push("/dashboard")
+  }
+
   // Open Modal for successfully Changed Details
   useEffect(() => {
     if(props.isSubmitted){
@@ -552,7 +557,7 @@ export function ProfileSettings(props) {
 
             {/* Save and cancel Button */}
 						<div className={styles.saveButton}>
-			      <Button style={{}} onClick={() => history.push('/station-management')}  className={classes.button2} variant="contained">
+			      <Button style={{}} onClick={() => history.push('/dashboard')}  className={classes.button2} variant="contained">
 			        Cancel
 			      </Button>
 			      <Button style={{}} onClick={handleSubmit} className={classes.saveButton1} variant="contained">
@@ -721,9 +726,7 @@ export function ProfileSettings(props) {
 
             {/* Save and cancel Button */}
 						<div className={styles.saveButton}>
-			      <Button style={{}} onClick={() => {
-							history.push('/dashboard')
-						}}  className={classes.button2} variant="contained">
+			      <Button style={{}} onClick={cancelUpdate}  className={classes.button2} variant="contained">
 			        Cancel
 			      </Button>
 			      <Button style={{}} onClick={handleSubmit} className={classes.saveButton1} variant="contained">

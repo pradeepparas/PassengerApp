@@ -35,34 +35,7 @@ export function DashBoard(props) {
 	// },[])
 
 	useEffect(() => {
-		// fetch('http://13.235.102.214:8000/reports/count?type=1',{
-        //        method:"GET",
-        //        headers:{
-        //            'Accept':"Application/json",
-        //            "Contect-Type":"Apllication/json",
-        //            "Authorization":"Bearer" + localStorage.getItem('token'),
-        //        }
-        //      })
-        //      .then(result=>result.json())
-        //      .then(result=>{
-        //         debugger
-		// 						console.log(result)
-		// 						setCounts({
-		// 							station: result.counts.station,
-		// 							user: result.counts.user,
-		// 							total_service: result.counts.total_service,
-		// 							vendor_service: result.counts.vendor_service
-		// 						})
-		// 						debugger
-		// 					}).catch(err => {
-		// 						setCounts({
-		// 							station: "",
-		// 							user: "",
-		// 							total_service: "",
-		// 							vendor_service: ""
-		// 						})
-		// 						toast.error(err.message)
-		// 					})
+		// Get Dashboard Count
 		props.getDashboardCount(1)
 	}, [])
 

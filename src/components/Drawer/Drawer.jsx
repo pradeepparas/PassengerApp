@@ -219,7 +219,6 @@ export function MiniDrawer(props) {
     }
 
     if(type == 'logout'){
-      // await props.logOut();
       localStorage.removeItem('token');
       localStorage.removeItem('username');
       localStorage.removeItem('userId');
@@ -339,11 +338,11 @@ export function MiniDrawer(props) {
             borderWidth: '4px'}}>MASTER ADMIN</div>
 
             <div onClick={handleDrawerOpen} className={styles.div1}>
-                  <span className={styles.spanClass} style={{}} />
-                  <span className={styles.spanClass1} style={{}} />
-                  <span className={styles.spanClass2} style={{}} />
-                  <span className={styles.spanClass3} style={{}} />
-                  <span className={styles.spanClass4} style={{}} />
+                  <span className={styles.spanClass} />
+                  <span className={styles.spanClass1} />
+                  <span className={styles.spanClass2} />
+                  <span className={styles.spanClass3} />
+                  <span className={styles.spanClass4} />
                 </div>
 
           {/*<IconButton
@@ -383,8 +382,8 @@ export function MiniDrawer(props) {
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList className={classes.menuList1} autoFocusItem={open_Profile} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                    <MenuItem onClick={(e) => handleClose(e, 'profile')}>Profile <img className={styles.imageColor} style={{width: 15, height: 15, marginLeft: 25}} src={user_alt1} /></MenuItem>
-                    <MenuItem onClick={(e) => handleClose(e, 'logout')}>Logout <img className={styles.imageColor} style={{width: 15, marginLeft: 25,height: 15}} src={account_logout} /></MenuItem>
+                    <MenuItem className={styles.listProfileText} onClick={(e) => handleClose(e, 'profile')}>Profile <img className={styles.imageColor} style={{width: 15, height: 15, marginLeft: 25}} src={user_alt1} /></MenuItem>
+                    <MenuItem className={styles.listProfileText} onClick={(e) => handleClose(e, 'logout')}>Logout <img className={styles.imageColor} style={{width: 15, marginLeft: 25,height: 15}} src={account_logout} /></MenuItem>
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

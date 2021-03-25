@@ -80,6 +80,11 @@
     border-radius: 4px;
 }
 
+.select1:focus {
+  border-color: #5975ae;
+  border-width: 2px;
+}
+
 .select1 option{
 
   border-radius: 50px;

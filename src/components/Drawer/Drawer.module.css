@@ -181,6 +181,6 @@
 }
 /* For Divs filter */
 
-  /* .imageColor {
-    filter: invert(0%) sepia(3%) saturate(0%) hue-rotate(250deg) brightness(103%) contrast(104%)
-  } */
+  .listProfileText:hover .imageColor {
+    filter: invert(20%) sepia(70%) saturate(862%) hue-rotate(190deg) brightness(93%) contrast(96%);
+  }
